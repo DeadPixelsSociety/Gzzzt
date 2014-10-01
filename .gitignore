@@ -18,7 +18,7 @@ src/lib/gzzzt/Makefile
 # Executables and libraries
 *.so*
 src/bin/client/gzzzt
-src/bin/client/gzzzt-server
+src/bin/server/gzzzt-server
 
 # Temporary files
 *~
