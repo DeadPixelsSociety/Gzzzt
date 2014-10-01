@@ -3,6 +3,7 @@ src/CMakeFiles/
 src/CMakeCache.txt
 src/cmake_install.cmake
 src/CPackConfig.cmake
+src/CPackSourceConfig.cmake
 src/Makefile
 
 src/bin/CMakeFiles/
@@ -10,9 +11,9 @@ src/bin/*.cmake
 src/bin/config.h
 src/bin/Makefile
 
-src/lib/CMakeFiles/
-src/lib/*.cmake
-src/lib/Makefile
+src/lib/gzzzt/CMakeFiles/
+src/lib/gzzzt/*.cmake
+src/lib/gzzzt/Makefile
 
 # Executables and libraries
 *.so*
