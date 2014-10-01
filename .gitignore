@@ -1,23 +1,23 @@
 # CMake files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-CPackConfig.cmake
-Makefile
+src/CMakeFiles/
+src/CMakeCache.txt
+src/cmake_install.cmake
+src/CPackConfig.cmake
+src/Makefile
 
-bin/CMakeFiles/
-bin/*.cmake
-bin/config.h
-bin/Makefile
+src/bin/CMakeFiles/
+src/bin/*.cmake
+src/bin/config.h
+src/bin/Makefile
 
-lib/CMakeFiles/
-lib/*.cmake
-lib/Makefile
+src/lib/CMakeFiles/
+src/lib/*.cmake
+src/lib/Makefile
 
 # Executables and libraries
 *.so*
-bin/client/gzzzt
-bin/client/gzzzt-server
+src/bin/client/gzzzt
+src/bin/client/gzzzt-server
 
 # Temporary files
 *~
