@@ -1,0 +1,22 @@
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+bin/CMakeFiles/
+bin/*.cmake
+bin/config.h
+bin/Makefile
+
+lib/CMakeFiles/
+lib/*.cmake
+lib/Makefile
+
+# Executables and libraries
+*.so*
+bin/client/gzzzt
+bin/client/gzzzt-server
+
+# Temporary files
+*~
