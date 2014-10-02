@@ -1,8 +1,17 @@
-gzzzt
+Gzzzt
 =====
 
-a Bomberman clone with robots and lightnings !
+A Bomberman clone with robots and lightnings !
 
+
+Required libraries
+------------------
+
+- Boost (http://www.boost.org/)
+- SFML (http://www.sfml-dev.org/index.php)
+- TinyXML-2 (http://www.grinninglizard.com/tinyxml2/)
+- ZLIB (http://www.zlib.net/)
+- libtmx (https://github.com/jube/libtmx)
 
 Build & run
 -----------
@@ -21,10 +30,3 @@ make
 # How to run the server :
 ./build/bin/server/gzzzt-server
 ```
-
-Required libraries :
-Boost (http://www.boost.org/)
-SFML (http://www.sfml-dev.org/index.php)
-TinyXML-2 (http://www.grinninglizard.com/tinyxml2/)
-ZLIB (http://www.zlib.net/)
-libtmx (https://github.com/jube/libtmx)
