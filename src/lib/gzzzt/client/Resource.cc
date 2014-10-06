@@ -15,6 +15,8 @@
  */
 #include <client/Resource.h>
 
+#include <iostream>
+
 #include <boost/filesystem.hpp>
 
 namespace fs = boost::filesystem;
