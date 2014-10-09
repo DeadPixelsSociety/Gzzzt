@@ -21,7 +21,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
-#include <client/Entity.h>
+#include <gzzzt/client/Entity.h>
 
 namespace gzzzt {
 

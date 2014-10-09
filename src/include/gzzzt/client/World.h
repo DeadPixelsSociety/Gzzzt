@@ -23,8 +23,8 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <client/Entity.h>
-#include <client/Event.h>
+#include <gzzzt/client/Entity.h>
+#include <gzzzt/client/Event.h>
 
 namespace gzzzt {
   enum class Memory {
