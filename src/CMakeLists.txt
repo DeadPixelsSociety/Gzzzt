@@ -27,6 +27,6 @@ install(
 )
 
 install(
-  DIRECTORY "${CMAKE_SOURCE_DIR}/share"
-  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/lib/gzzzt"
+  DIRECTORY "${CMAKE_SOURCE_DIR}/share/gzzzt"
+  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/games"
 )
