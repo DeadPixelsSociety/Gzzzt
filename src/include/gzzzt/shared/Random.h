@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GAME_RANDOM_H
-#define GAME_RANDOM_H
+#ifndef GZZZT_RANDOM_H
+#define GZZZT_RANDOM_H
 
 #include <random>
 #include <functional>
@@ -43,4 +43,4 @@ namespace gzzzt {
 
 }
 
-#endif // GAME_RANDOM_H
+#endif // GZZZT_RANDOM_H

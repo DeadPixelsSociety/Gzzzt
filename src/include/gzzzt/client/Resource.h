@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GAME_RESOURCE_H
-#define GAME_RESOURCE_H
+#ifndef GZZZT_RESOURCE_H
+#define GZZZT_RESOURCE_H
 
 #include <string>
 #include <map>
@@ -65,4 +65,4 @@ namespace gzzzt {
 
 }
 
-#endif // GAME_RESOURCE_H
+#endif // GZZZT_RESOURCE_H

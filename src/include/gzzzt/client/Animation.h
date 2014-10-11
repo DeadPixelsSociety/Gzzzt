@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GAME_ANIMATION_H
-#define GAME_ANIMATION_H
+#ifndef GZZZT_ANIMATION_H
+#define GZZZT_ANIMATION_H
 
 #include <vector>
 
@@ -59,4 +59,4 @@ namespace gzzzt {
 
 }
 
-#endif // GAME_ANIMATION_H
+#endif // GZZZT_ANIMATION_H

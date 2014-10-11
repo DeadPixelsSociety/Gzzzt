@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GAME_WORLD_H
-#define GAME_WORLD_H
+#ifndef GZZZT_WORLD_H
+#define GZZZT_WORLD_H
 
 #include <functional>
 #include <map>
@@ -134,4 +134,4 @@ namespace gzzzt {
 }
 
 
-#endif // GAME_WORLD_H
+#endif // GZZZT_WORLD_H

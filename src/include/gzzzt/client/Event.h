@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GAME_EVENT_H
-#define GAME_EVENT_H
+#ifndef GZZZT_EVENT_H
+#define GZZZT_EVENT_H
 
 #include <cstdint>
 #include <functional>
@@ -55,4 +55,4 @@ constexpr gzzzt::EventType operator"" _type(const char *str, std::size_t sz) {
   return gzzzt::Hash(str, sz);
 }
 
-#endif // GAME_EVENT_H
+#endif // GZZZT_EVENT_H

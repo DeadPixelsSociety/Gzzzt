@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GAME_ENTITY_H
-#define GAME_ENTITY_H
+#ifndef GZZZT_ENTITY_H
+#define GZZZT_ENTITY_H
 
 #include <SFML/Graphics.hpp>
 
@@ -36,4 +36,4 @@ namespace gzzzt {
 }
 
 
-#endif // GAME_ENTITY_H
+#endif // GZZZT_ENTITY_H
