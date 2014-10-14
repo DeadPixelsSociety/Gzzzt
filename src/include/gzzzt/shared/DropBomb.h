@@ -15,26 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_ACTION_H
-#define	GZZZT_ACTION_H
+#ifndef GZZZT_DROPBOMB_H
+#define	GZZZT_DROPBOMB_H
 
-#include <gzzzt/shared/ActionType.h>
-#include <gzzzt/shared/Position.h>
+#include <gzzzt/shared/Action.h>
 
 namespace gzzzt {
-
-    class Action {
+    
+    class DropBomb : public Action {
     public:
-        ActionType getType() const;
-        Position getPosition() const;
-
-    protected:
-        explicit Action(ActionType type, Position pos);
+        explicit DropBomb(Position pos);
         
     private:
-        ActionType m_type;
-        Position m_pos;
+        // TODO: add members here
     };
 }
 
-#endif	// GZZZT_ACTION_H
+#endif	// GZZZT_DROPBOMB_H
