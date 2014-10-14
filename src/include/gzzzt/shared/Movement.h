@@ -15,26 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ACTION_H
-#define	ACTION_H
+#ifndef MOVEMENT_H
+#define	MOVEMENT_H
 
-#include <gzzzt/shared/ActionType.h>
-#include <gzzzt/shared/Position.h>
+#include <gzzzt/shared/Action.h>
 
 namespace gzzzt {
-
-    class Action {
+    
+    class Movement : public Action {
     public:
-        ActionType getType() const;
-        Position getPosition() const;
-
-    protected:
-        explicit Action(ActionType type, Position pos);
+        explicit Movement(ActionType type, Position pos);
         
     private:
-        ActionType m_type;
-        Position m_pos;
+        // TODO: add members here
     };
 }
 
-#endif	// ACTION_H
+#endif	// MOVEMENT_H

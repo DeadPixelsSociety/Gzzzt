@@ -15,26 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ACTION_H
-#define	ACTION_H
-
-#include <gzzzt/shared/ActionType.h>
-#include <gzzzt/shared/Position.h>
+#include <gzzzt/shared/Movement.h>
 
 namespace gzzzt {
 
-    class Action {
-    public:
-        ActionType getType() const;
-        Position getPosition() const;
-
-    protected:
-        explicit Action(ActionType type, Position pos);
-        
-    private:
-        ActionType m_type;
-        Position m_pos;
-    };
+    Movement::Movement(ActionType type, Position pos) : Action(type, pos) {
+    }
 }
-
-#endif	// ACTION_H
