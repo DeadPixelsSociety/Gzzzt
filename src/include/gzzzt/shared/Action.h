@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ACTION_H
-#define	ACTION_H
+#ifndef GZZZT_ACTION_H
+#define	GZZZT_ACTION_H
 
 #include <gzzzt/shared/ActionType.h>
 #include <gzzzt/shared/Position.h>
@@ -37,4 +37,4 @@ namespace gzzzt {
     };
 }
 
-#endif	// ACTION_H
+#endif	// GZZZT_ACTION_H

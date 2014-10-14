@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DROPBOMB_H
-#define	DROPBOMB_H
+#ifndef GZZZT_DROPBOMB_H
+#define	GZZZT_DROPBOMB_H
 
 #include <gzzzt/shared/Action.h>
 
@@ -31,4 +31,4 @@ namespace gzzzt {
     };
 }
 
-#endif	// DROPBOMB_H
+#endif	// GZZZT_DROPBOMB_H

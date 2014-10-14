@@ -15,8 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef MOVEMENT_H
-#define	MOVEMENT_H
+#ifndef GZZZT_MOVEMENT_H
+#define	GZZZT_MOVEMENT_H
 
 #include <gzzzt/shared/Action.h>
 
@@ -31,4 +31,4 @@ namespace gzzzt {
     };
 }
 
-#endif	// MOVEMENT_H
+#endif	// GZZZT_MOVEMENT_H
