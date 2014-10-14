@@ -18,15 +18,17 @@
 #ifndef GZZZT_ACTION_H
 #define GZZZT_ACTION_H
 
+#include <cstdint>
+
 namespace gzzzt {
 
-	struct Action{
-		bool MOVE_LEFT;
-		bool MOVE_RIGHT;
-		bool MOVE_UP;
-		bool MOVE_DOWN;
-		bool DROP_BOMB;
-	};
+    enum class Action : uint8_t {
+        MOVE_LEFT,
+        MOVE_RIGHT,
+        MOVE_UP,
+        MOVE_DOWN,
+        DROP_BOMB,
+    };
 
 }
 

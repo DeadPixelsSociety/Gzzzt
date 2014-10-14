@@ -20,13 +20,10 @@
 
 namespace gzzzt {
 
-	class Speed {
-	public:
-		Speed();
-
-	private:
-		int vx, vy;
-	};
+    struct Speed {
+      float dx;
+      float dy;
+    };
 
 }
 

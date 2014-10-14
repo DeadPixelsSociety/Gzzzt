@@ -20,13 +20,10 @@
 
 namespace gzzzt {
 
-	class Position {
-	public:
-		Position();
-	
-	private:
-		int x, y;
-	};
+    struct Position {
+        float x;
+        float y;
+    };
 
 }
 
