@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/server/Game.h>
+#include <gzzzt/server/ServerMap.h>
 
 namespace gzzzt {
 
-    void Game::update(float dt) {
+    void ServerMap::update(float dt) {
         // TODO
     }
 

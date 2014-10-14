@@ -15,12 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/server/Game.h>
+#ifndef GZZZT_SERVER_MAP_H
+#define GZZZT_SERVER_MAP_H
+
+#include <gzzzt/server/ServerEntity.h>
 
 namespace gzzzt {
 
-    void Game::update(float dt) {
-        // TODO
-    }
+    class ServerMap : public ServerEntity {
+    public:
+
+        virtual void update(float dt) override;
+
+    };
 
 }
+
+
+#endif // GZZZT_SERVER_MAP_H

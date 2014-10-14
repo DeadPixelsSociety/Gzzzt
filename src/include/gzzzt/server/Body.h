@@ -15,12 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/server/Game.h>
+#ifndef GZZZT_SERVER_BODY_H
+#define GZZZT_SERVER_BODY_H
+
+#include <gzzzt/shared/Position.h>
+#include <gzzzt/shared/Speed.h>
 
 namespace gzzzt {
 
-    void Game::update(float dt) {
-        // TODO
-    }
+    class Body {
+    public:
+
+
+    private:
+        Position m_pos;
+        Speed m_speed;
+    };
 
 }
+
+#endif // GZZZT_SERVER_BODY_H

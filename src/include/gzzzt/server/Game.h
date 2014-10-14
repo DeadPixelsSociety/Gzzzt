@@ -20,8 +20,16 @@
 
 namespace gzzzt {
 
-	class Game {
-	};
+    class Game {
+    public:
+
+        void update(float dt);
+
+
+    private:
+
+
+    };
 }
 
 #endif // GZZZT_GAME_H
