@@ -26,20 +26,20 @@
 
 namespace gzzzt {
 
-  class Random {
-  public:
-    Random();
-    Random(unsigned seed);
+    class Random {
+    public:
+        Random();
+        Random(unsigned seed);
 
-    int computeUniformInteger(int min, int max);
+        int computeUniformInteger(int min, int max);
 
-    float computeUniformFloat(float min, float max);
+        float computeUniformFloat(float min, float max);
 
-    float computeNormalFloat(float mean, float stddev);
+        float computeNormalFloat(float mean, float stddev);
 
-  private:
-    std::mt19937 m_engine;
-  };
+    private:
+        std::mt19937 m_engine;
+    };
 
 }
 

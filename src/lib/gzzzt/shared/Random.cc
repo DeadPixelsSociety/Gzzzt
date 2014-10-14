@@ -21,32 +21,30 @@
 
 namespace gzzzt {
 
-  Random::Random()
-  : m_engine(std::time(nullptr))
-  {
+    Random::Random()
+        : m_engine(std::time(nullptr)) {
 
-  }
+    }
 
-  Random::Random(unsigned seed)
-  : m_engine(seed)
-  {
+    Random::Random(unsigned seed)
+        : m_engine(seed) {
 
-  }
+    }
 
 
-  int Random::computeUniformInteger(int min, int max) {
-    std::uniform_int_distribution<int> dist(min, max);
-    return dist(m_engine);
-  }
+    int Random::computeUniformInteger(int min, int max) {
+        std::uniform_int_distribution<int> dist(min, max);
+        return dist(m_engine);
+    }
 
-  float Random::computeUniformFloat(float min, float max) {
-    std::uniform_real_distribution<float> dist(min, max);
-    return dist(m_engine);
-  }
+    float Random::computeUniformFloat(float min, float max) {
+        std::uniform_real_distribution<float> dist(min, max);
+        return dist(m_engine);
+    }
 
-  float Random::computeNormalFloat(float mean, float stddev) {
-    std::normal_distribution<float> dist(mean, stddev);
-    return dist(m_engine);
-  }
+    float Random::computeNormalFloat(float mean, float stddev) {
+        std::normal_distribution<float> dist(mean, stddev);
+        return dist(m_engine);
+    }
 
 }

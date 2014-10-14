@@ -20,12 +20,12 @@
 
 namespace gzzzt {
 
-	class Block {
-	public:
-		Block();
+    class Block {
+    public:
+        Block();
 
-	private:
-	};
+    private:
+    };
 
 }
 

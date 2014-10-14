@@ -22,11 +22,11 @@
 #include "config.h"
 
 int main(void) {
-	std::cout << "Gzzzt-Server (version " << GAME_VERSION << ")" << std::endl;
+    std::cout << "Gzzzt-Server (version " << GAME_VERSION << ")" << std::endl;
 
-  gzzzt::Log::setLevel(gzzzt::Log::DEBUG);
-  gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the server...\n");
+    gzzzt::Log::setLevel(gzzzt::Log::DEBUG);
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the server...\n");
 
 
-	return 0;
+    return 0;
 }

@@ -42,11 +42,20 @@ namespace gzzzt {
 
     static const char *levelToString(Log::Level level) {
         switch (level) {
-            case Log::DEBUG: return "DEBUG";
-            case Log::INFO: return "INFO";
-            case Log::WARN: return "WARN";
-            case Log::ERROR: return "ERROR";
-            case Log::FATAL: return "FATAL";
+            case Log::DEBUG:
+                return "DEBUG";
+
+            case Log::INFO:
+                return "INFO";
+
+            case Log::WARN:
+                return "WARN";
+
+            case Log::ERROR:
+                return "ERROR";
+
+            case Log::FATAL:
+                return "FATAL";
         }
 
         assert(false);
@@ -55,10 +64,17 @@ namespace gzzzt {
 
     static const char *categoryToString(Log::Category category) {
         switch (category) {
-            case Log::GENERAL: return "GENERAL";
-            case Log::RENDER: return "RENDER";
-            case Log::NETWORK: return "NETWORK";
-            case Log::PHYSICS: return "PHYSICS";
+            case Log::GENERAL:
+                return "GENERAL";
+
+            case Log::RENDER:
+                return "RENDER";
+
+            case Log::NETWORK:
+                return "NETWORK";
+
+            case Log::PHYSICS:
+                return "PHYSICS";
         }
 
         assert(false);

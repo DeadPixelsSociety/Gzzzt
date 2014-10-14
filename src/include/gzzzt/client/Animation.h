@@ -27,35 +27,35 @@
 
 namespace gzzzt {
 
-  struct AnimationFrame {
-    sf::Texture *texture;
-    sf::IntRect bounds;
-    float duration;
-  };
+    struct AnimationFrame {
+        sf::Texture *texture;
+        sf::IntRect bounds;
+        float duration;
+    };
 
-  class Animation {
-  public:
-    Animation(std::string name)
-    : m_name(std::move(name)) {
-    }
+    class Animation {
+    public:
+        Animation(std::string name)
+            : m_name(std::move(name)) {
+        }
 
-    const std::string& name() {
-      return m_name;
-    }
+        const std::string& name() {
+            return m_name;
+        }
 
-    void addFrame(const AnimationFrame& frame);
+        void addFrame(const AnimationFrame& frame);
 
-    void update(float dt);
+        void update(float dt);
 
-    sf::Texture *currentTexture();
-    sf::IntRect currentTextureRect();
+        sf::Texture *currentTexture();
+        sf::IntRect currentTextureRect();
 
-  private:
-    std::string m_name;
-    std::size_t m_current_frame = 0;
-    float m_current_duration_in_frame = 0.0f;
-    std::vector<AnimationFrame> m_frames;
-  };
+    private:
+        std::string m_name;
+        std::size_t m_current_frame = 0;
+        float m_current_duration_in_frame = 0.0f;
+        std::vector<AnimationFrame> m_frames;
+    };
 
 }
 

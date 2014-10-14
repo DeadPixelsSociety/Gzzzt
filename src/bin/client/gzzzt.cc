@@ -20,48 +20,50 @@
 #include "config.h"
 
 int main(void) {
-  // initialize
-  gzzzt::World world;
-  sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
-  window.setKeyRepeatEnabled(false);
+    // initialize
+    gzzzt::World world;
+    sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
+    window.setKeyRepeatEnabled(false);
 
-  // load resources
-
-
-  // add entities
+    // load resources
 
 
-  // main loop
-  sf::Clock clock;
-  while (window.isOpen()) {
-    // input
-    sf::Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
-        window.close();
-      } else if (event.type == sf::Event::KeyPressed) {
+    // add entities
 
-        switch (event.key.code) {
-          case sf::Keyboard::Escape:
-            window.close();
-            break;
 
-          default:
-            break;
+    // main loop
+    sf::Clock clock;
+
+    while (window.isOpen()) {
+        // input
+        sf::Event event;
+
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            } else if (event.type == sf::Event::KeyPressed) {
+
+                switch (event.key.code) {
+                    case sf::Keyboard::Escape:
+                        window.close();
+                        break;
+
+                    default:
+                        break;
+                }
+
+            }
         }
 
-      }
+        // update
+        sf::Time elapsed = clock.restart();
+        world.update(elapsed.asSeconds());
+
+        // render
+        window.clear(sf::Color::White);
+        world.render(window);
+        window.display();
     }
 
-    // update
-    sf::Time elapsed = clock.restart();
-    world.update(elapsed.asSeconds());
-
-    // render
-    window.clear(sf::Color::White);
-    world.render(window);
-    window.display();
-  }
-
-  return 0;
+    return 0;
 }

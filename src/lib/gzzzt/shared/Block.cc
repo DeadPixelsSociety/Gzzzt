@@ -19,8 +19,8 @@
 
 namespace gzzzt {
 
-	Block::Block() {
+    Block::Block() {
 
-	}
+    }
 
 }

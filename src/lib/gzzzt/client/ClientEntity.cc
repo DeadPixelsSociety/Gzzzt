@@ -19,19 +19,19 @@
 
 namespace gzzzt {
 
-  ClientEntity::~ClientEntity() {
-  }
+    ClientEntity::~ClientEntity() {
+    }
 
-  int ClientEntity::priority() const {
-    return 0;
-  }
+    int ClientEntity::priority() const {
+        return 0;
+    }
 
-  void ClientEntity::update(float dt) {
-    // default: do nothing
-  }
+    void ClientEntity::update(float dt) {
+        // default: do nothing
+    }
 
-  void ClientEntity::render(sf::RenderWindow& window) {
-    // default: do nothing
-  }
+    void ClientEntity::render(sf::RenderWindow& window) {
+        // default: do nothing
+    }
 
 }

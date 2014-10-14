@@ -23,36 +23,36 @@
 
 
 namespace gzzzt {
-  class Entity;
+    class Entity;
 
-  typedef uint64_t EventType;
+    typedef uint64_t EventType;
 
 #define INVALID_EVENT 0
 
-  constexpr EventType Hash(const char *str, std::size_t sz) {
-    return sz == 0 ? 0xcbf29ce484222325 : (str[0] ^ Hash(str + 1, sz - 1)) * 0x100000001b3;
-  }
+    constexpr EventType Hash(const char *str, std::size_t sz) {
+        return sz == 0 ? 0xcbf29ce484222325 : (str[0] ^ Hash(str + 1, sz - 1)) * 0x100000001b3;
+    }
 
-  inline EventType Hash(const std::string& str) {
-    return Hash(str.c_str(), str.size());
-  }
+    inline EventType Hash(const std::string& str) {
+        return Hash(str.c_str(), str.size());
+    }
 
 
-  struct Event {
-    static const EventType type = INVALID_EVENT;
-  };
+    struct Event {
+        static const EventType type = INVALID_EVENT;
+    };
 
-  enum class EventStatus {
-    KEEP, /**< The handler must be kept */
-    DIE,  /**< The handler can be removed */
-  };
+    enum class EventStatus {
+        KEEP, /**< The handler must be kept */
+        DIE,  /**< The handler can be removed */
+    };
 
-  typedef std::function<EventStatus(ClientEntity*, EventType, Event*)> EventHandler;
+    typedef std::function<EventStatus(ClientEntity *, EventType, Event *)> EventHandler;
 
 }
 
 constexpr gzzzt::EventType operator"" _type(const char *str, std::size_t sz) {
-  return gzzzt::Hash(str, sz);
+    return gzzzt::Hash(str, sz);
 }
 
 #endif // GZZZT_EVENT_H

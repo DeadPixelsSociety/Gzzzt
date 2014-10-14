@@ -25,7 +25,7 @@ namespace gzzzt {
     ActionType Action::getType() const {
         return m_type;
     }
-    
+
     Position Action::getPosition() const {
         return m_pos;
     }

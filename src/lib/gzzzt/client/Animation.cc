@@ -21,44 +21,44 @@
 
 namespace gzzzt {
 
-  void Animation::addFrame(const AnimationFrame& frame) {
-    if (m_frames.empty()) {
-      m_current_duration_in_frame = frame.duration;
-      m_current_frame = 0;
+    void Animation::addFrame(const AnimationFrame& frame) {
+        if (m_frames.empty()) {
+            m_current_duration_in_frame = frame.duration;
+            m_current_frame = 0;
+        }
+
+        m_frames.push_back(frame);
     }
 
-    m_frames.push_back(frame);
-  }
+    void Animation::update(float dt) {
+        if (m_frames.empty()) {
+            return;
+        }
 
-  void Animation::update(float dt) {
-    if (m_frames.empty()) {
-      return;
+        m_current_duration_in_frame -= dt;
+
+        while (m_current_duration_in_frame < 0) {
+            m_current_frame = (m_current_frame + 1) % m_frames.size();
+            m_current_duration_in_frame += m_frames[m_current_frame].duration;
+        }
     }
 
-    m_current_duration_in_frame -= dt;
+    sf::Texture *Animation::currentTexture() {
+        if (m_frames.empty()) {
+            std::cerr << "Error! The animation does not have any frame: " << name() << std::endl;
+            return nullptr;
+        }
 
-    while (m_current_duration_in_frame < 0) {
-      m_current_frame = (m_current_frame + 1) % m_frames.size();
-      m_current_duration_in_frame += m_frames[m_current_frame].duration;
-    }
-  }
-
-  sf::Texture *Animation::currentTexture() {
-    if (m_frames.empty()) {
-      std::cerr << "Error! The animation does not have any frame: " << name() << std::endl;
-      return nullptr;
+        return m_frames[m_current_frame].texture;
     }
 
-    return m_frames[m_current_frame].texture;
-  }
+    sf::IntRect Animation::currentTextureRect() {
+        if (m_frames.empty()) {
+            std::cerr << "Error! The animation does not have any frame: " << name() << std::endl;
+            return sf::IntRect();
+        }
 
-  sf::IntRect Animation::currentTextureRect() {
-    if (m_frames.empty()) {
-      std::cerr << "Error! The animation does not have any frame: " << name() << std::endl;
-      return sf::IntRect();
+        return m_frames[m_current_frame].bounds;
     }
-
-    return m_frames[m_current_frame].bounds;
-  }
 
 }

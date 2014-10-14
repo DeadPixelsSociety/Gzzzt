@@ -21,8 +21,8 @@
 namespace gzzzt {
 
     struct Speed {
-      float dx;
-      float dy;
+        float dx;
+        float dy;
     };
 
 }

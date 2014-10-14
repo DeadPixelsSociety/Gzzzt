@@ -22,16 +22,16 @@
 
 namespace gzzzt {
 
-  class ClientEntity {
-  public:
-    virtual ~ClientEntity();
+    class ClientEntity {
+    public:
+        virtual ~ClientEntity();
 
-    virtual int priority() const;
+        virtual int priority() const;
 
-    virtual void update(float dt);
-    virtual void render(sf::RenderWindow& window);
+        virtual void update(float dt);
+        virtual void render(sf::RenderWindow& window);
 
-  };
+    };
 
 }
 

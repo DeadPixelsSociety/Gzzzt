@@ -1,0 +1,45 @@
+# Artistic Style (astyle) format file for Gzzzt
+# Run:
+# $ astyle --options=astylerc '*'
+# Documentation: http://astyle.sourceforge.net/astyle.html
+#
+
+# Bracket style options
+style=java
+
+# Tab options
+indent=spaces=4
+
+# Bracket modify options
+attach-namespaces
+attach-classes
+attach-inlines
+attach-extern-c
+
+# Indentation options
+indent-switches
+indent-namespaces
+indent-col1-comments
+
+# Padding options
+break-blocks
+pad-oper
+pad-header
+unpad-paren
+align-pointer=name
+align-reference=type
+
+# Formatting options
+add-brackets
+convert-tabs
+close-templates
+mode=c
+
+# Other options
+suffix=.bak
+recursive
+exclude=share
+exclude=astylerc
+exclude=CMakeLists.txt
+exclude=CPackConfig.cmake
+formatted

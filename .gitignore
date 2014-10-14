@@ -6,3 +6,4 @@ build/
 
 # Temporary files
 *~
+*.bak

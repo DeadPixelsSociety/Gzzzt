@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef GZZZT_ACTION_H
-#define	GZZZT_ACTION_H
+#define GZZZT_ACTION_H
 
 #include <gzzzt/shared/ActionType.h>
 #include <gzzzt/shared/Position.h>
@@ -30,11 +30,11 @@ namespace gzzzt {
 
     protected:
         explicit Action(ActionType type, Position pos);
-        
+
     private:
         ActionType m_type;
         Position m_pos;
     };
 }
 
-#endif	// GZZZT_ACTION_H
+#endif  // GZZZT_ACTION_H

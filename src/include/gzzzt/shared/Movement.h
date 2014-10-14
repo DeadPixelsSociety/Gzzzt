@@ -16,19 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef GZZZT_MOVEMENT_H
-#define	GZZZT_MOVEMENT_H
+#define GZZZT_MOVEMENT_H
 
 #include <gzzzt/shared/Action.h>
 
 namespace gzzzt {
-    
+
     class Movement : public Action {
     public:
         explicit Movement(ActionType type, Position pos);
-        
+
     private:
         // TODO: add members here
     };
 }
 
-#endif	// GZZZT_MOVEMENT_H
+#endif  // GZZZT_MOVEMENT_H

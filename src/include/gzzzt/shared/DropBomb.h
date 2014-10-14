@@ -16,19 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef GZZZT_DROPBOMB_H
-#define	GZZZT_DROPBOMB_H
+#define GZZZT_DROPBOMB_H
 
 #include <gzzzt/shared/Action.h>
 
 namespace gzzzt {
-    
+
     class DropBomb : public Action {
     public:
         explicit DropBomb(Position pos);
-        
+
     private:
         // TODO: add members here
     };
 }
 
-#endif	// GZZZT_DROPBOMB_H
+#endif  // GZZZT_DROPBOMB_H
