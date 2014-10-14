@@ -15,23 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/client/Entity.h>
+#ifndef GZZZT_CLIENT_MAP_H
+#define GZZZT_CLIENT_MAP_H
+
+#include <gzzzt/client/ClientEntity.h>
 
 namespace gzzzt {
 
-  Entity::~Entity() {
-  }
+    class ClientMap : public ClientEntity {
+    public:
 
-  int Entity::priority() const {
-    return 0;
-  }
+        virtual void update(float dt) override;
+        virtual void render(sf::RenderWindow& window) override;
 
-  void Entity::update(float dt) {
-    // default: do nothing
-  }
-
-  void Entity::render(sf::RenderWindow& window) {
-    // default: do nothing
-  }
+    };
 
 }
+
+
+#endif // GZZZT_CLIENT_MAP_H

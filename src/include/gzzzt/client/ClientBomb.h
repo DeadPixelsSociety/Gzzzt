@@ -15,25 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_ENTITY_H
-#define GZZZT_ENTITY_H
+#ifndef GZZZT_CLIENT_BOMB_H
+#define GZZZT_CLIENT_BOMB_H
 
-#include <SFML/Graphics.hpp>
+#include <gzzzt/client/ClientEntity.h>
 
 namespace gzzzt {
 
-  class Entity {
-  public:
-    virtual ~Entity();
+    class ClientBomb {
+    public:
 
-    virtual int priority() const;
+        virtual void update(float dt);
+        virtual void render(sf::RenderWindow& window);
 
-    virtual void update(float dt);
-    virtual void render(sf::RenderWindow& window);
-
-  };
+    };
 
 }
 
 
-#endif // GZZZT_ENTITY_H
+#endif // GZZZT_CLIENT_BOMB_H
