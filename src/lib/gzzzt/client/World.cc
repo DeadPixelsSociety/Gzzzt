@@ -36,7 +36,7 @@ namespace gzzzt {
   }
 
   void World::update(float dt) {
-    std::sort(m_entities.begin(), m_entities.end(), [](const EntityPtr& e1, const EntityPtr& e2) {
+    std::sort(m_entities.begin(), m_entities.end(), [](const ClientEntityPtr& e1, const ClientEntityPtr& e2) {
       return e1->priority() < e2->priority();
     });
 
@@ -51,19 +51,19 @@ namespace gzzzt {
     }
   }
 
-  void World::addEntity(Entity *e, Memory from) {
+  void World::addEntity(ClientEntity *e, Memory from) {
     switch (from) {
       case Memory::FROM_HEAP:
-        m_entities.emplace_back(e, std::default_delete<Entity>());
+        m_entities.emplace_back(e, std::default_delete<ClientEntity>());
         break;
       case Memory::FROM_STACK:
-        m_entities.emplace_back(e, null_delete<Entity>());
+        m_entities.emplace_back(e, null_delete<ClientEntity>());
         break;
     }
   }
 
-  void World::removeEntity(Entity *e) {
-    std::remove_if(m_entities.begin(), m_entities.end(), [=](const EntityPtr& ptr) {
+  void World::removeEntity(ClientEntity *e) {
+    std::remove_if(m_entities.begin(), m_entities.end(), [=](const ClientEntityPtr& ptr) {
       return e == ptr.get();
     });
   }
@@ -81,7 +81,7 @@ namespace gzzzt {
     it->second.push_back(handler);
   }
 
-  void World::triggerEvent(Entity *origin, EventType type, Event *event) {
+  void World::triggerEvent(ClientEntity *origin, EventType type, Event *event) {
     auto it = m_handlers.find(type);
 
     if (it == m_handlers.end()) {

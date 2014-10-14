@@ -47,7 +47,7 @@ namespace gzzzt {
     DIE,  /**< The handler can be removed */
   };
 
-  typedef std::function<EventStatus(Entity*, EventType, Event*)> EventHandler;
+  typedef std::function<EventStatus(ClientEntity*, EventType, Event*)> EventHandler;
 
 }
 
