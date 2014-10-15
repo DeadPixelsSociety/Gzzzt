@@ -18,16 +18,23 @@
 #ifndef GZZZT_GAME_H
 #define GZZZT_GAME_H
 
+#include <memory>
+#include <vector>
+
+#include <gzzzt/server/ServerEntity.h>
+
 namespace gzzzt {
 
     class Game {
     public:
+        void addEntity(std::shared_ptr<ServerEntity> e);
+        void removeEntity(std::shared_ptr<ServerEntity> e);
 
         void update(float dt);
 
 
     private:
-
+      std::vector<std::shared_ptr<ServerEntity>> m_entities;
 
     };
 }

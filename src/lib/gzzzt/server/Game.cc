@@ -17,10 +17,25 @@
  */
 #include <gzzzt/server/Game.h>
 
+#include <algorithm>
+
 namespace gzzzt {
 
+    void Game::addEntity(std::shared_ptr<ServerEntity> e) {
+        if (e) {
+            m_entities.push_back(e);
+        }
+    }
+
+    void Game::removeEntity(std::shared_ptr<ServerEntity> e) {
+        // http://en.wikipedia.org/wiki/Erase-remove_idiom
+        m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), e), m_entities.end());
+    }
+
     void Game::update(float dt) {
-        // TODO
+        for (auto& e : m_entities) {
+            e->update(dt);
+        }
     }
 
 }
