@@ -34,7 +34,7 @@ namespace gzzzt {
 
 
     private:
-      std::vector<std::shared_ptr<ServerEntity>> m_entities;
+        std::vector<std::shared_ptr<ServerEntity>> m_entities;
 
     };
 }
