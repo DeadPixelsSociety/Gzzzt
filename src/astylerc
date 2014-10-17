@@ -36,7 +36,7 @@ close-templates
 mode=c
 
 # Other options
-suffix=.bak
+suffix=none
 recursive
 exclude=share
 exclude=astylerc
