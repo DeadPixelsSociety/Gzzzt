@@ -15,45 +15,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SERVER_BODY_H
-#define GZZZT_SERVER_BODY_H
-
-#include <gzzzt/shared/Position.h>
-#include <gzzzt/shared/Speed.h>
+#include <gzzzt/server/Physics.h>
 
 namespace gzzzt {
 
-    struct Shape {
-        enum Kind {
-            CIRCLE,
-            RECTANGLE,
-        };
+    void Physics::addBody(Body *body) {
+        switch (body->type) {
+            case Body::DYNAMIC:
+                m_dynamic_bodies.push_back(body);
+                break;
 
-        Kind kind;
-        union {
-            struct {
-                float radius;
-            } circle;
+            case Body::STATIC:
+                m_static_bodies.push_back(body);
+                break;
+        }
+    }
 
-            struct {
-                float width;
-                float height;
-            } rectangle;
-        };
-    };
+    void Physics::update(float dt) {
+        // forces simulation
 
-    struct Body {
-        enum Type {
-            STATIC,
-            DYNAMIC,
-        };
 
-        Type type;
-        Position pos; /**< center of the body */
-        Speed speed;
-        Shape shape;
-    };
+        // collision resolution
+
+    }
 
 }
-
-#endif // GZZZT_SERVER_BODY_H
