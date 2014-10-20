@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef GZZZT_SERIALIZER_H
-#define	GZZZT_SERIALIZER_H
+#define GZZZT_SERIALIZER_H
 
 namespace gzzzt {
 
