@@ -15,39 +15,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/Action.h>
+#include <cstring>
+
 #include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
 
-    Action::Action(ActionType type, Position pos)
-    : m_type(type), m_pos(pos) {
-    }
-    
-    Action::Action(unsigned char* bytes) {
-        unsigned int index;
-        m_type = (ActionType) bytes[0];
-        index = 1;
-        m_pos.x = Serializer::deserializeFloat(bytes, &index);
-        m_pos.y = Serializer::deserializeFloat(bytes, &index);
-    }
-
-    ActionType Action::getType() const {
-        return m_type;
-    }
-
-    Position Action::getPosition() const {
-        return m_pos;
-    }
-
-    unsigned char* Action::serialize(unsigned char* bytes, unsigned int* size) const {
-        if (bytes == nullptr || size == nullptr) {
-            return nullptr;
+    unsigned char* Serializer::serializeFloat(unsigned char* bytes, unsigned int* size, float f) {
+        unsigned char const* floatBytes = reinterpret_cast<unsigned char const*>(&f);
+        for (std::size_t i = 0; i < sizeof(float); i++) {
+            bytes[*size + i] = floatBytes[i];
         }
-        bytes[0] = (unsigned char) m_type;
-        *size = 1;
-        Serializer::serializeFloat(bytes, size, m_pos.x);
-        Serializer::serializeFloat(bytes, size, m_pos.y);
+        *size += sizeof(float);
         return bytes;
+    }
+
+    float Serializer::deserializeFloat(unsigned char* bytes, unsigned int *index) {
+        float f;
+        std::memcpy(&f, bytes + *index, sizeof(float));
+        *index += sizeof(float);
+        return f;
     }
 }

@@ -15,21 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/Movement.h>
+#ifndef GZZZT_SERIALIZER_H
+#define	GZZZT_SERIALIZER_H
 
 namespace gzzzt {
 
-    Movement::Movement(ActionType type, Position pos) : Action(type, pos) {
-    }
-    
-    Movement::Movement(unsigned char* bytes) : Action(bytes) {
-    }
-
-    unsigned char* Movement::serialize(unsigned char* bytes, unsigned int* size) const {
-        if (Action::serialize(bytes, size) == nullptr) {
-            return nullptr;
-        }
-        // TODO: Serialize members
-        return bytes;
-    }
+    class Serializer {
+    public:
+        static unsigned char* serializeFloat(unsigned char* bytes, unsigned int* size, float f);
+        
+        static float deserializeFloat(unsigned char* bytes, unsigned int* index);
+    };
 }
+
+#endif	// GZZZT_SERIALIZER_H

@@ -25,11 +25,13 @@ namespace gzzzt {
 
     class Action {
     public:
+        explicit Action(ActionType type, Position pos);
+        explicit Action(unsigned char* bytes);
+
         ActionType getType() const;
         Position getPosition() const;
 
-    protected:
-        explicit Action(ActionType type, Position pos);
+        virtual unsigned char* serialize(unsigned char* bytes, unsigned int* size) const;
 
     private:
         ActionType m_type;

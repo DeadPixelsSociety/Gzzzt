@@ -21,4 +21,15 @@ namespace gzzzt {
 
     DropBomb::DropBomb(Position pos) : Action(ActionType::DROP_BOMB, pos) {
     }
+    
+    DropBomb::DropBomb(unsigned char* bytes) : Action(bytes) {
+    }
+
+    unsigned char* DropBomb::serialize(unsigned char* bytes, unsigned int* size) const {
+        if (Action::serialize(bytes, size) == nullptr) {
+            return nullptr;
+        }
+        // TODO: Serialize members
+        return bytes;
+    }
 }

@@ -25,6 +25,9 @@ namespace gzzzt {
     class Movement : public Action {
     public:
         explicit Movement(ActionType type, Position pos);
+        explicit Movement(unsigned char* bytes);
+
+        unsigned char* serialize(unsigned char* bytes, unsigned int* size) const override;
 
     private:
         // TODO: add members here

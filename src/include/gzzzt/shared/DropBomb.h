@@ -25,6 +25,9 @@ namespace gzzzt {
     class DropBomb : public Action {
     public:
         explicit DropBomb(Position pos);
+        explicit DropBomb(unsigned char* bytes);
+
+        unsigned char* serialize(unsigned char* bytes, unsigned int* size) const override;
 
     private:
         // TODO: add members here
