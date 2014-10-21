@@ -19,7 +19,6 @@
 #define GZZZT_SERIALIZER_H
 
 #include <cstdint>
-#include <list>
 #include <vector>
 
 namespace gzzzt {
