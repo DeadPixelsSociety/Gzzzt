@@ -20,13 +20,14 @@
 
 #include <gzzzt/shared/Position.h>
 #include <gzzzt/shared/Speed.h>
+#include <gzzzt/shared/Vector.h>
 
 namespace gzzzt {
 
     struct Shape {
-        enum Kind {
-            CIRCLE,
-            RECTANGLE,
+        enum Kind : unsigned {
+            CIRCLE = 0,
+            RECTANGLE = 1,
         };
 
         Kind kind;
@@ -42,6 +43,15 @@ namespace gzzzt {
         };
     };
 
+    struct Body;
+
+    struct Manifold {
+        Body *a;
+        Body *b;
+        float penetration;
+        Vector normal;
+    };
+
     struct Body {
         enum Type {
             STATIC,
@@ -52,6 +62,8 @@ namespace gzzzt {
         Position pos; /**< center of the body */
         Speed speed;
         Shape shape;
+
+        static bool collides(const Body& lhs, const Body& rhs, Manifold *m);
     };
 
 }

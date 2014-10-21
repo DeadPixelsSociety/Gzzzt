@@ -32,10 +32,28 @@ namespace gzzzt {
     }
 
     void Physics::update(float dt) {
-        // forces simulation
-
+        // speed simulation
+        for (auto& body : m_dynamic_bodies) {
+            body->pos.x += body->speed.dx * dt;
+            body->pos.y += body->speed.dy * dt;
+        }
 
         // collision resolution
+        Manifold m;
+
+        for (auto& body : m_dynamic_bodies) {
+            for (auto& other_body : m_dynamic_bodies) {
+                if (body == other_body) {
+                    continue;
+                }
+
+                if (Body::collides(*body, *other_body, &m)) {
+                    // TODO
+                }
+            }
+
+
+        }
 
     }
 
