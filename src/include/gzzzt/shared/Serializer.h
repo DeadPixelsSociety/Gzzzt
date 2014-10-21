@@ -18,13 +18,19 @@
 #ifndef GZZZT_SERIALIZER_H
 #define GZZZT_SERIALIZER_H
 
+#include <cstdint>
+#include <list>
+#include <vector>
+
 namespace gzzzt {
 
     class Serializer {
     public:
-        static unsigned char* serializeFloat(unsigned char* bytes, unsigned int* size, float f);
-        
-        static float deserializeFloat(unsigned char* bytes, unsigned int* index);
+        static std::vector<uint8_t>* serializeFloat(std::vector<uint8_t>* bytes, float f);
+        static std::vector<uint8_t>* serializeInt(std::vector<uint8_t>* bytes, int i);
+
+        static float deserializeFloat(std::vector<uint8_t>* bytes);
+        static int deserializeInt(std::vector<uint8_t>* bytes);
     };
 }
 

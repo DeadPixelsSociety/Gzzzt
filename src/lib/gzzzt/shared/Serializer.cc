@@ -21,19 +21,41 @@
 
 namespace gzzzt {
 
-    unsigned char* Serializer::serializeFloat(unsigned char* bytes, unsigned int* size, float f) {
-        unsigned char const* floatBytes = reinterpret_cast<unsigned char const*>(&f);
+    std::vector<uint8_t>* Serializer::serializeFloat(std::vector<uint8_t>* bytes, float f) {
+        const uint8_t* floatBytes = reinterpret_cast<const uint8_t*>(&f);
         for (std::size_t i = 0; i < sizeof(float); i++) {
-            bytes[*size + i] = floatBytes[i];
+            bytes->push_back(floatBytes[i]);
         }
-        *size += sizeof(float);
         return bytes;
     }
 
-    float Serializer::deserializeFloat(unsigned char* bytes, unsigned int *index) {
-        float f;
-        std::memcpy(&f, bytes + *index, sizeof(float));
-        *index += sizeof(float);
+    std::vector<uint8_t>* Serializer::serializeInt(std::vector<uint8_t>* bytes, int integer) {
+        int shift = ((sizeof(int) - 1) * 8); // = 24 if sizeof(int) = 4 (32 bits)
+        int mask = 0xFF << shift; // = 0xFF000000 if sizeof(int) = 4
+        for (std::size_t i = 0; i < sizeof (int); i++) {
+            bytes->push_back(static_cast<uint8_t>((integer & mask) >> shift));
+            shift -= 8;
+            mask >>= 8;
+        }
+        return bytes;
+    }
+
+    float Serializer::deserializeFloat(std::vector<uint8_t>* bytes) {
+        float f = 0.f;
+        std::memcpy(&f, &bytes->at(0), sizeof(float));
+        auto it = bytes->begin();
+        bytes->erase(it, it + sizeof(float)); // Remove the first sizeof(float) elements
         return f;
+    }
+
+    int Serializer::deserializeInt(std::vector<uint8_t>* bytes) {
+        int shift = ((sizeof(int) - 1) * 8); // = 24 if sizeof(int) = 4 (32 bits)
+        int integer = 0;
+        for (std::size_t i = 0; i < sizeof(int); i++) {
+            integer |= bytes->at(0) << shift;
+            bytes->erase(bytes->begin());
+            shift -= 8;
+        }
+        return integer;
     }
 }

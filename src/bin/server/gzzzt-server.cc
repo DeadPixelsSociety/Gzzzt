@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <atomic>
 #include <cassert>
 #include <csignal>
-#include <atomic>
 #include <iostream>
 
 #include <SFML/System.hpp>
@@ -75,7 +75,7 @@ int main(void) {
         sf::Time elapsed = clock.restart();
         game.update(elapsed.asSeconds());
     }
-
+    
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the server...\n");
 
     return 0;

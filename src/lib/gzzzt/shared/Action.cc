@@ -20,34 +20,23 @@
 
 namespace gzzzt {
 
-    Action::Action(ActionType type, Position pos)
-    : m_type(type), m_pos(pos) {
+    Action::Action(ActionType type) : m_type(type) {
     }
-    
-    Action::Action(unsigned char* bytes) {
-        unsigned int index;
-        m_type = (ActionType) bytes[0];
-        index = 1;
-        m_pos.x = Serializer::deserializeFloat(bytes, &index);
-        m_pos.y = Serializer::deserializeFloat(bytes, &index);
+
+    Action::Action(std::vector<uint8_t>* bytes) {
+        m_type = static_cast<ActionType>(bytes->at(0));
+        bytes->erase(bytes->begin());
     }
 
     ActionType Action::getType() const {
         return m_type;
     }
 
-    Position Action::getPosition() const {
-        return m_pos;
-    }
-
-    unsigned char* Action::serialize(unsigned char* bytes, unsigned int* size) const {
-        if (bytes == nullptr || size == nullptr) {
+    std::vector<uint8_t>* Action::serialize(std::vector<uint8_t>* bytes) const {
+        if (bytes == nullptr) {
             return nullptr;
         }
-        bytes[0] = (unsigned char) m_type;
-        *size = 1;
-        Serializer::serializeFloat(bytes, size, m_pos.x);
-        Serializer::serializeFloat(bytes, size, m_pos.y);
+        bytes->push_back(static_cast<uint8_t>(m_type));
         return bytes;
     }
 }

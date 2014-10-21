@@ -19,24 +19,21 @@
 #define GZZZT_ACTION_H
 
 #include <gzzzt/shared/ActionType.h>
-#include <gzzzt/shared/Position.h>
+#include <gzzzt/shared/Serializable.h>
 
 namespace gzzzt {
 
-    class Action {
+    class Action : Serializable {
     public:
+        explicit Action(ActionType type);
+        explicit Action(std::vector<uint8_t>* bytes);
+
         ActionType getType() const;
-        Position getPosition() const;
 
-    protected:
-        explicit Action(ActionType type, Position pos);
-        explicit Action(unsigned char* bytes);
-
-        virtual unsigned char* serialize(unsigned char* bytes, unsigned int* size) const;
+        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
 
     private:
         ActionType m_type;
-        Position m_pos;
     };
 }
 
