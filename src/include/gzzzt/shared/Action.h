@@ -23,7 +23,7 @@
 
 namespace gzzzt {
 
-    class Action : Serializable {
+    class Action : public Serializable {
     public:
         explicit Action(ActionType type);
         explicit Action(std::vector<uint8_t>* bytes);
