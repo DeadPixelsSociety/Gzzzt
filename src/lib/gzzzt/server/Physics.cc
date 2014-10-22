@@ -17,7 +17,47 @@
  */
 #include <gzzzt/server/Physics.h>
 
+#include <cassert>
+
 namespace gzzzt {
+    static float dotProduct(const sf::Vector2f& rhs, const sf::Vector2f& lhs) {
+        return rhs.x * lhs.x + rhs.y * lhs.y;
+    }
+
+    static void resolveCollision(Manifold& m) {
+        assert(m.a && m.b);
+
+        sf::Vector2f relative_velocity = m.b->velocity - m.a->velocity;
+        float velocity_along_normal = dotProduct(relative_velocity, m.normal);
+
+        if (velocity_along_normal > 0) {
+            return;
+        }
+
+        float a_inverse_mass = (m.a->type == Body::DYNAMIC ? 1.0f : 0.0f);
+        float b_inverse_mass = (m.b->type == Body::DYNAMIC ? 1.0f : 0.0f);
+
+        float restitution = std::max(m.a->restitution, m.b->restitution);
+
+        float j = -(1 + restitution) * velocity_along_normal / (a_inverse_mass + b_inverse_mass);
+
+        sf::Vector2f impulse = j * m.normal;
+        m.a->velocity -= a_inverse_mass * impulse;
+        m.b->velocity -= b_inverse_mass * impulse;
+    }
+
+    static void correctPosition(Manifold& m) {
+        const float percent = 0.2;
+        const float slop = 0.01;
+
+        float a_inverse_mass = (m.a->type == Body::DYNAMIC ? 1.0f : 0.0f);
+        float b_inverse_mass = (m.b->type == Body::DYNAMIC ? 1.0f : 0.0f);
+
+        sf::Vector2f correction = std::max(m.penetration - slop, 0.0f) / (a_inverse_mass + b_inverse_mass) * percent * m.normal;
+
+        m.a->pos -= a_inverse_mass * correction;
+        m.b->pos += b_inverse_mass * correction;
+    }
 
     void Physics::addBody(Body *body) {
         switch (body->type) {
@@ -42,8 +82,10 @@ namespace gzzzt {
         Manifold m;
         std::vector<Manifold> manifolds;
 
-        for (auto& body : m_dynamic_bodies) {
-            for (auto& other_body : m_dynamic_bodies) {
+        for (auto body : m_dynamic_bodies) {
+            m.a = body;
+
+            for (auto other_body : m_dynamic_bodies) {
                 if (body == other_body) {
                     continue;
                 }
@@ -54,21 +96,26 @@ namespace gzzzt {
                 }
 
                 if (Body::collides(*body, *other_body, &m)) {
+                    m.b = other_body;
                     manifolds.push_back(m);
                 }
             }
 
-            for (auto& other_body : m_static_bodies) {
+            for (auto other_body : m_static_bodies) {
                 if (Body::collides(*body, *other_body, &m)) {
+                    m.b = other_body;
                     manifolds.push_back(m);
                 }
             }
         }
 
-        for (auto m : manifolds) {
-            // TODO
+        for (auto& m : manifolds) {
+            resolveCollision(m);
         }
 
+        for (auto& m : manifolds) {
+            correctPosition(m);
+        }
     }
 
 }

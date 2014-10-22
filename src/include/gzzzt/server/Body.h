@@ -60,6 +60,7 @@ namespace gzzzt {
         sf::Vector2f pos; /**< center of the body */
         sf::Vector2f velocity;
         Shape shape;
+        float restitution;
 
         static bool collides(const Body& lhs, const Body& rhs, Manifold *m);
     };
