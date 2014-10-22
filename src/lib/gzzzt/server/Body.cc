@@ -20,24 +20,26 @@
 #include <cassert>
 #include <cmath>
 
+#include <gzzzt/shared/Log.h>
+
 namespace gzzzt {
 
     static float lengthSquared(const sf::Vector2f& v) {
-      return v.x * v.x + v.y * v.y;
+        return v.x * v.x + v.y * v.y;
     }
 
     static float clamp(float value, float min, float max) {
-      assert(min < max);
+        assert(min < max);
 
-      if (value > max) {
-        return max;
-      }
+        if (value > max) {
+            return max;
+        }
 
-      if (value < min) {
-        return min;
-      }
+        if (value < min) {
+            return min;
+        }
 
-      return value;
+        return value;
     }
 
     static bool collidesCircleVsCircle(const Body& lhs, const Body& rhs, Manifold *m) {
@@ -76,40 +78,45 @@ namespace gzzzt {
         bool inside = false;
 
         if (n == closest) {
-          inside = true;
+            inside = true;
 
-          if (std::abs(n.x) > std::abs(n.y)) {
-            if (closest.x > 0) {
-              closest.x = x_extent;
+            if (std::abs(n.x) > std::abs(n.y)) {
+                if (closest.x > 0) {
+                    closest.x = x_extent;
+                } else {
+                    closest.x = -x_extent;
+                }
             } else {
-              closest.x = -x_extent;
+                if (closest.y > 0) {
+                    closest.y = y_extent;
+                } else {
+                    closest.y = -y_extent;
+                }
             }
-          } else {
-            if (closest.y > 0) {
-              closest.y = y_extent;
-            } else {
-              closest.y = -y_extent;
-            }
-          }
         }
 
         sf::Vector2f normal = n - closest;
 
         float d2 = lengthSquared(normal);
-        float r = lhs.shape.circle.radius;
+        float r = rhs.shape.circle.radius;
 
         if (d2 > r * r && !inside) {
-          return false;
+            return false;
         }
 
         float d = std::sqrt(d2);
 
+        Log::debug(Log::PHYSICS, "Collision Rectangle vs Circle\n");
+        Log::debug(Log::PHYSICS, "  r: %f / d: %f\n", r, d);
+        Log::debug(Log::PHYSICS, "  n: (%f, %f)\n", n.x, n.y);
+        Log::debug(Log::PHYSICS, "  closest: (%f, %f)\n", closest.x, closest.y);
+
         if (inside) {
-          m->normal = -normal;
-          m->penetration = r + d;
+            m->normal = -normal / d;
+            m->penetration = r + d;
         } else {
-          m->normal = normal;
-          m->penetration = r + d;
+            m->normal = normal / d;
+            m->penetration = r - d;
         }
 
         return true;

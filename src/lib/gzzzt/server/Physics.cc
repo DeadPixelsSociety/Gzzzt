@@ -19,6 +19,8 @@
 
 #include <cassert>
 
+#include <gzzzt/shared/Log.h>
+
 namespace gzzzt {
     static float dotProduct(const sf::Vector2f& rhs, const sf::Vector2f& lhs) {
         return rhs.x * lhs.x + rhs.y * lhs.y;
@@ -30,9 +32,13 @@ namespace gzzzt {
         sf::Vector2f relative_velocity = m.b->velocity - m.a->velocity;
         float velocity_along_normal = dotProduct(relative_velocity, m.normal);
 
+        Log::debug(Log::PHYSICS, "relative_velocity: (%f, %f)\n", relative_velocity.x, relative_velocity.y);
+
         if (velocity_along_normal > 0) {
             return;
         }
+
+        Log::debug(Log::PHYSICS, "velocity_along_normal: %f\n", velocity_along_normal);
 
         float a_inverse_mass = (m.a->type == Body::DYNAMIC ? 1.0f : 0.0f);
         float b_inverse_mass = (m.b->type == Body::DYNAMIC ? 1.0f : 0.0f);
@@ -47,8 +53,8 @@ namespace gzzzt {
     }
 
     static void correctPosition(Manifold& m) {
-        const float percent = 0.2;
-        const float slop = 0.01;
+        const float percent = 0.4;
+        const float slop = 0.05;
 
         float a_inverse_mass = (m.a->type == Body::DYNAMIC ? 1.0f : 0.0f);
         float b_inverse_mass = (m.b->type == Body::DYNAMIC ? 1.0f : 0.0f);
@@ -69,6 +75,23 @@ namespace gzzzt {
                 m_static_bodies.push_back(body);
                 break;
         }
+    }
+
+    static void logInfoBody(const Body& body) {
+        Log::info(Log::PHYSICS, "- body %p\n", &body);
+        Log::info(Log::PHYSICS, "    (%f, %f) @ (%f, %f)\n", body.pos.x, body.pos.y, body.velocity.x, body.velocity.y);
+
+        switch (body.shape.kind) {
+            case Shape::CIRCLE:
+                Log::info(Log::PHYSICS, "    circle: %f\n", body.shape.circle.radius);
+                break;
+
+            case Shape::RECTANGLE:
+                Log::info(Log::PHYSICS, "    rectangle: %f x %f\n", body.shape.rectangle.width, body.shape.rectangle.height);
+                break;
+        }
+
+        Log::info(Log::PHYSICS, "    restitution: %f\n", body.restitution);
     }
 
     void Physics::update(float dt) {
@@ -98,6 +121,10 @@ namespace gzzzt {
                 if (Body::collides(*body, *other_body, &m)) {
                     m.b = other_body;
                     manifolds.push_back(m);
+                    Log::info(Log::PHYSICS, "Collision detected!\n");
+                    logInfoBody(*body);
+                    logInfoBody(*other_body);
+                    Log::info(Log::PHYSICS, "Manifold: %f (%f, %f)\n", m.penetration, m.normal.x, m.normal.y);
                 }
             }
 
@@ -105,16 +132,26 @@ namespace gzzzt {
                 if (Body::collides(*body, *other_body, &m)) {
                     m.b = other_body;
                     manifolds.push_back(m);
+                    Log::info(Log::PHYSICS, "Collision detected!\n");
+                    logInfoBody(*body);
+                    logInfoBody(*other_body);
+                    Log::info(Log::PHYSICS, "Manifold: %f (%f, %f)\n", m.penetration, m.normal.x, m.normal.y);
                 }
             }
         }
 
         for (auto& m : manifolds) {
             resolveCollision(m);
+            Log::info(Log::PHYSICS, "After collision resolution:\n");
+            logInfoBody(*m.a);
+            logInfoBody(*m.b);
         }
 
         for (auto& m : manifolds) {
             correctPosition(m);
+            Log::info(Log::PHYSICS, "After position correction:\n");
+            logInfoBody(*m.a);
+            logInfoBody(*m.b);
         }
     }
 
