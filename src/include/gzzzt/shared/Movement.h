@@ -24,7 +24,7 @@ namespace gzzzt {
 
     class Movement : public Action {
     public:
-        explicit Movement(ActionType type, Position pos);
+        explicit Movement(ActionType type);
 
     private:
         // TODO: add members here

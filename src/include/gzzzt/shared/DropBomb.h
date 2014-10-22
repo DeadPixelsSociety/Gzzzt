@@ -24,7 +24,7 @@ namespace gzzzt {
 
     class DropBomb : public Action {
     public:
-        explicit DropBomb(Position pos);
+        explicit DropBomb();
 
     private:
         // TODO: add members here

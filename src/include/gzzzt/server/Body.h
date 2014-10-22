@@ -18,9 +18,7 @@
 #ifndef GZZZT_SERVER_BODY_H
 #define GZZZT_SERVER_BODY_H
 
-#include <gzzzt/shared/Position.h>
-#include <gzzzt/shared/Speed.h>
-#include <gzzzt/shared/Vector.h>
+#include <SFML/System/Vector2.hpp>
 
 namespace gzzzt {
 
@@ -49,7 +47,7 @@ namespace gzzzt {
         Body *a;
         Body *b;
         float penetration;
-        Vector normal;
+        sf::Vector2f normal;
     };
 
     struct Body {
@@ -59,8 +57,8 @@ namespace gzzzt {
         };
 
         Type type;
-        Position pos; /**< center of the body */
-        Speed speed;
+        sf::Vector2f pos; /**< center of the body */
+        sf::Vector2f velocity;
         Shape shape;
 
         static bool collides(const Body& lhs, const Body& rhs, Manifold *m);

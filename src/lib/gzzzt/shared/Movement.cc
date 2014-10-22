@@ -19,6 +19,6 @@
 
 namespace gzzzt {
 
-    Movement::Movement(ActionType type, Position pos) : Action(type, pos) {
+    Movement::Movement(ActionType type) : Action(type) {
     }
 }

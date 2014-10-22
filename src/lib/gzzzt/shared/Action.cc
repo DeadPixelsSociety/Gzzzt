@@ -19,14 +19,11 @@
 
 namespace gzzzt {
 
-    Action::Action(ActionType type, Position pos) : m_type(type), m_pos(pos) {
+    Action::Action(ActionType type) : m_type(type) {
     }
 
     ActionType Action::getType() const {
         return m_type;
     }
 
-    Position Action::getPosition() const {
-        return m_pos;
-    }
 }

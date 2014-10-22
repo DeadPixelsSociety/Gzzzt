@@ -19,6 +19,6 @@
 
 namespace gzzzt {
 
-    DropBomb::DropBomb(Position pos) : Action(ActionType::DROP_BOMB, pos) {
+    DropBomb::DropBomb() : Action(ActionType::DROP_BOMB) {
     }
 }

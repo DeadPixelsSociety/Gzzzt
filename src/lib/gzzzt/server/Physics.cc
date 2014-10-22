@@ -34,8 +34,8 @@ namespace gzzzt {
     void Physics::update(float dt) {
         // speed simulation
         for (auto& body : m_dynamic_bodies) {
-            body->pos.x += body->speed.dx * dt;
-            body->pos.y += body->speed.dy * dt;
+            body->pos.x += body->velocity.x * dt;
+            body->pos.y += body->velocity.y * dt;
         }
 
         // collision resolution

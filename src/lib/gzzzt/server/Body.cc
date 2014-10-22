@@ -22,6 +22,10 @@
 
 namespace gzzzt {
 
+    static float lengthSquared(const sf::Vector2f& v) {
+      return v.x * v.x + v.y * v.y;
+    }
+
     static float clamp(float value, float min, float max) {
       assert(min < max);
 
@@ -37,7 +41,7 @@ namespace gzzzt {
     }
 
     static bool collidesCircleVsCircle(const Body& lhs, const Body& rhs, Manifold *m) {
-        Vector n = rhs.pos - lhs.pos;
+        sf::Vector2f n = rhs.pos - lhs.pos;
         float r = lhs.shape.circle.radius + rhs.shape.circle.radius;
         float d2 = lengthSquared(n);
 
@@ -59,9 +63,9 @@ namespace gzzzt {
     }
 
     static bool collidesRectVsCircle(const Body& lhs, const Body& rhs, Manifold *m) {
-        Vector n = rhs.pos - lhs.pos;
+        sf::Vector2f n = rhs.pos - lhs.pos;
 
-        Vector closest = n;
+        sf::Vector2f closest = n;
 
         float x_extent = lhs.shape.rectangle.width / 2;
         float y_extent = lhs.shape.rectangle.height / 2;
@@ -89,7 +93,7 @@ namespace gzzzt {
           }
         }
 
-        Vector normal = n - closest;
+        sf::Vector2f normal = n - closest;
 
         float d2 = lengthSquared(normal);
         float r = lhs.shape.circle.radius;
@@ -118,7 +122,7 @@ namespace gzzzt {
     }
 
     static bool collidesRectVsRect(const Body& lhs, const Body& rhs, Manifold *m) {
-        Vector n = rhs.pos - lhs.pos;
+        sf::Vector2f n = rhs.pos - lhs.pos;
 
         float l_extent_x = lhs.shape.rectangle.width / 2;
         float r_extent_x = rhs.shape.rectangle.width / 2;

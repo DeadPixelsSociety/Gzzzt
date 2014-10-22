@@ -19,21 +19,18 @@
 #define GZZZT_ACTION_H
 
 #include <gzzzt/shared/ActionType.h>
-#include <gzzzt/shared/Position.h>
 
 namespace gzzzt {
 
     class Action {
     public:
         ActionType getType() const;
-        Position getPosition() const;
 
     protected:
-        explicit Action(ActionType type, Position pos);
+        explicit Action(ActionType type);
 
     private:
         ActionType m_type;
-        Position m_pos;
     };
 }
 
