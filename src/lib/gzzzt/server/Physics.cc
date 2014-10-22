@@ -43,7 +43,7 @@ namespace gzzzt {
 
         sf::Vector2f impulse = j * m.normal;
         m.a->velocity -= a_inverse_mass * impulse;
-        m.b->velocity -= b_inverse_mass * impulse;
+        m.b->velocity += b_inverse_mass * impulse;
     }
 
     static void correctPosition(Manifold& m) {
@@ -73,7 +73,7 @@ namespace gzzzt {
 
     void Physics::update(float dt) {
         // speed simulation
-        for (auto& body : m_dynamic_bodies) {
+        for (auto body : m_dynamic_bodies) {
             body->pos.x += body->velocity.x * dt;
             body->pos.y += body->velocity.y * dt;
         }
