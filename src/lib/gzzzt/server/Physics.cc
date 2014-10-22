@@ -77,6 +77,11 @@ namespace gzzzt {
         }
     }
 
+    void Physics::clear() {
+        m_dynamic_bodies.clear();
+        m_static_bodies.clear();
+    }
+
     static void logInfoBody(const Body& body) {
         Log::info(Log::PHYSICS, "- body %p\n", &body);
         Log::info(Log::PHYSICS, "    (%f, %f) @ (%f, %f)\n", body.pos.x, body.pos.y, body.velocity.x, body.velocity.y);

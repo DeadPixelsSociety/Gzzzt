@@ -28,6 +28,7 @@ namespace gzzzt {
     public:
 
         void addBody(Body *body);
+        void clear();
 
         void update(float dt);
 
