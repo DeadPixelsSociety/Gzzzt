@@ -40,6 +40,7 @@ namespace gzzzt {
 
         // collision resolution
         Manifold m;
+        std::vector<Manifold> manifolds;
 
         for (auto& body : m_dynamic_bodies) {
             for (auto& other_body : m_dynamic_bodies) {
@@ -47,12 +48,25 @@ namespace gzzzt {
                     continue;
                 }
 
+                if (body < other_body) {
+                    // avoid adding the manifold twice
+                    continue;
+                }
+
                 if (Body::collides(*body, *other_body, &m)) {
-                    // TODO
+                    manifolds.push_back(m);
                 }
             }
 
+            for (auto& other_body : m_static_bodies) {
+                if (Body::collides(*body, *other_body, &m)) {
+                    manifolds.push_back(m);
+                }
+            }
+        }
 
+        for (auto m : manifolds) {
+            // TODO
         }
 
     }
