@@ -154,13 +154,32 @@ static void setupDemo(World& world, int step) {
             break;
 
         case 3:
-            std::printf("Step %i: Multiple balls colliding\n", step);
+            std::printf("Step %i: Multiple balls colliding in line\n", step);
 
             for (int i = 0; i < 4; ++i) {
                 world.addBall(250 - 3 * RADIUS + i * RADIUS * 2, 250, 0, 0)->body.restitution = 1.0f;
             }
 
             world.addBall(50, 250, 200, 0)->body.restitution = 1.0f;
+            break;
+
+        case 4:
+            std::printf("Step %i: One ball and one block colliding in diagonal\n", step);
+            world.addBlock(350, 250, 0, 0);
+            world.addBall(150 - 2 * RADIUS, 50, 140, 140)->body.restitution = 1.0f;
+            break;
+
+        case 5:
+            std::printf("Step %i: Two balls colliding in diagonal\n", step);
+            world.addBall(250, 250, 0, 0)->body.restitution = 1.0f;
+            world.addBall(50 - 2 * RADIUS, 50, 140, 140)->body.restitution = 1.0f;
+            break;
+
+        case 6:
+            std::printf("Step %i: Two balls colliding face to face\n", step);
+            world.addBall(250, 250, 50, 0)->body.restitution = 1.0f;
+            world.addBall(450, 250, -150, 0)->body.restitution = 1.0f;
+            break;
 
         default:
             break;
