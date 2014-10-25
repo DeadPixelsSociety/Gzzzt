@@ -15,11 +15,64 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <iostream>
+#include <cstdlib>
+
+#include <SFML/Network.hpp>
+#include <SFML/System.hpp>
+
 #include <gzzzt/client/World.h>
+#include <gzzzt/shared/Action.h>
+#include <gzzzt/shared/Log.h>
 
 #include "config.h"
 
-int main(void) {
+static void help(void) {
+    std::cout << "Usage: gzzzt <PLAYER_NAME> <SERVER_ADDRESS:PORT>" << std::endl;
+    std::cout << "Example: gzzzt robot1 192.168.1.56:5000 6000" << std::endl;
+}
+
+int main(int argc, char** argv) {
+    if (argc < 2 || argc > 3) {
+        help();
+        return 1;
+    }
+    gzzzt::Log::setLevel(gzzzt::Log::DEBUG);
+    std::string playerName(argv[1]);
+    std::string serverURL(argv[2]);
+    std::size_t pos = serverURL.find(":");
+    if (pos == std::string::npos) {
+        std::cout << "Error: bad address format" << std::endl;
+        help();
+        return 2;
+    }
+    std::string serverAddress = serverURL.substr(0, pos);
+    unsigned short serverPort = std::strtoul(serverURL.substr(pos + 1).c_str(), nullptr, 10);
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connecting to %s on port %d...\n", serverAddress.c_str(), serverPort);
+    sf::TcpSocket tcpSocket;
+    if (tcpSocket.connect("127.0.0.1", serverPort) != sf::Socket::Done) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not connect to %s on port %d\n", serverAddress.c_str(), serverPort);
+        return 3;
+    }
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to %s on port %d...\n", serverAddress.c_str(), serverPort);
+    
+    // TODO: send request with player's name
+
+
+    //    sf::IpAddress server("127.0.0.1");
+    //    sf::UdpSocket socket;
+    //    gzzzt::Action msg(gzzzt::ActionType::DROP_BOMB);
+    //    std::vector<uint8_t> bytes;
+    //    unsigned short port = 2048;
+    //    if (msg.serialize(&bytes) == nullptr) {
+    //        return 2;
+    //    }
+    //    unsigned char* rawData = bytes.data();
+    //    if (socket.send(rawData, sizeof(rawData), server, port) != sf::Socket::Done) {
+    //        return 3;
+    //    }
+    //    gzzzt::Log::info(gzzzt::Log::GENERAL, "Message sent!\n");
+
     // initialize
     gzzzt::World world;
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
