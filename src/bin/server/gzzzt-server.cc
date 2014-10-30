@@ -165,6 +165,7 @@ int main(int argc, char** argv) {
                     case sf::Socket::Status::Disconnected:
                         gzzzt::Log::info(gzzzt::Log::NETWORK, "Client %s is disconnected\n", player.toString());
                         selector.remove(*playerSocket);
+                        delete playerSocket;
                         players.erase(it);
                         break;
                     case sf::Socket::Status::NotReady:
