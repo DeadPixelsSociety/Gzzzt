@@ -24,6 +24,7 @@
 #include <gzzzt/client/World.h>
 #include <gzzzt/shared/Log.h>
 #include <gzzzt/shared/NewPlayerRequest.h>
+#include <gzzzt/shared/ErrorResponse.h>
 
 #include "config.h"
 
@@ -58,14 +59,33 @@ int main(int argc, char** argv) {
     std::vector<uint8_t> bytes;
     if (playerReq.serialize(&bytes) == nullptr) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not serialize msg\n");
+        tcpSocket.disconnect();
         return 4;
     }
-    //gzzzt::Log::info(gzzzt::Log::NETWORK, "length = %d\n", bytes.size());
     gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to \"%s:%d\" using port %d...\n", serverAddress.c_str(), serverPort, tcpSocket.getLocalPort());
     if (tcpSocket.send(&bytes[0], bytes.size()) != sf::Socket::Done) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data to server\n");
+        tcpSocket.disconnect();
         return 5;
     }
+
+    // Wait for the response
+    std::size_t nbBytesRead;
+    bytes.assign(64, 0);
+    if (tcpSocket.receive(&bytes[0], bytes.size(), nbBytesRead) != sf::Socket::Done) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not received the server's response\n");
+        tcpSocket.disconnect();
+        return 6;
+    }
+    bytes.resize(nbBytesRead);
+    gzzzt::ResponseType respType = gzzzt::Response::getType(bytes);
+    if (respType == gzzzt::ResponseType::ERROR) {
+        gzzzt::ErrorResponse err(&bytes);
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Response: Error: %s\n", err.getReason().c_str());
+        tcpSocket.disconnect();
+        return 7;
+    }
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Name accepted.\n");
 
     // initialize
     gzzzt::World world;

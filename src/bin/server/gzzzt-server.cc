@@ -27,7 +27,9 @@
 #include <gzzzt/server/Game.h>
 #include <gzzzt/server/ServerPlayer.h>
 #include <gzzzt/shared/Log.h>
+#include <gzzzt/shared/ErrorResponse.h>
 #include <gzzzt/shared/NewPlayerRequest.h>
+#include <gzzzt/shared/NewPlayerResponse.h>
 
 #include "config.h"
 
@@ -149,10 +151,14 @@ int main(int argc, char** argv) {
                                     "Name \"%s\" already taken. %s needs to choose another one\n",
                                     playerReq->getPlayerName().c_str(),
                                     player.toString());
-                            // TODO: sent NewPlayerResponse or ErrorResponse
+                            // Send an error to the client 
+                            gzzzt::ErrorResponse("Name already taken").serialize(&bytes);
+                            playerSocket->send(&bytes[0], bytes.size());
                         } else {
                             player.setName(playerReq->getPlayerName());
                             gzzzt::Log::info(gzzzt::Log::NETWORK, "Client chose a name : %s\n", player.toString());
+                            gzzzt::NewPlayerResponse().serialize(&bytes);
+                            playerSocket->send(&bytes[0], bytes.size());
                         }
                         delete playerReq;
                         break;
