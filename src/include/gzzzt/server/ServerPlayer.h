@@ -18,18 +18,35 @@
 #ifndef GZZZT_SERVER_PLAYER_H
 #define GZZZT_SERVER_PLAYER_H
 
+#include <string>
+
+#include <SFML/Network.hpp>
+
 #include <gzzzt/server/ServerEntity.h>
 
 namespace gzzzt {
 
     class ServerPlayer : public ServerEntity {
     public:
+        explicit ServerPlayer(sf::TcpSocket* socket);
+
+        sf::TcpSocket* getTCPSocket() const;
+        sf::IpAddress getAddress() const;
+        unsigned short getPort() const;
+        std::string getName() const;
+        const char* toString();
+
+        void setName(std::string name);
 
         virtual void update(float dt) override;
 
+    private:
+        sf::TcpSocket* m_TCPSocket;
+        sf::IpAddress m_address;
+        unsigned short m_port;
+        std::string m_name;
     };
 
 }
-
 
 #endif // GZZZT_SERVER_PLAYER_H

@@ -29,11 +29,10 @@
 
 static void help(void) {
     std::cout << "Usage: gzzzt <PLAYER_NAME> <SERVER_ADDRESS:PORT>" << std::endl;
-    std::cout << "Example: gzzzt robot1 192.168.1.56:5000 6000" << std::endl;
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2 || argc > 3) {
+    if (argc != 3) {
         help();
         return 1;
     }
@@ -42,7 +41,7 @@ int main(int argc, char** argv) {
     std::string serverURL(argv[2]);
     std::size_t pos = serverURL.find(":");
     if (pos == std::string::npos) {
-        std::cout << "Error: bad address format" << std::endl;
+        gzzzt::Log::error(gzzzt::Log::GENERAL, "Bad address format\n");
         help();
         return 2;
     }
@@ -50,12 +49,16 @@ int main(int argc, char** argv) {
     unsigned short serverPort = std::strtoul(serverURL.substr(pos + 1).c_str(), nullptr, 10);
     gzzzt::Log::info(gzzzt::Log::NETWORK, "Connecting to %s on port %d...\n", serverAddress.c_str(), serverPort);
     sf::TcpSocket tcpSocket;
-    if (tcpSocket.connect("127.0.0.1", serverPort) != sf::Socket::Done) {
+    if (tcpSocket.connect(serverAddress, serverPort) != sf::Socket::Done) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not connect to %s on port %d\n", serverAddress.c_str(), serverPort);
         return 3;
     }
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to %s on port %d...\n", serverAddress.c_str(), serverPort);
-    
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to \"%s:%d\" using port %d...\n", serverAddress.c_str(), serverPort, tcpSocket.getLocalPort());
+    if (tcpSocket.send(playerName.c_str(), playerName.length()) != sf::Socket::Done) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data to server\n");
+        return 4;
+    }
+
     // TODO: send request with player's name
 
 
@@ -117,6 +120,7 @@ int main(int argc, char** argv) {
         world.render(window);
         window.display();
     }
+    tcpSocket.disconnect();
 
     return 0;
 }

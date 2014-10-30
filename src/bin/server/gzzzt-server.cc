@@ -18,22 +18,34 @@
 #include <atomic>
 #include <cassert>
 #include <csignal>
-#include <functional>
 #include <iostream>
+#include <set>
 
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 
 #include <gzzzt/server/Game.h>
+#include <gzzzt/server/ServerPlayer.h>
 #include <gzzzt/shared/Log.h>
 
 #include "config.h"
 
-static std::atomic_bool should_continue {true};
+static std::atomic_bool should_continue
+{
+    true
+};
 
 static void help(void) {
     std::cout << "Usage: gzzzt-server <PORT>" << std::endl;
-    std::cout << "Example: gzzzt-server 5000" << std::endl;
+}
+
+static bool isDuplicatedName(const std::vector<gzzzt::ServerPlayer>& players, const std::string& name) {
+    for (auto player : players) {
+        if (player.getName().compare(name) == 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
 static void signal_handler(int sig) {
@@ -81,43 +93,69 @@ int main(int argc, char** argv) {
 
     unsigned short port = std::strtoul(argv[1], nullptr, 10);
 
-    // initialize the TCP socket
+    sf::SocketSelector selector;
+
+    // initialize the listener
     sf::TcpListener tcpListener;
     if (tcpListener.listen(port) != sf::Socket::Done) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind listener on port %d\n", port);
         return 3;
     }
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Waiting for connections on port %d...\n", port);
-    
-    // wait for 1 player
-    short nbPlayers = 0;
-    sf::TcpSocket playerSocket;
-    while (nbPlayers < 2) {
-        if (tcpListener.accept(playerSocket) != sf::Socket::Done) {
-            gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not accept connection\n");
-            return 4;
+    selector.add(tcpListener);
+    //gzzzt::Log::info(gzzzt::Log::NETWORK, "Waiting for connections on port %d...\n", port);
+
+    // wait for 2 players
+    std::vector<gzzzt::ServerPlayer> players;
+    while (should_continue) {
+        if (selector.wait()) {
+            sf::TcpSocket* playerSocket;
+            if (selector.isReady(tcpListener)) {
+                // New pending connection
+                playerSocket = new sf::TcpSocket;
+                if (tcpListener.accept(*playerSocket) != sf::Socket::Done) {
+                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not accept connection\n");
+                    delete playerSocket;
+                } else {
+                    playerSocket->setBlocking(false);
+                    selector.add(*playerSocket);
+                    gzzzt::ServerPlayer player(playerSocket);
+                    players.push_back(player);
+                    gzzzt::Log::info(gzzzt::Log::NETWORK, "New connection from %s\n", player.toString());
+                }
+            } else {
+                std::vector<gzzzt::ServerPlayer>::iterator it = players.begin();
+                while (it != players.end()) {
+                    gzzzt::ServerPlayer& player = *it;
+                    char data[64];
+                    std::string name;
+                    std::size_t read;
+                    sf::Socket::Status state = player.getTCPSocket()->receive(data, sizeof(data), read);
+                    switch (state) {
+                        case sf::Socket::Status::Disconnected:
+                            gzzzt::Log::info(gzzzt::Log::NETWORK, "Client disconnected: %s\n", player.toString());
+                            selector.remove(*(player.getTCPSocket()));
+                            it = players.erase(it);
+                            break;
+                        case sf::Socket::Status::Done:
+                            gzzzt::Log::debug(gzzzt::Log::NETWORK, "Received %d bytes from %s | Data = \"%s\"\n", read, player.toString(), data);
+                            name = data;
+                            if (isDuplicatedName(players, name)) {
+                                gzzzt::Log::info(gzzzt::Log::NETWORK, "Name \"%s\" already taken. %s needs to choose another one\n", name.c_str(), player.toString());
+                                // TODO: send msg to client
+                            } else {
+                                player.setName(name);
+                                gzzzt::Log::info(gzzzt::Log::NETWORK, "Client chose a name : %s\n", player.toString());
+                            }
+                        default:
+                            it++;
+                            break;
+                    }
+                }
+            }
         }
-        unsigned short playerPort = playerSocket.getRemotePort();
-        sf::IpAddress playerAddress = playerSocket.getRemoteAddress();
-        nbPlayers++;
-        // TODO: update list of players
-        gzzzt::Log::info(gzzzt::Log::NETWORK, "New connection from \"%s:%d\"\n", playerAddress.toString().c_str(), playerPort);
     }
-    playerSocket.disconnect();
     tcpListener.close();
-    
-    //    // wait for 1 player
-    //    sf::TcpSocket tcpSocket;
-    //    short nbPlayers = 0;
-    //    while (nbPlayers < 1) {
-    //        if (tcpListener.accept(tcpSocket) != sf::Socket::Done) {
-    //            gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not accept socket\n");
-    //            return 1;
-    //        }
-    //        nbPlayers++;
-    //        // TODO: create players
-    //        gzzzt::Log::info(gzzzt::Log::NETWORK, "New connection from \"%s:%d\"\n", tcpSocket.getRemoteAddress(), tcpSocket.getRemotePort());
-    //    }
+
 
     // close the TCP listener and initialize the UDP sockets
     //    tcpSocket.disconnect();
