@@ -22,20 +22,21 @@
 #include <gzzzt/shared/Serializable.h>
 
 namespace gzzzt {
-    
+
     class Request : public gzzzt::Serializable {
-    public:
-        explicit Request(std::vector<uint8_t>* bytes, bool erase = true);
-        virtual ~Request();
-        
     protected:
+        explicit Request(std::vector<uint8_t>* bytes);
         explicit Request(RequestType type);
-        
+
     public:
+        virtual ~Request();
+
         RequestType getReqType() const;
-        
+
         std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
-        
+
+        static RequestType getType(std::vector<uint8_t> bytes);
+
     private:
         RequestType m_reqType;
     };

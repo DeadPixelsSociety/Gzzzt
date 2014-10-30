@@ -22,15 +22,13 @@ namespace gzzzt {
 
     Request::Request(RequestType type) : m_reqType(type) {
     }
-    
-    Request::~Request() {
+
+    Request::Request(std::vector<uint8_t>* bytes) {
+        m_reqType = static_cast<RequestType>(bytes->at(0));
+        bytes->erase(bytes->begin());
     }
 
-    Request::Request(std::vector<uint8_t>* bytes, bool erase) {
-        m_reqType = static_cast<RequestType>(bytes->at(0));
-        if (erase) {
-            bytes->erase(bytes->begin());
-        }
+    Request::~Request() {
     }
 
     RequestType Request::getReqType() const {
@@ -41,7 +39,11 @@ namespace gzzzt {
         if (bytes == nullptr) {
             return nullptr;
         }
-        bytes->push_back(static_cast<uint8_t>(m_reqType));
+        bytes->push_back(static_cast<uint8_t> (m_reqType));
         return bytes;
+    }
+
+    RequestType Request::getType(std::vector<uint8_t> bytes) {
+        return static_cast<RequestType>(bytes[0]);
     }
 }

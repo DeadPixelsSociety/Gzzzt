@@ -23,11 +23,9 @@ namespace gzzzt {
     Response::Response(ResponseType type) : m_respType(type) {
     }
 
-    Response::Response(std::vector<uint8_t>* bytes, bool erase) {
+    Response::Response(std::vector<uint8_t>* bytes) {
         m_respType = static_cast<ResponseType>(bytes->at(0));
-        if (erase) {
-            bytes->erase(bytes->begin());
-        }
+        bytes->erase(bytes->begin());
     }
 
     ResponseType Response::getRespType() const {
@@ -38,7 +36,11 @@ namespace gzzzt {
         if (bytes == nullptr) {
             return nullptr;
         }
-        bytes->push_back(static_cast<uint8_t>(m_respType));
+        bytes->push_back(static_cast<uint8_t> (m_respType));
         return bytes;
+    }
+
+    ResponseType Response::getType(std::vector<uint8_t> bytes) {
+        return static_cast<ResponseType>(bytes[0]);
     }
 }
