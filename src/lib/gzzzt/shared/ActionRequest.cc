@@ -15,25 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SERIALIZER_H
-#define GZZZT_SERIALIZER_H
-
-#include <cstdint>
-#include <string>
-#include <vector>
+#include <gzzzt/shared/ActionRequest.h>
+#include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
 
-    class Serializer {
-    public:
-        static std::vector<uint8_t>* serializeFloat(std::vector<uint8_t>* bytes, float f);
-        static std::vector<uint8_t>* serializeInt(std::vector<uint8_t>* bytes, int i);
-        static std::vector<uint8_t>* serializeString(std::vector<uint8_t>* bytes, std::string s);
+    ActionRequest::ActionRequest(ActionType type)
+    : Request(RequestType::ACTION),
+    m_type(type) {
+    }
 
-        static float deserializeFloat(std::vector<uint8_t>* bytes);
-        static int deserializeInt(std::vector<uint8_t>* bytes);
-        static std::string deserializeString(std::vector<uint8_t>* bytes);
-    };
+    ActionRequest::ActionRequest(std::vector<uint8_t>* bytes) : Request(bytes) {
+        m_type = static_cast<ActionType>(bytes->at(0));
+        bytes->erase(bytes->begin());
+    }
+
+    ActionType ActionRequest::getType() const {
+        return m_type;
+    }
+
+    std::vector<uint8_t>* ActionRequest::serialize(std::vector<uint8_t>* bytes) const {
+        if (Request::serialize(bytes) == nullptr) {
+            return nullptr;
+        }
+        bytes->push_back(static_cast<uint8_t> (m_type));
+        return bytes;
+    }
 }
-
-#endif	// GZZZT_SERIALIZER_H

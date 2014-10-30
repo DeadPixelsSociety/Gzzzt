@@ -27,6 +27,7 @@
 #include <gzzzt/server/Game.h>
 #include <gzzzt/server/ServerPlayer.h>
 #include <gzzzt/shared/Log.h>
+#include <gzzzt/shared/NewPlayerRequest.h>
 
 #include "config.h"
 
@@ -92,7 +93,6 @@ int main(int argc, char** argv) {
     }
 
     unsigned short port = std::strtoul(argv[1], nullptr, 10);
-
     sf::SocketSelector selector;
 
     // initialize the listener
@@ -101,10 +101,10 @@ int main(int argc, char** argv) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind listener on port %d\n", port);
         return 3;
     }
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Waiting for connections on port %d...\n", port);
     selector.add(tcpListener);
-    //gzzzt::Log::info(gzzzt::Log::NETWORK, "Waiting for connections on port %d...\n", port);
 
-    // wait for 2 players
+    // wait for players
     std::vector<gzzzt::ServerPlayer> players;
     while (should_continue) {
         if (selector.wait()) {
@@ -123,29 +123,40 @@ int main(int argc, char** argv) {
                     gzzzt::Log::info(gzzzt::Log::NETWORK, "New connection from %s\n", player.toString());
                 }
             } else {
+                std::vector<uint8_t> bytes(64);
+                std::string name;
+                std::size_t read;
+                gzzzt::Request* req;
+                gzzzt::NewPlayerRequest *playerReq;
                 std::vector<gzzzt::ServerPlayer>::iterator it = players.begin();
                 while (it != players.end()) {
                     gzzzt::ServerPlayer& player = *it;
-                    char data[64];
-                    std::string name;
-                    std::size_t read;
-                    sf::Socket::Status state = player.getTCPSocket()->receive(data, sizeof(data), read);
+                    playerSocket = player.getTCPSocket();
+                    sf::Socket::Status state = playerSocket->receive(&bytes[0], bytes.size(), read);
+                    bytes.resize(read);
+                    
                     switch (state) {
                         case sf::Socket::Status::Disconnected:
                             gzzzt::Log::info(gzzzt::Log::NETWORK, "Client disconnected: %s\n", player.toString());
-                            selector.remove(*(player.getTCPSocket()));
+                            selector.remove(*playerSocket);
                             it = players.erase(it);
                             break;
                         case sf::Socket::Status::Done:
-                            gzzzt::Log::debug(gzzzt::Log::NETWORK, "Received %d bytes from %s | Data = \"%s\"\n", read, player.toString(), data);
-                            name = data;
-                            if (isDuplicatedName(players, name)) {
-                                gzzzt::Log::info(gzzzt::Log::NETWORK, "Name \"%s\" already taken. %s needs to choose another one\n", name.c_str(), player.toString());
-                                // TODO: send msg to client
+                            req = new gzzzt::Request(&bytes, false);
+                            if (req->getReqType() != gzzzt::RequestType::NEW_PLAYER) {
+                                gzzzt::Log::error(gzzzt::Log::NETWORK, "Bad type of message from %s\n", player.toString());
                             } else {
-                                player.setName(name);
-                                gzzzt::Log::info(gzzzt::Log::NETWORK, "Client chose a name : %s\n", player.toString());
+                                playerReq = new gzzzt::NewPlayerRequest(&bytes);
+                                if (isDuplicatedName(players, playerReq->getPlayerName())) {
+                                    gzzzt::Log::info(gzzzt::Log::NETWORK, "Name \"%s\" already taken. %s needs to choose another one\n", name.c_str(), player.toString());
+                                    // TODO: sent NewPlayerResponse or ErrorResponse
+                                } else {
+                                    player.setName(playerReq->getPlayerName());
+                                    gzzzt::Log::info(gzzzt::Log::NETWORK, "Client chose a name : %s\n", player.toString());
+                                }
+                                delete playerReq;
                             }
+                            delete req;
                         default:
                             it++;
                             break;

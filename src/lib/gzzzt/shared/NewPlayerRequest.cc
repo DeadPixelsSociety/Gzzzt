@@ -15,25 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SERIALIZER_H
-#define GZZZT_SERIALIZER_H
-
-#include <cstdint>
-#include <string>
-#include <vector>
+#include <gzzzt/shared/NewPlayerRequest.h>
+#include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
 
-    class Serializer {
-    public:
-        static std::vector<uint8_t>* serializeFloat(std::vector<uint8_t>* bytes, float f);
-        static std::vector<uint8_t>* serializeInt(std::vector<uint8_t>* bytes, int i);
-        static std::vector<uint8_t>* serializeString(std::vector<uint8_t>* bytes, std::string s);
+    NewPlayerRequest::NewPlayerRequest(std::string playerName)
+    : Request(RequestType::NEW_PLAYER),
+    m_playerName(playerName) {
+    }
 
-        static float deserializeFloat(std::vector<uint8_t>* bytes);
-        static int deserializeInt(std::vector<uint8_t>* bytes);
-        static std::string deserializeString(std::vector<uint8_t>* bytes);
-    };
+    NewPlayerRequest::NewPlayerRequest(std::vector<uint8_t>* bytes)
+    : Request(bytes) {
+        m_playerName = Serializer::deserializeString(bytes);
+    }
+    
+    std::string NewPlayerRequest::getPlayerName() const {
+        return m_playerName;
+    }
+
+    std::vector<uint8_t>* NewPlayerRequest::serialize(std::vector<uint8_t>* bytes) const {
+        if (Request::serialize(bytes) == nullptr) {
+            return nullptr;
+        }
+        Serializer::serializeString(bytes, m_playerName);
+        return bytes;
+    }
 }
-
-#endif	// GZZZT_SERIALIZER_H

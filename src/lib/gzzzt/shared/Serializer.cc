@@ -32,10 +32,17 @@ namespace gzzzt {
     std::vector<uint8_t>* Serializer::serializeInt(std::vector<uint8_t>* bytes, int integer) {
         int shift = ((sizeof(int) - 1) * 8); // = 24 if sizeof(int) = 4 (32 bits)
         int mask = 0xFF << shift; // = 0xFF000000 if sizeof(int) = 4
-        for (std::size_t i = 0; i < sizeof (int); i++) {
+        for (std::size_t i = 0; i < sizeof(int); i++) {
             bytes->push_back(static_cast<uint8_t>((integer & mask) >> shift));
             shift -= 8;
             mask >>= 8;
+        }
+        return bytes;
+    }
+
+    std::vector<uint8_t>* Serializer::serializeString(std::vector<uint8_t>* bytes, std::string s) {
+        for (std::size_t i = 0; i < s.length(); i++) {
+            bytes->push_back(static_cast<uint8_t>(s.at(i)));
         }
         return bytes;
     }
@@ -57,5 +64,13 @@ namespace gzzzt {
             shift -= 8;
         }
         return integer;
+    }
+
+    std::string Serializer::deserializeString(std::vector<uint8_t>* bytes) {
+        // Consider all the bytes as a string
+        int length = bytes->size();
+        std::string str(bytes->begin(), bytes->begin() + length);
+        bytes->erase(bytes->begin(), bytes->begin() + length);
+        return str;
     }
 }

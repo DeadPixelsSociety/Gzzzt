@@ -15,25 +15,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SERIALIZER_H
-#define GZZZT_SERIALIZER_H
+#ifndef GAME_STATE_RESPONSE_H
+#define GAME_STATE_RESPONSE_H
 
-#include <cstdint>
-#include <string>
-#include <vector>
+#include <gzzzt/shared/Position.h>
+#include <gzzzt/shared/Response.h>
+#include <gzzzt/shared/Speed.h>
 
 namespace gzzzt {
 
-    class Serializer {
+    class GameStateResponse : public Response {
     public:
-        static std::vector<uint8_t>* serializeFloat(std::vector<uint8_t>* bytes, float f);
-        static std::vector<uint8_t>* serializeInt(std::vector<uint8_t>* bytes, int i);
-        static std::vector<uint8_t>* serializeString(std::vector<uint8_t>* bytes, std::string s);
+        explicit GameStateResponse(Position pos, Speed speed);
+        explicit GameStateResponse(std::vector<uint8_t>* bytes);
 
-        static float deserializeFloat(std::vector<uint8_t>* bytes);
-        static int deserializeInt(std::vector<uint8_t>* bytes);
-        static std::string deserializeString(std::vector<uint8_t>* bytes);
+        Position getPosition() const;
+        Speed getSpeed() const;
+
+        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
+
+    private:
+        Position m_pos;
+        Speed m_speed;
     };
 }
 
-#endif	// GZZZT_SERIALIZER_H
+#endif	// GAME_STATE_RESPONSE_H

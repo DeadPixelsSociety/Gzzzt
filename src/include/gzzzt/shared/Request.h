@@ -15,25 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SERIALIZER_H
-#define GZZZT_SERIALIZER_H
+#ifndef GZZZT_REQUEST_H
+#define GZZZT_REQUEST_H
 
-#include <cstdint>
-#include <string>
-#include <vector>
+#include <gzzzt/shared/RequestType.h>
+#include <gzzzt/shared/Serializable.h>
 
 namespace gzzzt {
-
-    class Serializer {
+    
+    class Request : public gzzzt::Serializable {
     public:
-        static std::vector<uint8_t>* serializeFloat(std::vector<uint8_t>* bytes, float f);
-        static std::vector<uint8_t>* serializeInt(std::vector<uint8_t>* bytes, int i);
-        static std::vector<uint8_t>* serializeString(std::vector<uint8_t>* bytes, std::string s);
-
-        static float deserializeFloat(std::vector<uint8_t>* bytes);
-        static int deserializeInt(std::vector<uint8_t>* bytes);
-        static std::string deserializeString(std::vector<uint8_t>* bytes);
+        explicit Request(std::vector<uint8_t>* bytes, bool erase = true);
+        virtual ~Request();
+        
+    protected:
+        explicit Request(RequestType type);
+        
+    public:
+        RequestType getReqType() const;
+        
+        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
+        
+    private:
+        RequestType m_reqType;
     };
 }
 
-#endif	// GZZZT_SERIALIZER_H
+#endif	// GZZZT_REQUEST_H

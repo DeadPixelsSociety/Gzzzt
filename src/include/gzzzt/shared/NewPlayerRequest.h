@@ -15,25 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SERIALIZER_H
-#define GZZZT_SERIALIZER_H
+#ifndef GZZZT_NEW_PLAYER_REQUEST_H
+#define GZZZT_NEW_PLAYER_REQUEST_H
 
-#include <cstdint>
 #include <string>
-#include <vector>
+
+#include <gzzzt/shared/Request.h>
 
 namespace gzzzt {
-
-    class Serializer {
+    
+    class NewPlayerRequest : public Request {
     public:
-        static std::vector<uint8_t>* serializeFloat(std::vector<uint8_t>* bytes, float f);
-        static std::vector<uint8_t>* serializeInt(std::vector<uint8_t>* bytes, int i);
-        static std::vector<uint8_t>* serializeString(std::vector<uint8_t>* bytes, std::string s);
+        explicit NewPlayerRequest(std::string playerName);
+        explicit NewPlayerRequest(std::vector<uint8_t>* bytes);
 
-        static float deserializeFloat(std::vector<uint8_t>* bytes);
-        static int deserializeInt(std::vector<uint8_t>* bytes);
-        static std::string deserializeString(std::vector<uint8_t>* bytes);
+        std::string getPlayerName() const;
+        
+        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
+
+    private:
+        std::string m_playerName;
     };
 }
 
-#endif	// GZZZT_SERIALIZER_H
+#endif	// GZZZT_NEW_PLAYER_REQUEST_H

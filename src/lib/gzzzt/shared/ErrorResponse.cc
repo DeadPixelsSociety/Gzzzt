@@ -15,28 +15,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/Action.h>
+#include <gzzzt/shared/ErrorResponse.h>
 #include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
 
-    Action::Action(ActionType type) : m_type(type) {
+    ErrorResponse::ErrorResponse(std::string reason)
+    : Response(ResponseType::ERROR),
+    m_reason(reason) {
     }
 
-    Action::Action(std::vector<uint8_t>* bytes) {
-        m_type = static_cast<ActionType>(bytes->at(0));
-        bytes->erase(bytes->begin());
+    ErrorResponse::ErrorResponse(std::vector<uint8_t>* bytes) : Response(bytes) {
+        m_reason = Serializer::deserializeString(bytes);
     }
 
-    ActionType Action::getType() const {
-        return m_type;
+    std::string ErrorResponse::getReason() const {
+        return m_reason;
     }
 
-    std::vector<uint8_t>* Action::serialize(std::vector<uint8_t>* bytes) const {
-        if (bytes == nullptr) {
+    std::vector<uint8_t>* ErrorResponse::serialize(std::vector<uint8_t>* bytes) const {
+        if (Response::serialize(bytes) == nullptr) {
             return nullptr;
         }
-        bytes->push_back(static_cast<uint8_t>(m_type));
+        Serializer::serializeString(bytes, m_reason);
         return bytes;
     }
 }

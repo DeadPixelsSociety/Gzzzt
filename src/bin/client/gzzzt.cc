@@ -22,8 +22,8 @@
 #include <SFML/System.hpp>
 
 #include <gzzzt/client/World.h>
-#include <gzzzt/shared/Action.h>
 #include <gzzzt/shared/Log.h>
+#include <gzzzt/shared/NewPlayerRequest.h>
 
 #include "config.h"
 
@@ -53,28 +53,19 @@ int main(int argc, char** argv) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not connect to %s on port %d\n", serverAddress.c_str(), serverPort);
         return 3;
     }
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to \"%s:%d\" using port %d...\n", serverAddress.c_str(), serverPort, tcpSocket.getLocalPort());
-    if (tcpSocket.send(playerName.c_str(), playerName.length()) != sf::Socket::Done) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data to server\n");
+    // Send a request to be a player
+    gzzzt::NewPlayerRequest playerReq(playerName);
+    std::vector<uint8_t> bytes;
+    if (playerReq.serialize(&bytes) == nullptr) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not serialize msg\n");
         return 4;
     }
-
-    // TODO: send request with player's name
-
-
-    //    sf::IpAddress server("127.0.0.1");
-    //    sf::UdpSocket socket;
-    //    gzzzt::Action msg(gzzzt::ActionType::DROP_BOMB);
-    //    std::vector<uint8_t> bytes;
-    //    unsigned short port = 2048;
-    //    if (msg.serialize(&bytes) == nullptr) {
-    //        return 2;
-    //    }
-    //    unsigned char* rawData = bytes.data();
-    //    if (socket.send(rawData, sizeof(rawData), server, port) != sf::Socket::Done) {
-    //        return 3;
-    //    }
-    //    gzzzt::Log::info(gzzzt::Log::GENERAL, "Message sent!\n");
+    //gzzzt::Log::info(gzzzt::Log::NETWORK, "length = %d\n", bytes.size());
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to \"%s:%d\" using port %d...\n", serverAddress.c_str(), serverPort, tcpSocket.getLocalPort());
+    if (tcpSocket.send(&bytes[0], bytes.size()) != sf::Socket::Done) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data to server\n");
+        return 5;
+    }
 
     // initialize
     gzzzt::World world;

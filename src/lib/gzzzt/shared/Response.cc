@@ -20,30 +20,25 @@
 
 namespace gzzzt {
 
-    Response::Response(Position pos, Speed speed)
-    : m_pos(pos), m_speed(speed) {
+    Response::Response(ResponseType type) : m_respType(type) {
     }
 
-    Response::Response(std::vector<uint8_t>* bytes) {
-        m_pos.x = Serializer::deserializeFloat(bytes);
-        m_pos.y = Serializer::deserializeFloat(bytes);
-        m_speed.dx = Serializer::deserializeFloat(bytes);
-        m_speed.dy = Serializer::deserializeFloat(bytes);
+    Response::Response(std::vector<uint8_t>* bytes, bool erase) {
+        m_respType = static_cast<ResponseType>(bytes->at(0));
+        if (erase) {
+            bytes->erase(bytes->begin());
+        }
     }
 
-    Position Response::getPosition() const {
-        return m_pos;
-    }
-
-    Speed Response::getSpeed() const {
-        return m_speed;
+    ResponseType Response::getRespType() const {
+        return m_respType;
     }
 
     std::vector<uint8_t>* Response::serialize(std::vector<uint8_t>* bytes) const {
-        Serializer::serializeFloat(bytes, m_pos.x);
-        Serializer::serializeFloat(bytes, m_pos.y);
-        Serializer::serializeFloat(bytes, m_speed.dx);
-        Serializer::serializeFloat(bytes, m_speed.dy);
+        if (bytes == nullptr) {
+            return nullptr;
+        }
+        bytes->push_back(static_cast<uint8_t>(m_respType));
         return bytes;
     }
 }
