@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
                     selector.add(*playerSocket);
                     gzzzt::ServerPlayer player(playerSocket);
                     players.push_back(player);
-                    gzzzt::Log::info(gzzzt::Log::NETWORK, "New connection from %s\n", player.toString());
+                    gzzzt::Log::info(gzzzt::Log::NETWORK, "New connection from %s\n", player.toString().c_str());
                 }
             } else {
                 // Find the client's socket which is ready
@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
                     case sf::Socket::Status::Done:
                         reqType = gzzzt::Request::getType(bytes);
                         if (reqType != gzzzt::RequestType::NEW_PLAYER) {
-                            gzzzt::Log::error(gzzzt::Log::NETWORK, "Bad type of message from %s\n", player.toString());
+                            gzzzt::Log::error(gzzzt::Log::NETWORK, "Bad type of message from %s\n", player.toString().c_str());
                             break;
                         }
                         playerReq = new gzzzt::NewPlayerRequest(&bytes);
@@ -150,20 +150,20 @@ int main(int argc, char** argv) {
                             gzzzt::Log::info(gzzzt::Log::NETWORK,
                                     "Name \"%s\" already taken. %s needs to choose another one\n",
                                     playerReq->getPlayerName().c_str(),
-                                    player.toString());
+                                    player.toString().c_str());
                             // Send an error to the client 
                             gzzzt::ErrorResponse("Name already taken").serialize(&bytes);
                             playerSocket->send(&bytes[0], bytes.size());
                         } else {
                             player.setName(playerReq->getPlayerName());
-                            gzzzt::Log::info(gzzzt::Log::NETWORK, "Client chose a name : %s\n", player.toString());
+                            gzzzt::Log::info(gzzzt::Log::NETWORK, "Client chose a name : %s\n", player.toString().c_str());
                             gzzzt::NewPlayerResponse().serialize(&bytes);
                             playerSocket->send(&bytes[0], bytes.size());
                         }
                         delete playerReq;
                         break;
                     case sf::Socket::Status::Disconnected:
-                        gzzzt::Log::info(gzzzt::Log::NETWORK, "Client %s is disconnected\n", player.toString());
+                        gzzzt::Log::info(gzzzt::Log::NETWORK, "Client %s is disconnected\n", player.toString().c_str());
                         selector.remove(*playerSocket);
                         delete playerSocket;
                         players.erase(it);

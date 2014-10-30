@@ -34,7 +34,7 @@ namespace gzzzt {
         sf::IpAddress getAddress() const;
         unsigned short getPort() const;
         std::string getName() const;
-        const char* toString();
+        std::string toString();
 
         void setName(std::string name);
 

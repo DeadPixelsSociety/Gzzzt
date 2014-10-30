@@ -47,7 +47,7 @@ namespace gzzzt {
         m_name = name;
     }
 
-    const char* ServerPlayer::toString() {
+    std::string ServerPlayer::toString() {
         std::ostringstream oss;
         bool nameDefined = m_name.length() > 0;
         if (nameDefined) {
@@ -57,7 +57,7 @@ namespace gzzzt {
         if (nameDefined) {
             oss << "]";
         }
-        return oss.str().c_str();
+        return oss.str();
     }
 
     void ServerPlayer::update(float dt) {
