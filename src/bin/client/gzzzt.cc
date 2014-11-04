@@ -16,20 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <gzzzt/client/World.h>
+#include <gzzzt/client/ClientMap.h>
 
 #include "config.h"
 
 int main(void) {
     // initialize
     gzzzt::World world;
+    gzzzt::ClientMap* map;
+    
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
     window.setKeyRepeatEnabled(false);
 
     // load resources
-
+    
+    //map = new gzzzt::ClientMap("../../../share/gzzzt/maps/simple/simple.tmx");
+    map = new gzzzt::ClientMap("../src/share/gzzzt/maps/simple/simple.tmx");
 
     // add entities
-
+    world.addEntity(map);
 
     // main loop
     sf::Clock clock;
