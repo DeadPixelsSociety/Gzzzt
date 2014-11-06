@@ -132,21 +132,24 @@ public:
         }
     }
 
-
-private:
     gzzzt::Physics engine;
     std::vector<Entity *> entities;
 };
 
 
 static void setupDemo(World& world, int step) {
+    gzzzt::Body *body;
+
     world.clear();
 
     switch (step) {
         case 1:
             std::printf("Step %i: One ball and one block with no restitution\n", step);
             world.addBlock(400, 250, 0, 0);
-            world.addBall(100, 250, 200, 0);
+            body = &world.addBall(100, 250, 200, 0)->body;
+            world.engine.setCallback(body, [](gzzzt::Body *self, gzzzt::Body *other){
+                std::printf("Paf!\n");
+            });
             break;
 
         case 2:

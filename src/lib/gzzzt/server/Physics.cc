@@ -53,8 +53,8 @@ namespace gzzzt {
     }
 
     static void correctPosition(Manifold& m) {
-        const float percent = 0.4;
-        const float slop = 0.05;
+        const float percent = 0.9;
+        const float slop = 0.1;
 
         float a_inverse_mass = (m.a->type == Body::DYNAMIC ? 1.0f : 0.0f);
         float b_inverse_mass = (m.b->type == Body::DYNAMIC ? 1.0f : 0.0f);
@@ -80,6 +80,15 @@ namespace gzzzt {
     void Physics::clear() {
         m_dynamic_bodies.clear();
         m_static_bodies.clear();
+        m_callbacks.clear();
+    }
+
+    void Physics::setCallback(Body *body, CollisionCallback callback) {
+        m_callbacks[body] = callback;
+    }
+
+    void Physics::removeCallback(Body *body) {
+        m_callbacks.erase(body);
     }
 
     static void logInfoBody(const Body& body) {
@@ -161,6 +170,22 @@ namespace gzzzt {
             Log::info(Log::PHYSICS, "After position correction:\n");
             logInfoBody(*m.a);
             logInfoBody(*m.b);
+        }
+
+        for (auto& m : manifolds) {
+            auto it = m_callbacks.find(m.a);
+
+            if (it != m_callbacks.end()) {
+                assert(it->second);
+                it->second(m.a, m.b);
+            }
+
+            it = m_callbacks.find(m.b);
+
+            if (it != m_callbacks.end()) {
+                assert(it->second);
+                it->second(m.b, m.a);
+            }
         }
     }
 

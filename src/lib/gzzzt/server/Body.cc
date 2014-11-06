@@ -24,6 +24,8 @@
 
 namespace gzzzt {
 
+    static constexpr float skin = 0.15;
+
     static float lengthSquared(const sf::Vector2f& v) {
         return v.x * v.x + v.y * v.y;
     }
@@ -61,7 +63,7 @@ namespace gzzzt {
             m->normal = { 1.0f, 0.0f };
         }
 
-        return true;
+        return m->penetration > skin;
     }
 
     static bool collidesRectVsCircle(const Body& lhs, const Body& rhs, Manifold *m) {
@@ -119,7 +121,7 @@ namespace gzzzt {
             m->penetration = r - d;
         }
 
-        return true;
+        return m->penetration > skin;
     }
 
     static bool collidesCircleVsRect(const Body& lhs, const Body& rhs, Manifold *m) {
@@ -167,7 +169,7 @@ namespace gzzzt {
             m->penetration = y_overlap;
         }
 
-        return true;
+        return m->penetration > skin;
     }
 
     bool Body::collides(const Body& lhs, const Body& rhs, Manifold *m) {
