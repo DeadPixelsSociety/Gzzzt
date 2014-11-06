@@ -123,6 +123,10 @@ namespace gzzzt {
                     continue;
                 }
 
+                if ((body->layers & other_body->layers) == 0) {
+                    continue;
+                }
+
                 if (Body::collides(*body, *other_body, &m)) {
                     m.b = other_body;
                     manifolds.push_back(m);

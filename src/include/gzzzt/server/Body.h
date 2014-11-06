@@ -18,6 +18,8 @@
 #ifndef GZZZT_SERVER_BODY_H
 #define GZZZT_SERVER_BODY_H
 
+#include <cstdint>
+
 #include <SFML/System/Vector2.hpp>
 
 namespace gzzzt {
@@ -61,6 +63,9 @@ namespace gzzzt {
         sf::Vector2f velocity;
         Shape shape;
         float restitution;
+        uint32_t layers;
+
+        static constexpr uint32_t ALL_LAYERS = static_cast<uint32_t>(-1);
 
         static bool collides(const Body& lhs, const Body& rhs, Manifold *m);
     };

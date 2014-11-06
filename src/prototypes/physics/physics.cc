@@ -54,6 +54,7 @@ public:
         body.shape.kind = gzzzt::Shape::CIRCLE;
         body.shape.circle.radius = RADIUS;
         body.restitution = 0.0f;
+        body.layers = gzzzt::Body::ALL_LAYERS;
     }
 
     virtual void render(sf::RenderWindow& window) override {
@@ -77,6 +78,7 @@ public:
         body.shape.kind = gzzzt::Shape::RECTANGLE;
         body.shape.rectangle.width = body.shape.rectangle.height = 2 * RADIUS;
         body.restitution = 0.0f;
+        body.layers = gzzzt::Body::ALL_LAYERS;
     }
 
     virtual void render(sf::RenderWindow& window) override {
@@ -179,6 +181,14 @@ static void setupDemo(World& world, int step) {
             std::printf("Step %i: Two balls colliding face to face\n", step);
             world.addBall(250, 250, 50, 0)->body.restitution = 1.0f;
             world.addBall(450, 250, -150, 0)->body.restitution = 1.0f;
+            break;
+
+        case 7:
+            std::printf("Step %i: Two balls not on the same layer\n", step);
+            world.addBlock(450, 250, 0, 0);
+            world.addBlock(50, 250, 0, 0);
+            world.addBall(100, 255, 200, 0)->body.layers = 0x01;
+            world.addBall(400, 245, -100, 0)->body.layers = 0x02;
             break;
 
         default:
