@@ -1,0 +1,8 @@
+sound prototype :
+
+- Class :
+    - Sound (class to play light sound like bomb explosition, etc...)
+    - SoundHandler (class to handle all sound needed by the game)
+    - Music (class to play music like the background music if it has)
+    - MusicHandler? (class to handle all music?)
+
