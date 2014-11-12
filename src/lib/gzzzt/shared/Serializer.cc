@@ -68,7 +68,10 @@ namespace gzzzt {
 
     std::string Serializer::deserializeString(std::vector<uint8_t>* bytes) {
         // Consider all the bytes as a string
-        int length = bytes->size();
+        return deserializeString(bytes, bytes->size());
+    }
+    
+    std::string Serializer::deserializeString(std::vector<uint8_t>* bytes, int length) {
         std::string str(bytes->begin(), bytes->begin() + length);
         bytes->erase(bytes->begin(), bytes->begin() + length);
         return str;

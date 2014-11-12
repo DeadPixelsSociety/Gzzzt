@@ -30,6 +30,7 @@
 #include <gzzzt/shared/ErrorResponse.h>
 #include <gzzzt/shared/NewPlayerRequest.h>
 #include <gzzzt/shared/NewPlayerResponse.h>
+#include <gzzzt/shared/StartGameResponse.h>
 
 #include "config.h"
 
@@ -39,7 +40,7 @@ static std::atomic_bool should_continue
 };
 
 static void help(void) {
-    std::cout << "Usage: gzzzt-server <PORT>" << std::endl;
+    std::cout << "Usage: gzzzt-server <TCP_PORT> <UDP_PORT>" << std::endl;
 }
 
 static bool isDuplicatedName(const std::vector<gzzzt::ServerPlayer>& players, const std::string& name) {
@@ -73,7 +74,7 @@ static void signal_handler(int sig) {
 //}
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
+    if (argc != 3) {
         help();
         return 1;
     }
@@ -108,7 +109,8 @@ int main(int argc, char** argv) {
 
     // wait for players
     std::vector<gzzzt::ServerPlayer> players;
-    while (should_continue) {
+    int nbPlayersRegistered = 0;
+    while (should_continue && nbPlayersRegistered < 2) {
         if (selector.wait()) {
             sf::TcpSocket* playerSocket;
             if (selector.isReady(tcpListener)) {
@@ -156,6 +158,7 @@ int main(int argc, char** argv) {
                             playerSocket->send(&bytes[0], bytes.size());
                         } else {
                             player.setName(playerReq->getPlayerName());
+                            nbPlayersRegistered++;
                             gzzzt::Log::info(gzzzt::Log::NETWORK, "Client chose a name : %s\n", player.toString().c_str());
                             gzzzt::NewPlayerResponse().serialize(&bytes);
                             playerSocket->send(&bytes[0], bytes.size());
@@ -165,6 +168,7 @@ int main(int argc, char** argv) {
                     case sf::Socket::Status::Disconnected:
                         gzzzt::Log::info(gzzzt::Log::NETWORK, "Client %s is disconnected\n", player.toString().c_str());
                         selector.remove(*playerSocket);
+                        playerSocket->disconnect();
                         delete playerSocket;
                         players.erase(it);
                         break;
@@ -172,17 +176,54 @@ int main(int argc, char** argv) {
                         gzzzt::Log::error(gzzzt::Log::NETWORK, "The socket is not ready\n");
                         break;
                     case sf::Socket::Status::Error:
-                        gzzzt::Log::error(gzzzt::Log::NETWORK, "Error while receiving date\n");
+                        gzzzt::Log::error(gzzzt::Log::NETWORK, "Error while receiving data\n");
                         break;
                 }
             }
         }
     }
-    tcpListener.close();
+
+    // Broadcast the name of the players
+    std::vector<uint8_t> bytes;
+    std::vector<std::string> playersName;
+    for (auto player : players) {
+        playersName.push_back(player.getName());
+    }
+    gzzzt::StartGameResponse(playersName).serialize(&bytes);
+    for (auto player : players) {
+        if (player.getTCPSocket()->send(&bytes[0], bytes.size()) != sf::Socket::Done) {
+            gzzzt::Log::fatal(gzzzt::Log::NETWORK, "Error while broadcasting to the players\n");
+        }
+    }
+
+    // Initialize the UDP sockets
+    unsigned short udpPort = std::strtoul(argv[2], nullptr, 10);
+    sf::UdpSocket udpSocket;
+    if (udpSocket.bind(udpPort) != sf::Socket::Done) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind UDP socket to port %d\n", port);
+        return 4;
+    }
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "UDP socket created\n");
+    std::size_t received;
+    sf::IpAddress sender;
+    unsigned short senderPort;
+    selector.add(udpSocket);
+    udpSocket.setBlocking(false);
+    while (should_continue) {
+        if (selector.wait()) {
+            if (selector.isReady(udpSocket)) {
+                if (udpSocket.receive(&bytes[0], bytes.size(), received, sender, senderPort) != sf::Socket::Status::Done) {
+                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not receive data\n");
+                    return 5;
+                }
+                gzzzt::Log::info(gzzzt::Log::NETWORK, "Received %d on %d\n", received, senderPort);
+            }
+        }
+        bytes.assign(64, 0);
+    }
+    udpSocket.unbind();
 
 
-    // close the TCP listener and initialize the UDP sockets
-    //    tcpSocket.disconnect();
     //    sf::UdpSocket udpSocket;
     //    if (udpSocket.bind(port) != sf::Socket::Done) {
     //        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind socket to port %d\n", port);

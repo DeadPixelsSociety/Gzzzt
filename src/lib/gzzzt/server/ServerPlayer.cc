@@ -24,7 +24,7 @@ namespace gzzzt {
     ServerPlayer::ServerPlayer(sf::TcpSocket* socket)
     : m_TCPSocket(socket),
     m_address(socket->getRemoteAddress()),
-    m_port(socket->getRemotePort()) {
+    m_TCPPort(socket->getRemotePort()) {
     }
 
     sf::TcpSocket* ServerPlayer::getTCPSocket() const {
@@ -35,8 +35,12 @@ namespace gzzzt {
         return m_address;
     }
 
-    unsigned short ServerPlayer::getPort() const {
-        return m_port;
+    unsigned short ServerPlayer::getTCPPort() const {
+        return m_TCPPort;
+    }
+    
+    unsigned short ServerPlayer::getUDPPort() const {
+        return m_UDPPort;
     }
 
     std::string ServerPlayer::getName() const {
@@ -46,14 +50,23 @@ namespace gzzzt {
     void ServerPlayer::setName(std::string name) {
         m_name = name;
     }
+    
+    void ServerPlayer::setUDPPort(unsigned short port) {
+        m_UDPPort = port;
+    }
+    
+    void ServerPlayer::closeTCPSocket() {
+        delete m_TCPSocket;
+        m_TCPSocket = nullptr;
+    }
 
-    std::string ServerPlayer::toString() {
+    std::string ServerPlayer::toString() const {
         std::ostringstream oss;
         bool nameDefined = m_name.length() > 0;
         if (nameDefined) {
             oss << m_name << "@[";
         }
-        oss << m_address.toString() << ":" << m_port;
+        oss << m_address.toString() << ":" << m_TCPPort;
         if (nameDefined) {
             oss << "]";
         }

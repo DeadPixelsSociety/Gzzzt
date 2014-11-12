@@ -22,18 +22,19 @@
 #include <SFML/System.hpp>
 
 #include <gzzzt/client/World.h>
+#include <gzzzt/shared/ErrorResponse.h>
 #include <gzzzt/shared/Log.h>
 #include <gzzzt/shared/NewPlayerRequest.h>
-#include <gzzzt/shared/ErrorResponse.h>
+#include <gzzzt/shared/StartGameResponse.h>
 
 #include "config.h"
 
 static void help(void) {
-    std::cout << "Usage: gzzzt <PLAYER_NAME> <SERVER_ADDRESS:PORT>" << std::endl;
+    std::cout << "Usage: gzzzt <PLAYER_NAME> <SERVER_ADDRESS:PORT> <SERVER_UDP_PORT>" << std::endl;
 }
 
 int main(int argc, char** argv) {
-    if (argc != 3) {
+    if (argc != 4) {
         help();
         return 1;
     }
@@ -47,11 +48,11 @@ int main(int argc, char** argv) {
         return 2;
     }
     std::string serverAddress = serverURL.substr(0, pos);
-    unsigned short serverPort = std::strtoul(serverURL.substr(pos + 1).c_str(), nullptr, 10);
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connecting to %s on port %d...\n", serverAddress.c_str(), serverPort);
+    unsigned short serverPortTCP = std::strtoul(serverURL.substr(pos + 1).c_str(), nullptr, 10);
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connecting to %s on port %d...\n", serverAddress.c_str(), serverPortTCP);
     sf::TcpSocket tcpSocket;
-    if (tcpSocket.connect(serverAddress, serverPort) != sf::Socket::Done) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not connect to %s on port %d\n", serverAddress.c_str(), serverPort);
+    if (tcpSocket.connect(serverAddress, serverPortTCP) != sf::Socket::Done) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not connect to %s on port %d\n", serverAddress.c_str(), serverPortTCP);
         return 3;
     }
     // Send a request to be a player
@@ -62,12 +63,13 @@ int main(int argc, char** argv) {
         tcpSocket.disconnect();
         return 4;
     }
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to \"%s:%d\" using port %d...\n", serverAddress.c_str(), serverPort, tcpSocket.getLocalPort());
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to \"%s:%d\" using port %d...\n", serverAddress.c_str(), serverPortTCP, tcpSocket.getLocalPort());
     if (tcpSocket.send(&bytes[0], bytes.size()) != sf::Socket::Done) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data to server\n");
         tcpSocket.disconnect();
         return 5;
     }
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Waiting for the response...\n");
 
     // Wait for the response
     std::size_t nbBytesRead;
@@ -86,6 +88,32 @@ int main(int argc, char** argv) {
         return 7;
     }
     gzzzt::Log::info(gzzzt::Log::NETWORK, "Name accepted.\n");
+
+    // Wait for the game to start
+    bytes.assign(64, 0);
+    if (tcpSocket.receive(&bytes[0], bytes.size(), nbBytesRead) != sf::Socket::Done) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not received the server's msg\n");
+        tcpSocket.disconnect();
+        return 6;
+    }
+    bytes.resize(nbBytesRead);
+    gzzzt::StartGameResponse resp(&bytes);
+    std::vector<std::string> playersName = resp.getPlayersName();
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "List of players :\n");
+    for (auto name : playersName) {
+        gzzzt::Log::info(gzzzt::Log::GENERAL, "- %s\n", name.c_str());
+    }
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the game...\n");
+
+    // Initialize the UDP socket
+    //tcpSocket.disconnect();
+    unsigned short serverPortUDP = std::strtoul(argv[3], nullptr, 10);
+    sf::UdpSocket udpSocket;
+    const char* s = "abc";
+    if (udpSocket.send(s, 3, serverAddress, serverPortUDP) != sf::Socket::Status::Done) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
+        return 5;
+    }
 
     // initialize
     gzzzt::World world;

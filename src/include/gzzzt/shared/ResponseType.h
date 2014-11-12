@@ -25,6 +25,7 @@ namespace gzzzt {
     enum class ResponseType : uint8_t {
         ERROR = 0,
         NEW_PLAYER_OK,
+        START_GAME,
         GAME_STATE
     };
 }

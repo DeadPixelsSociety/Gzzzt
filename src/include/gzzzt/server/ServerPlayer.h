@@ -32,18 +32,22 @@ namespace gzzzt {
 
         sf::TcpSocket* getTCPSocket() const;
         sf::IpAddress getAddress() const;
-        unsigned short getPort() const;
+        unsigned short getTCPPort() const;
+        unsigned short getUDPPort() const;
         std::string getName() const;
-        std::string toString();
+        std::string toString() const;
 
         void setName(std::string name);
+        void setUDPPort(unsigned short port);
+        void closeTCPSocket();
 
         virtual void update(float dt) override;
 
     private:
         sf::TcpSocket* m_TCPSocket;
         sf::IpAddress m_address;
-        unsigned short m_port;
+        unsigned short m_TCPPort;
+        unsigned short m_UDPPort;
         std::string m_name;
     };
 
