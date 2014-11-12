@@ -17,6 +17,7 @@
  */
 #include <gzzzt/client/World.h>
 #include <gzzzt/client/ClientMap.h>
+#include <gzzzt/client/Resource.h>
 
 #include "config.h"
 
@@ -24,15 +25,22 @@ int main(void) {
     // initialize
     gzzzt::World world;
     gzzzt::ClientMap* map;
+    gzzzt::ResourceManager resourceManager;
+    
+    resourceManager.addSearchDir(GAME_DATADIR);
+    resourceManager.addSearchDir("..");
     
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
     window.setKeyRepeatEnabled(false);
 
     // load resources
     
-    //map = new gzzzt::ClientMap("../../../share/gzzzt/maps/simple/simple.tmx");
-    map = new gzzzt::ClientMap("../src/share/gzzzt/maps/simple/simple.tmx");
-
+#if _DEBUG_
+    map = new gzzzt::ClientMap("../../../src/share/gzzzt/maps/simple/simple.tmx", resourceManager);
+#else
+    assert(true);
+#endif
+    
     // add entities
     world.addEntity(map);
 

@@ -31,7 +31,7 @@ namespace gzzzt {
     class ClientMap : public ClientEntity {
     public:
 
-        ClientMap(const boost::filesystem::path & path);
+        ClientMap(const boost::filesystem::path & path, ResourceManager & resourceManager);
         virtual ~ClientMap();
 
         virtual void update(float dt) override;
@@ -45,7 +45,6 @@ namespace gzzzt {
     private:
         tmx::Map* m_tmxMap;
         std::vector<unsigned int> m_GID;
-        ResourceManager m_resourceManager;
         sf::Texture* m_tileSetTexture;
         unsigned int m_tileWidth;
         unsigned int m_tileHeight;
