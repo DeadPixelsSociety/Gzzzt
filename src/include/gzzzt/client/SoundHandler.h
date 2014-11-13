@@ -27,7 +27,7 @@ namespace gzzzt {
         static void loadSounds();
     private:
 	    
-	}
+	};
 }
 
 #endif // GZZZT_SOUNDHANDLER_H
