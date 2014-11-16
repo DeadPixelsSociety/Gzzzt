@@ -17,6 +17,7 @@
  */
 #include <gzzzt/client/World.h>
 #include <gzzzt/client/ClientMap.h>
+#include <SFML/Audio.hpp>
 
 #include "config.h"
 
@@ -24,6 +25,8 @@ int main(void) {
     // initialize
     gzzzt::World world;
     gzzzt::ClientMap* map;
+    sf::SoundBuffer soundBuff;
+    sf::Sound sound;
     
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
     window.setKeyRepeatEnabled(false);
@@ -32,6 +35,11 @@ int main(void) {
     
     //map = new gzzzt::ClientMap("../../../share/gzzzt/maps/simple/simple.tmx");
     map = new gzzzt::ClientMap("../src/share/gzzzt/maps/simple/simple.tmx");
+
+    if(!soundBuff.loadFromFile("../src/res/gzzzt/sound/Countdown-B.ogg"))
+        return -1;
+    else
+        sound.setBuffer(soundBuff);
 
     // add entities
     world.addEntity(map);
@@ -51,6 +59,9 @@ int main(void) {
                 switch (event.key.code) {
                     case sf::Keyboard::Escape:
                         window.close();
+                        break;
+                    case sf::Keyboard::Space:
+                        sound.play();
                         break;
 
                     default:
