@@ -2,4 +2,5 @@ sound prototype :
 
 - Class :
     - SoundHandler (class to handle all sound needed by the game)
+      * play() method need an integer that's in the class as a static const int
 

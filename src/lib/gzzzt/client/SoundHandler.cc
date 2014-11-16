@@ -22,17 +22,22 @@ namespace gzzzt {
     SoundHandler::SoundHandler() {
         //Loading all sounds needed by the game
         sf::SoundBuffer buffer;
-        if(buffer.loadFromFile("../src/res/gzzzt/sound/EnteringGame.mp3"))
+        if(buffer.loadFromFile("../src/res/gzzzt/sound/EnteringGame.ogg"))
             m_SoundsBuffer.push_back(buffer);
-        if(buffer.loadFromFile("../src/res/gzzzt/sound/Countdown-A.ogg"))
-            m_SoundsBuffer.push_back(buffer);
-        if(buffer.loadFromFile("../src/res/gzzzt/sound/Countdown-B.ogg"))
+        if(buffer.loadFromFile("../src/res/gzzzt/sound/StartGame.ogg"))
             m_SoundsBuffer.push_back(buffer);
         if(buffer.loadFromFile("../src/res/gzzzt/sound/EndGame.ogg"))
+            m_SoundsBuffer.push_back(buffer);
+        if(buffer.loadFromFile("../src/res/gzzzt/sound/BombDrop.ogg"))
+            m_SoundsBuffer.push_back(buffer);
+        if(buffer.loadFromFile("../src/res/gzzzt/sound/BombExplode.ogg"))
+            m_SoundsBuffer.push_back(buffer);
+        if(buffer.loadFromFile("../src/res/gzzzt/sound/Death.ogg"))
             m_SoundsBuffer.push_back(buffer);
     }
 
     SoundHandler::~SoundHandler() {
+        m_SoundsBuffer.clear();
     }
     
     void SoundHandler::play(int s){
@@ -41,14 +46,19 @@ namespace gzzzt {
                 m_SoundPlayer.setBuffer(m_SoundsBuffer.at(0));
                 break;
             case STARTGAME:
+                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(1));
                 break;
             case ENDGAME:
+                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(2));
                 break;
             case BOMBDROP:
+                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(3));
                 break;
             case BOMBEXPLODE:
+                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(4));
                 break;
             case DEATH:
+                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(5));
                 break;
 
             default:
