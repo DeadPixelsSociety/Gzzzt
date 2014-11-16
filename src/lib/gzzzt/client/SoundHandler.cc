@@ -22,6 +22,8 @@ namespace gzzzt {
     SoundHandler::SoundHandler() {
         //Loading all sounds needed by the game
         sf::SoundBuffer buffer;
+        if(buffer.loadFromFile("../src/res/gzzzt/sound/EnteringGame.mp3"))
+            m_SoundsBuffer.push_back(buffer);
         if(buffer.loadFromFile("../src/res/gzzzt/sound/Countdown-A.ogg"))
             m_SoundsBuffer.push_back(buffer);
         if(buffer.loadFromFile("../src/res/gzzzt/sound/Countdown-B.ogg"))
@@ -29,7 +31,18 @@ namespace gzzzt {
     }
 
     SoundHandler::~SoundHandler() {
-        // TODO Auto-generated destructor stub
+    }
+    
+    void SoundHandler::play(int s){
+        switch(s){
+            case ENTERGAME:
+                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(0));
+                m_SoundPlayer.play();
+                break;
+
+            default:
+                break;
+        }
     }
 
 } /* namespace gzzzt */

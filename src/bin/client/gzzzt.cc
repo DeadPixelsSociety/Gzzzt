@@ -20,11 +20,13 @@
 #include <SFML/Audio.hpp>
 
 #include "config.h"
+#include "gzzzt/client/SoundHandler.h"
 
 int main(void) {
     // initialize
     gzzzt::World world;
     gzzzt::ClientMap* map;
+    gzzzt::SoundHandler* sounds;
     sf::SoundBuffer soundBuff;
     sf::Sound sound;
     
@@ -35,6 +37,7 @@ int main(void) {
     
     //map = new gzzzt::ClientMap("../../../share/gzzzt/maps/simple/simple.tmx");
     map = new gzzzt::ClientMap("../src/share/gzzzt/maps/simple/simple.tmx");
+    sounds = new gzzzt::SoundHandler();
 
     if(!soundBuff.loadFromFile("../src/res/gzzzt/sound/Countdown-B.ogg"))
         return -1;
@@ -63,6 +66,15 @@ int main(void) {
                     case sf::Keyboard::Space:
                         sound.play();
                         break;
+                    case sf::Keyboard::A:
+                        sounds->play(sounds->ENTERGAME);
+                        break;
+                    case sf::Keyboard::Z:
+                        sounds->play(sounds->STARTGAME);
+                        break;
+                    case sf::Keyboard::E:
+                        sounds->play(sounds->BOMBDROP);
+                        break;
 
                     default:
                         break;
@@ -70,7 +82,7 @@ int main(void) {
 
             }
         }
-
+        
         // update
         sf::Time elapsed = clock.restart();
         world.update(elapsed.asSeconds());

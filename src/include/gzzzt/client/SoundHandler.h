@@ -28,6 +28,15 @@ namespace gzzzt {
     public:
         SoundHandler();
         virtual ~SoundHandler();
+        void play(int s);
+        
+        // Const var for sound played
+        static const int ENTERGAME = 0;
+        static const int STARTGAME = 1;
+        static const int ENDGAME = 2;
+        static const int BOMBDROP = 3;
+        static const int BOMBEXPLODE = 4;
+        static const int DEATH = 5;
     private:
         std::vector<sf::SoundBuffer> m_SoundsBuffer;
         sf::Sound m_SoundPlayer;
