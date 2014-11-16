@@ -27,8 +27,6 @@ int main(void) {
     gzzzt::World world;
     gzzzt::ClientMap* map;
     gzzzt::SoundHandler* sounds;
-    sf::SoundBuffer soundBuff;
-    sf::Sound sound;
     
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
     window.setKeyRepeatEnabled(false);
@@ -38,11 +36,6 @@ int main(void) {
     //map = new gzzzt::ClientMap("../../../share/gzzzt/maps/simple/simple.tmx");
     map = new gzzzt::ClientMap("../src/share/gzzzt/maps/simple/simple.tmx");
     sounds = new gzzzt::SoundHandler();
-
-    if(!soundBuff.loadFromFile("../src/res/gzzzt/sound/Countdown-B.ogg"))
-        return -1;
-    else
-        sound.setBuffer(soundBuff);
 
     // add entities
     world.addEntity(map);
@@ -63,9 +56,6 @@ int main(void) {
                     case sf::Keyboard::Escape:
                         window.close();
                         break;
-                    case sf::Keyboard::Space:
-                        sound.play();
-                        break;
                     case sf::Keyboard::A:
                         sounds->play(sounds->ENTERGAME);
                         break;
@@ -73,7 +63,16 @@ int main(void) {
                         sounds->play(sounds->STARTGAME);
                         break;
                     case sf::Keyboard::E:
+                        sounds->play(sounds->ENDGAME);
+                        break;
+                    case sf::Keyboard::R:
                         sounds->play(sounds->BOMBDROP);
+                        break;
+                    case sf::Keyboard::T:
+                        sounds->play(sounds->BOMBEXPLODE);
+                        break;
+                    case sf::Keyboard::Y:
+                        sounds->play(sounds->DEATH);
                         break;
 
                     default:

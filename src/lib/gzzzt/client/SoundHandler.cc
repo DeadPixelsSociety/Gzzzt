@@ -28,6 +28,8 @@ namespace gzzzt {
             m_SoundsBuffer.push_back(buffer);
         if(buffer.loadFromFile("../src/res/gzzzt/sound/Countdown-B.ogg"))
             m_SoundsBuffer.push_back(buffer);
+        if(buffer.loadFromFile("../src/res/gzzzt/sound/EndGame.ogg"))
+            m_SoundsBuffer.push_back(buffer);
     }
 
     SoundHandler::~SoundHandler() {
@@ -37,12 +39,22 @@ namespace gzzzt {
         switch(s){
             case ENTERGAME:
                 m_SoundPlayer.setBuffer(m_SoundsBuffer.at(0));
-                m_SoundPlayer.play();
+                break;
+            case STARTGAME:
+                break;
+            case ENDGAME:
+                break;
+            case BOMBDROP:
+                break;
+            case BOMBEXPLODE:
+                break;
+            case DEATH:
                 break;
 
             default:
                 break;
         }
+        m_SoundPlayer.play();
     }
 
 } /* namespace gzzzt */
