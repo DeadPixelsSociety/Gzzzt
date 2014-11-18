@@ -19,52 +19,41 @@
 
 namespace gzzzt {
 
-    SoundHandler::SoundHandler() {
-        //Loading all sounds needed by the game
-        sf::SoundBuffer buffer;
-        if(buffer.loadFromFile("../src/res/gzzzt/sound/EnteringGame.ogg"))
-            m_SoundsBuffer.push_back(buffer);
-        if(buffer.loadFromFile("../src/res/gzzzt/sound/StartGame.ogg"))
-            m_SoundsBuffer.push_back(buffer);
-        if(buffer.loadFromFile("../src/res/gzzzt/sound/EndGame.ogg"))
-            m_SoundsBuffer.push_back(buffer);
-        if(buffer.loadFromFile("../src/res/gzzzt/sound/BombDrop.ogg"))
-            m_SoundsBuffer.push_back(buffer);
-        if(buffer.loadFromFile("../src/res/gzzzt/sound/BombExplode.ogg"))
-            m_SoundsBuffer.push_back(buffer);
-        if(buffer.loadFromFile("../src/res/gzzzt/sound/Death.ogg"))
-            m_SoundsBuffer.push_back(buffer);
+    SoundHandler::SoundHandler(ResourceManager& manager) {
+        // Loading all sounds needed by the game
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/EnteringGame.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/StartGame.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/EndGame.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/BombDrop.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/BombExplode.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/Death.ogg"));
     }
 
-    SoundHandler::~SoundHandler() {
-        m_SoundsBuffer.clear();
-    }
-    
-    void SoundHandler::play(int s){
-        switch(s){
-            case ENTERGAME:
-                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(0));
-                break;
-            case STARTGAME:
-                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(1));
-                break;
-            case ENDGAME:
-                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(2));
-                break;
-            case BOMBDROP:
-                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(3));
-                break;
-            case BOMBEXPLODE:
-                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(4));
-                break;
-            case DEATH:
-                m_SoundPlayer.setBuffer(m_SoundsBuffer.at(5));
-                break;
+    void SoundHandler::play(Sound id){
+        sf::Sound sound;
 
-            default:
+        switch (id){
+            case Sound::GAME_IN:
+                sound.setBuffer(*m_SoundsBuffer.at(0));
+                break;
+            case Sound::GAME_START:
+                sound.setBuffer(*m_SoundsBuffer.at(1));
+                break;
+            case Sound::GAME_END:
+                sound.setBuffer(*m_SoundsBuffer.at(2));
+                break;
+            case Sound::BOMB_DROP:
+                sound.setBuffer(*m_SoundsBuffer.at(3));
+                break;
+            case Sound::BOMB_EXPLODE:
+                sound.setBuffer(*m_SoundsBuffer.at(4));
+                break;
+            case Sound::DEATH:
+                sound.setBuffer(*m_SoundsBuffer.at(5));
                 break;
         }
-        m_SoundPlayer.play();
+
+        sound.play();
     }
 
 } /* namespace gzzzt */

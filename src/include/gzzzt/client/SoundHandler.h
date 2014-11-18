@@ -22,24 +22,26 @@
 
 #include <SFML/Audio.hpp>
 
+#include <gzzzt/client/Resource.h>
+
 namespace gzzzt {
+
+    enum class Sound {
+        GAME_IN       = 0,
+        GAME_START    = 1,
+        GAME_END      = 2,
+        BOMB_DROP     = 3,
+        BOMB_EXPLODE  = 4,
+        DEATH         = 5,
+    };
 
     class SoundHandler {
     public:
-        SoundHandler();
-        virtual ~SoundHandler();
-        void play(int s);
-        
-        // Const var for sound played
-        static const int ENTERGAME = 0;
-        static const int STARTGAME = 1;
-        static const int ENDGAME = 2;
-        static const int BOMBDROP = 3;
-        static const int BOMBEXPLODE = 4;
-        static const int DEATH = 5;
+        SoundHandler(ResourceManager& manager);
+        void play(Sound id);
+
     private:
-        std::vector<sf::SoundBuffer> m_SoundsBuffer;
-        sf::Sound m_SoundPlayer;
+        std::vector<sf::SoundBuffer*> m_SoundsBuffer;
     };
 
 }
