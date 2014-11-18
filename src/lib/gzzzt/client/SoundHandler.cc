@@ -17,8 +17,6 @@
  */
 #include <gzzzt/client/SoundHandler.h>
 
-#include <gzzzt/shared/Log.h>
-
 namespace gzzzt {
 
     SoundHandler::SoundHandler(ResourceManager& manager) {

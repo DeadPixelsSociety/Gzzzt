@@ -19,7 +19,6 @@
 #include <SFML/Graphics.hpp>
 
 #include <gzzzt/client/SoundHandler.h>
-#include <gzzzt/shared/Log.h>
 
 #include "config.h"
 
@@ -29,8 +28,7 @@ int main() {
 
     sf::RenderWindow window(sf::VideoMode(500, 500), "Sounds prototype", sf::Style::Default, settings);
     window.setKeyRepeatEnabled(false);
-
-    gzzzt::Log::setLevel(gzzzt::Log::DEBUG);
+    
     gzzzt::ResourceManager manager;
 
     manager.addSearchDir(GAME_DATADIR);
@@ -54,7 +52,6 @@ int main() {
                         break;
                         
                     case sf::Keyboard::A:
-                        gzzzt::Log::info(gzzzt::Log::GENERAL, "Game In!\n");
                         handler.play(gzzzt::Sound::GAME_IN);
                         break;
 
