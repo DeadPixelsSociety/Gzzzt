@@ -36,10 +36,13 @@ namespace gzzzt {
 
         virtual void update(float dt) override;
         virtual void render(sf::RenderWindow& window) override;
+
+        void setStaticGID(const int index, unsigned const int value);
+        void setDynamicGID(const int index, unsigned const int value);
     private:
         void loadStaticMap();
         void drawGID(unsigned int x, unsigned int y, unsigned int GID, sf::RenderWindow& window);
-        
+
     public:
 
 

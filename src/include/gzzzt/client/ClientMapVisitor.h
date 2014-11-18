@@ -21,21 +21,22 @@
 #include <vector>
 #include <tmx/LayerVisitor.h>
 
+#include <gzzzt/client/ClientMap.h>
+
 namespace gzzzt {
 
     class ClientMapVisitor : public tmx::LayerVisitor {
     public:
         
         ClientMapVisitor() {};
-        ClientMapVisitor(unsigned int* m_staticGIDs, unsigned int* m_dynamicGIDs);
+        ClientMapVisitor(ClientMap* map);
         
         virtual void visitTileLayer(tmx::TileLayer& layer) override;
         virtual void visitObjectLayer(tmx::ObjectLayer& layer) override;
         virtual void visitImageLayer(tmx::ImageLayer& layer) override;
         
     private:
-        unsigned int* m_staticGIDs;
-        unsigned int* m_dynamicGIDs;
+        ClientMap* m_map;
     };
 
 }

@@ -25,9 +25,8 @@
 
 namespace gzzzt {
 
-    ClientMapVisitor::ClientMapVisitor(unsigned int* staticGIDs, unsigned int* dynamicGIDs) {
-        m_staticGIDs = staticGIDs;
-        m_dynamicGIDs = dynamicGIDs;
+    ClientMapVisitor::ClientMapVisitor(ClientMap* map) {
+        m_map = map;
     }
 
     void ClientMapVisitor::visitTileLayer(tmx::TileLayer& layer) {
@@ -37,7 +36,7 @@ namespace gzzzt {
             for (auto obj : layer) {
 
                 if (obj.getGID() != 0) {
-                    m_staticGIDs[index] = obj.getGID();
+                    m_map->setStaticGID(index, obj.getGID());
                 }
                 
                 index++;
@@ -47,7 +46,7 @@ namespace gzzzt {
 
             for (auto obj : layer) {
                 if (obj.getGID() != 0) {
-                    m_staticGIDs[index] = obj.getGID();
+                    m_map->setStaticGID(index, obj.getGID());
                 }
 
                 index++;
@@ -57,7 +56,7 @@ namespace gzzzt {
 
             for (auto obj : layer) {
                 if (obj.getGID() != 0) {
-                    m_dynamicGIDs[index] = obj.getGID();
+                    m_map->setDynamicGID(index, obj.getGID());
                 }
 
                 index++;

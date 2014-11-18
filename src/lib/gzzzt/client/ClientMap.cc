@@ -32,14 +32,14 @@ namespace gzzzt {
 
         m_staticGIDs = new unsigned int[m_width * m_height];
         m_dynamicGIDs = new unsigned int[m_width * m_height];
-        
+
         int mapLength = m_width * m_height;
-        
-        for(int i = 0; i < mapLength; ++i) {
+
+        for (int i = 0; i < mapLength; ++i) {
             m_dynamicGIDs[i] = 0;
             m_staticGIDs[i] = 0;
         }
-        
+
 #if _DEBUG_
         m_tileSetTexture = resourceManager.getTexture("../../src/share/gzzzt/maps/simple/tileset.png");
 #else
@@ -47,7 +47,7 @@ namespace gzzzt {
         assert(true);
 #endif
 
-        ClientMapVisitor visitor(m_staticGIDs, m_dynamicGIDs);
+        ClientMapVisitor visitor(this);
         m_tmxMap->visitLayers(visitor);
 
         loadStaticMap();
@@ -75,8 +75,9 @@ namespace gzzzt {
 
         for (int index = 0; index < mapLength; ++index) {
             int GID = m_dynamicGIDs[index];
-           
+
             if (GID != 0) {
+
                 unsigned int i = k % m_width;
                 unsigned int j = k / m_width;
 
@@ -84,7 +85,6 @@ namespace gzzzt {
 
                 unsigned int x = i * m_tileWidth;
                 unsigned int y = j * m_tileHeight;
-
                 drawGID(x, y, GID, window);
             }
 
@@ -144,9 +144,9 @@ namespace gzzzt {
     void ClientMap::drawGID(unsigned int x, unsigned int y, unsigned int GID, sf::RenderWindow & window) {
 
         tmx::TileSet *tileset = m_tmxMap->getTileSetFromGID(GID);
-        
+
         GID = GID - tileset->getFirstGID();
-        
+
         if (tileset->hasImage()) {
             const tmx::Image *image = tileset->getImage();
 
@@ -164,5 +164,13 @@ namespace gzzzt {
             sprite.setPosition(x, y);
             window.draw(sprite);
         }
+    }
+
+    void ClientMap::setStaticGID(const int index, unsigned const int value) {
+        m_staticGIDs[index] = value;
+    }
+
+    void ClientMap::setDynamicGID(const int index, unsigned const int value) {
+        m_dynamicGIDs[index] = value;
     }
 }
