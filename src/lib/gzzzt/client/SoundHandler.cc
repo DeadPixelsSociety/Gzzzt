@@ -17,23 +17,26 @@
  */
 #include <gzzzt/client/SoundHandler.h>
 
+#include <gzzzt/shared/Log.h>
+
 namespace gzzzt {
 
     SoundHandler::SoundHandler(ResourceManager& manager) {
         // Loading all sounds needed by the game
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/EnteringGame.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/StartGame.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/EndGame.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/BombDrop.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/BombExplode.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sound/Death.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/EnteringGame.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/StartGame.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/EndGame.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/BombDrop.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/BombExplode.ogg"));
+        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/Death.ogg"));
     }
 
     void SoundHandler::play(Sound id){
         sf::Sound sound;
 
-        switch (id){
+        switch (id) {
             case Sound::GAME_IN:
+                Log::info(Log::GENERAL, "Inside play!\n");
                 sound.setBuffer(*m_SoundsBuffer.at(0));
                 break;
             case Sound::GAME_START:
