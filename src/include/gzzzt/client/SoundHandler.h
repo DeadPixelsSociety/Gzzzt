@@ -42,7 +42,6 @@ namespace gzzzt {
 
     private:
         void load(ResourceManager& manager, const std::string& filename);
-        std::vector<sf::SoundBuffer*> m_SoundsBuffer;
         std::vector<sf::Sound> m_SoundPlayer;
     };
 

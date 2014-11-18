@@ -34,7 +34,6 @@ namespace gzzzt {
     void SoundHandler::play(Sound id){
         switch (id) {
             case Sound::GAME_IN:
-                Log::info(Log::GENERAL, "Inside play!\n");
                 m_SoundPlayer.at(0).play();
                 break;
             case Sound::GAME_START:
@@ -56,9 +55,8 @@ namespace gzzzt {
     }
     
     void SoundHandler::load(ResourceManager& manager, const std::string& filename){
-        auto soundBuffer = manager.getSoundBuffer(filename);
-        m_SoundsBuffer.push_back(soundBuffer);
         sf::Sound sound;
+        auto soundBuffer = manager.getSoundBuffer(filename);
         sound.setBuffer(*soundBuffer);
         m_SoundPlayer.push_back(sound);
     }
