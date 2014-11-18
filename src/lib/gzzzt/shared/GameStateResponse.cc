@@ -24,7 +24,7 @@ namespace gzzzt {
     : Response(ResponseType::GAME_STATE), m_pos(pos), m_speed(speed) {
     }
 
-    GameStateResponse::GameStateResponse(std::vector<uint8_t>* bytes)
+    GameStateResponse::GameStateResponse(std::vector<uint8_t>& bytes)
     : Response(bytes) {
         m_pos.x = Serializer::deserializeFloat(bytes);
         m_pos.y = Serializer::deserializeFloat(bytes);
@@ -40,7 +40,10 @@ namespace gzzzt {
         return m_speed;
     }
 
-    std::vector<uint8_t>* GameStateResponse::serialize(std::vector<uint8_t>* bytes) const {
+    std::vector<uint8_t> GameStateResponse::serialize() const {
+        std::vector<uint8_t> bytes, respBytes;
+        respBytes = Response::serialize();
+        bytes.insert(bytes.end(), respBytes.begin(), respBytes.end());
         Serializer::serializeFloat(bytes, m_pos.x);
         Serializer::serializeFloat(bytes, m_pos.y);
         Serializer::serializeFloat(bytes, m_speed.dx);

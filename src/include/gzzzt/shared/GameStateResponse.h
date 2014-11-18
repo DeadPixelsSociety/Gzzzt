@@ -27,12 +27,12 @@ namespace gzzzt {
     class GameStateResponse : public Response {
     public:
         explicit GameStateResponse(Position pos, Speed speed);
-        explicit GameStateResponse(std::vector<uint8_t>* bytes);
+        explicit GameStateResponse(std::vector<uint8_t>& bytes);
 
         Position getPosition() const;
         Speed getSpeed() const;
 
-        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
+        std::vector<uint8_t> serialize() const override;
 
     private:
         Position m_pos;

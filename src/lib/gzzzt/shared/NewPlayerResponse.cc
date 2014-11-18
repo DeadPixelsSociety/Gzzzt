@@ -24,11 +24,11 @@ namespace gzzzt {
     : Response(ResponseType::NEW_PLAYER_OK) {
     }
 
-    NewPlayerResponse::NewPlayerResponse(std::vector<uint8_t>* bytes)
+    NewPlayerResponse::NewPlayerResponse(std::vector<uint8_t>& bytes)
     : Response(bytes) {
     }
 
-    std::vector<uint8_t>* NewPlayerResponse::serialize(std::vector<uint8_t>* bytes) const {
-        return Response::serialize(bytes);
+    std::vector<uint8_t> NewPlayerResponse::serialize() const {
+        return Response::serialize();
     }
 }

@@ -25,7 +25,7 @@ namespace gzzzt {
 
     class Request : public gzzzt::Serializable {
     protected:
-        explicit Request(std::vector<uint8_t>* bytes);
+        explicit Request(std::vector<uint8_t>& bytes);
         explicit Request(RequestType type);
 
     public:
@@ -33,7 +33,7 @@ namespace gzzzt {
 
         RequestType getReqType() const;
 
-        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
+        std::vector<uint8_t> serialize() const override;
 
         static RequestType getType(std::vector<uint8_t> bytes);
 

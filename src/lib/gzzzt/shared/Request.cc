@@ -23,9 +23,9 @@ namespace gzzzt {
     Request::Request(RequestType type) : m_reqType(type) {
     }
 
-    Request::Request(std::vector<uint8_t>* bytes) {
-        m_reqType = static_cast<RequestType>(bytes->at(0));
-        bytes->erase(bytes->begin());
+    Request::Request(std::vector<uint8_t>& bytes) {
+        m_reqType = static_cast<RequestType>(bytes[0]);
+        bytes.erase(bytes.begin());
     }
 
     Request::~Request() {
@@ -35,11 +35,9 @@ namespace gzzzt {
         return m_reqType;
     }
 
-    std::vector<uint8_t>* Request::serialize(std::vector<uint8_t>* bytes) const {
-        if (bytes == nullptr) {
-            return nullptr;
-        }
-        bytes->push_back(static_cast<uint8_t> (m_reqType));
+    std::vector<uint8_t> Request::serialize() const {
+        std::vector<uint8_t> bytes;
+        bytes.push_back(static_cast<uint8_t>(m_reqType));
         return bytes;
     }
 

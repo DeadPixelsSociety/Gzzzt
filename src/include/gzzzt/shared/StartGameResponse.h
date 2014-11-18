@@ -18,24 +18,28 @@
 #ifndef START_GAME_RESPONSE_H
 #define START_GAME_RESPONSE_H
 
+#include <map>
 #include <string>
-#include <vector>
 
+#include <gzzzt/server/ServerPlayer.h>
 #include <gzzzt/shared/Response.h>
 
 namespace gzzzt {
     
     class StartGameResponse : public Response {
     public:
-        explicit StartGameResponse(const std::vector<std::string>& playersName);
-        explicit StartGameResponse(std::vector<uint8_t>* bytes);
+        explicit StartGameResponse(const std::map<uint8_t, std::string>& players, unsigned short serverPort);
+        explicit StartGameResponse(std::vector<uint8_t>& bytes);
 
-        std::vector<std::string> getPlayersName() const;
+        std::map<uint8_t, std::string> getPlayers() const;
+        unsigned short getServerPortUDP() const;
         
-        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
+        std::vector<uint8_t> serialize() const override;
 
     private:
-        std::vector<std::string> m_playersName;
+        std::map<uint8_t, std::string> m_players;
+        unsigned short m_serverPortUDP;
+        
     };
 }
 

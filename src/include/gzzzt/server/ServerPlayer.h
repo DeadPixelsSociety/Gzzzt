@@ -18,6 +18,7 @@
 #ifndef GZZZT_SERVER_PLAYER_H
 #define GZZZT_SERVER_PLAYER_H
 
+#include <cstdint>
 #include <string>
 
 #include <SFML/Network.hpp>
@@ -35,9 +36,11 @@ namespace gzzzt {
         unsigned short getTCPPort() const;
         unsigned short getUDPPort() const;
         std::string getName() const;
+        uint8_t getID() const;
         std::string toString() const;
 
         void setName(std::string name);
+        void setID(uint8_t id);
         void setUDPPort(unsigned short port);
         void closeTCPSocket();
 
@@ -49,6 +52,7 @@ namespace gzzzt {
         unsigned short m_TCPPort;
         unsigned short m_UDPPort;
         std::string m_name;
+        uint8_t m_id;
     };
 
 }

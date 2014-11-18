@@ -46,9 +46,17 @@ namespace gzzzt {
     std::string ServerPlayer::getName() const {
         return m_name;
     }
+    
+    uint8_t ServerPlayer::getID() const {
+        return m_id;
+    }
 
     void ServerPlayer::setName(std::string name) {
         m_name = name;
+    }
+    
+    void ServerPlayer::setID(uint8_t id) {
+        m_id = id;
     }
     
     void ServerPlayer::setUDPPort(unsigned short port) {

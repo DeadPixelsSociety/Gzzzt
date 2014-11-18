@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
     }
 
     unsigned short port = std::strtoul(argv[1], nullptr, 10);
+    unsigned short udpPort = std::strtoul(argv[2], nullptr, 10);
     sf::SocketSelector selector;
 
     // initialize the listener
@@ -109,7 +110,7 @@ int main(int argc, char** argv) {
 
     // wait for players
     std::vector<gzzzt::ServerPlayer> players;
-    int nbPlayersRegistered = 0;
+    uint8_t nbPlayersRegistered = 0;
     while (should_continue && nbPlayersRegistered < 2) {
         if (selector.wait()) {
             sf::TcpSocket* playerSocket;
@@ -147,20 +148,21 @@ int main(int argc, char** argv) {
                             gzzzt::Log::error(gzzzt::Log::NETWORK, "Bad type of message from %s\n", player.toString().c_str());
                             break;
                         }
-                        playerReq = new gzzzt::NewPlayerRequest(&bytes);
+                        playerReq = new gzzzt::NewPlayerRequest(bytes);
                         if (isDuplicatedName(players, playerReq->getPlayerName())) {
                             gzzzt::Log::info(gzzzt::Log::NETWORK,
                                     "Name \"%s\" already taken. %s needs to choose another one\n",
                                     playerReq->getPlayerName().c_str(),
                                     player.toString().c_str());
                             // Send an error to the client 
-                            gzzzt::ErrorResponse("Name already taken").serialize(&bytes);
+                            bytes = gzzzt::ErrorResponse("Name already taken").serialize();
                             playerSocket->send(&bytes[0], bytes.size());
                         } else {
                             player.setName(playerReq->getPlayerName());
+                            player.setID(nbPlayersRegistered); // Use the nb of players registered as id
                             nbPlayersRegistered++;
                             gzzzt::Log::info(gzzzt::Log::NETWORK, "Client chose a name : %s\n", player.toString().c_str());
-                            gzzzt::NewPlayerResponse().serialize(&bytes);
+                            bytes = gzzzt::NewPlayerResponse().serialize();
                             playerSocket->send(&bytes[0], bytes.size());
                         }
                         delete playerReq;
@@ -183,13 +185,13 @@ int main(int argc, char** argv) {
         }
     }
 
-    // Broadcast the name of the players
-    std::vector<uint8_t> bytes;
-    std::vector<std::string> playersName;
-    for (auto player : players) {
-        playersName.push_back(player.getName());
+    // Broadcast the players list
+    std::map<uint8_t, std::string> playersData;
+    for (auto& player : players) {
+        // TODO: gzzzt::Log::debug(gzzzt::Log::NETWORK, "id = %d, name = %s\n", player.getID(), player.getName().c_str());
+        playersData.insert(std::pair<uint8_t, std::string>(player.getID(), player.getName()));
     }
-    gzzzt::StartGameResponse(playersName).serialize(&bytes);
+    std::vector<uint8_t> bytes = gzzzt::StartGameResponse(playersData, udpPort).serialize();
     for (auto player : players) {
         if (player.getTCPSocket()->send(&bytes[0], bytes.size()) != sf::Socket::Done) {
             gzzzt::Log::fatal(gzzzt::Log::NETWORK, "Error while broadcasting to the players\n");
@@ -197,7 +199,6 @@ int main(int argc, char** argv) {
     }
 
     // Initialize the UDP sockets
-    unsigned short udpPort = std::strtoul(argv[2], nullptr, 10);
     sf::UdpSocket udpSocket;
     if (udpSocket.bind(udpPort) != sf::Socket::Done) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind UDP socket to port %d\n", port);
@@ -223,12 +224,6 @@ int main(int argc, char** argv) {
     }
     udpSocket.unbind();
 
-
-    //    sf::UdpSocket udpSocket;
-    //    if (udpSocket.bind(port) != sf::Socket::Done) {
-    //        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind socket to port %d\n", port);
-    //        return 1;
-    //    }
     //
     //    // launch the threads
     //    sf::Thread receiver(&receiveMsg, std::ref(udpSocket));

@@ -25,7 +25,7 @@ namespace gzzzt {
 
     class Serializable {
     public:
-        virtual std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const = 0;
+        virtual std::vector<uint8_t> serialize() const = 0;
     };
 }
 

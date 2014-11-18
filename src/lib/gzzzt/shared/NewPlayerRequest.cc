@@ -25,7 +25,7 @@ namespace gzzzt {
     m_playerName(playerName) {
     }
 
-    NewPlayerRequest::NewPlayerRequest(std::vector<uint8_t>* bytes)
+    NewPlayerRequest::NewPlayerRequest(std::vector<uint8_t>& bytes)
     : Request(bytes) {
         m_playerName = Serializer::deserializeString(bytes);
     }
@@ -34,10 +34,10 @@ namespace gzzzt {
         return m_playerName;
     }
 
-    std::vector<uint8_t>* NewPlayerRequest::serialize(std::vector<uint8_t>* bytes) const {
-        if (Request::serialize(bytes) == nullptr) {
-            return nullptr;
-        }
+    std::vector<uint8_t> NewPlayerRequest::serialize() const {
+        std::vector<uint8_t> bytes, reqBytes;
+        reqBytes = Request::serialize();
+        bytes.insert(bytes.end(), reqBytes.begin(), reqBytes.end());
         Serializer::serializeString(bytes, m_playerName);
         return bytes;
     }

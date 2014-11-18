@@ -25,9 +25,9 @@ namespace gzzzt {
     class NewPlayerResponse : public Response {
     public:
         explicit NewPlayerResponse();
-        explicit NewPlayerResponse(std::vector<uint8_t>* bytes);
+        explicit NewPlayerResponse(std::vector<uint8_t>& bytes);
 
-        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
+        std::vector<uint8_t> serialize() const override;
     };
 }
 

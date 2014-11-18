@@ -26,14 +26,17 @@ namespace gzzzt {
 
     class Serializer {
     public:
-        static std::vector<uint8_t>* serializeFloat(std::vector<uint8_t>* bytes, float f);
-        static std::vector<uint8_t>* serializeInt(std::vector<uint8_t>* bytes, int i);
-        static std::vector<uint8_t>* serializeString(std::vector<uint8_t>* bytes, std::string s);
+        static void serializeFloat(std::vector<uint8_t>& bytes, float f);
+        static void serializeInt(std::vector<uint8_t>& bytes, int i);
+        static void serializeInt8(std::vector<uint8_t>& bytes, uint8_t i);
+        static void serializeUShort(std::vector<uint8_t>& bytes, unsigned short s);
+        static void serializeString(std::vector<uint8_t>& bytes, std::string s);
 
-        static float deserializeFloat(std::vector<uint8_t>* bytes);
-        static int deserializeInt(std::vector<uint8_t>* bytes);
-        static std::string deserializeString(std::vector<uint8_t>* bytes);
-        static std::string deserializeString(std::vector<uint8_t>* bytes, int length);
+        static float deserializeFloat(std::vector<uint8_t>& bytes);
+        static int deserializeInt(std::vector<uint8_t>& bytes);
+        static uint8_t deserializeInt8(std::vector<uint8_t>& bytes);
+        static unsigned short deserializeUShort(std::vector<uint8_t>& bytes);
+        static std::string deserializeString(std::vector<uint8_t>& bytes);
     };
 }
 

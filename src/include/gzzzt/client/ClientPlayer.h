@@ -18,16 +18,26 @@
 #ifndef GZZZT_CLIENT_PLAYER_H
 #define GZZZT_CLIENT_PLAYER_H
 
+#include <cstdint>
+#include <string>
+
 #include <gzzzt/client/ClientEntity.h>
 
 namespace gzzzt {
 
     class ClientPlayer : public ClientEntity {
     public:
-
+        explicit ClientPlayer(std::string name, uint8_t id);
+        
+        std::string getName() const;
+        uint8_t getID() const;
+        
         virtual void update(float dt) override;
         virtual void render(sf::RenderWindow& window) override;
 
+    private:
+        std::string m_name;
+        uint8_t m_id;
     };
 
 }

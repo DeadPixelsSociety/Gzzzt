@@ -25,7 +25,8 @@ namespace gzzzt {
     m_reason(reason) {
     }
 
-    ErrorResponse::ErrorResponse(std::vector<uint8_t>* bytes) : Response(bytes) {
+    ErrorResponse::ErrorResponse(std::vector<uint8_t>& bytes)
+    : Response(bytes) {
         m_reason = Serializer::deserializeString(bytes);
     }
 
@@ -33,10 +34,10 @@ namespace gzzzt {
         return m_reason;
     }
 
-    std::vector<uint8_t>* ErrorResponse::serialize(std::vector<uint8_t>* bytes) const {
-        if (Response::serialize(bytes) == nullptr) {
-            return nullptr;
-        }
+    std::vector<uint8_t> ErrorResponse::serialize() const {
+        std::vector<uint8_t> bytes, respBytes;
+        respBytes = Response::serialize();
+        bytes.insert(bytes.end(), respBytes.begin(), respBytes.end());
         Serializer::serializeString(bytes, m_reason);
         return bytes;
     }

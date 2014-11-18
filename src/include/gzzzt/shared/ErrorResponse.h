@@ -27,11 +27,11 @@ namespace gzzzt {
     class ErrorResponse : public Response {
     public:
         explicit ErrorResponse(std::string reason);
-        explicit ErrorResponse(std::vector<uint8_t>* bytes);
+        explicit ErrorResponse(std::vector<uint8_t>& bytes);
 
         std::string getReason() const;
         
-        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
+        std::vector<uint8_t> serialize() const override;
 
     private:
         std::string m_reason;

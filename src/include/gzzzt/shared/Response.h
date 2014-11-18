@@ -25,13 +25,13 @@ namespace gzzzt {
 
     class Response : public Serializable {
     protected:
-        explicit Response(std::vector<uint8_t>* bytes);
+        explicit Response(std::vector<uint8_t>& bytes);
         explicit Response(ResponseType respType);
 
     public:
         ResponseType getRespType() const;
 
-        std::vector<uint8_t>* serialize(std::vector<uint8_t>* bytes) const override;
+        std::vector<uint8_t> serialize() const override;
 
         static ResponseType getType(std::vector<uint8_t> bytes);
 

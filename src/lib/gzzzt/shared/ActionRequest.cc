@@ -25,20 +25,20 @@ namespace gzzzt {
     m_type(type) {
     }
 
-    ActionRequest::ActionRequest(std::vector<uint8_t>* bytes) : Request(bytes) {
-        m_type = static_cast<ActionType>(bytes->at(0));
-        bytes->erase(bytes->begin());
+    ActionRequest::ActionRequest(std::vector<uint8_t>& bytes) : Request(bytes) {
+        m_type = static_cast<ActionType>(bytes[0]);
+        bytes.erase(bytes.begin());
     }
 
     ActionType ActionRequest::getType() const {
         return m_type;
     }
 
-    std::vector<uint8_t>* ActionRequest::serialize(std::vector<uint8_t>* bytes) const {
-        if (Request::serialize(bytes) == nullptr) {
-            return nullptr;
-        }
-        bytes->push_back(static_cast<uint8_t> (m_type));
+    std::vector<uint8_t> ActionRequest::serialize() const {
+        std::vector<uint8_t> bytes, reqBytes;
+        reqBytes = Request::serialize();
+        bytes.insert(bytes.end(), reqBytes.begin(), reqBytes.end());
+        bytes.push_back(static_cast<uint8_t>(m_type));
         return bytes;
     }
 }

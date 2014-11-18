@@ -23,20 +23,18 @@ namespace gzzzt {
     Response::Response(ResponseType type) : m_respType(type) {
     }
 
-    Response::Response(std::vector<uint8_t>* bytes) {
-        m_respType = static_cast<ResponseType>(bytes->at(0));
-        bytes->erase(bytes->begin());
+    Response::Response(std::vector<uint8_t>& bytes) {
+        m_respType = static_cast<ResponseType>(bytes[0]);
+        bytes.erase(bytes.begin());
     }
 
     ResponseType Response::getRespType() const {
         return m_respType;
     }
 
-    std::vector<uint8_t>* Response::serialize(std::vector<uint8_t>* bytes) const {
-        if (bytes == nullptr) {
-            return nullptr;
-        }
-        bytes->push_back(static_cast<uint8_t> (m_respType));
+    std::vector<uint8_t> Response::serialize() const {
+        std::vector<uint8_t> bytes;
+        bytes.push_back(static_cast<uint8_t>(m_respType));
         return bytes;
     }
 
