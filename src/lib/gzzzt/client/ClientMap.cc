@@ -30,28 +30,83 @@ namespace gzzzt {
         m_width = m_tmxMap->getWidth();
         m_height = m_tmxMap->getHeight();
 
+        m_staticGIDs = new unsigned int[m_width * m_height];
+        m_dynamicGIDs = new unsigned int[m_width * m_height];
+        
+        int mapLength = m_width * m_height;
+        
+        for(int i = 0; i < mapLength; ++i) {
+            m_dynamicGIDs[i] = 0;
+            m_staticGIDs[i] = 0;
+        }
+        
 #if _DEBUG_
         m_tileSetTexture = resourceManager.getTexture("../../src/share/gzzzt/maps/simple/tileset.png");
 #else
+        //TODO
         assert(true);
 #endif
 
-        ClientMapVisitor visitor(&m_GID);
+        ClientMapVisitor visitor(m_staticGIDs, m_dynamicGIDs);
         m_tmxMap->visitLayers(visitor);
+
+        loadStaticMap();
     }
 
     ClientMap::~ClientMap() {
         delete m_tmxMap;
+        delete[] m_staticGIDs;
+        delete[] m_dynamicGIDs;
     }
 
     void ClientMap::update(float dt) {
         // TODO
     }
 
-    void ClientMap::render(sf::RenderWindow& window) {
-        unsigned int k = 0;
+    void ClientMap::render(sf::RenderWindow & window) {
 
-        for (int GID : m_GID) {
+        //static blocks
+        window.draw(m_vertices, m_tileSetTexture);
+
+        //dynamic blocks
+        int k = 0;
+
+        int mapLength = m_width * m_height;
+
+        for (int index = 0; index < mapLength; ++index) {
+            int GID = m_dynamicGIDs[index];
+           
+            if (GID != 0) {
+                unsigned int i = k % m_width;
+                unsigned int j = k / m_width;
+
+                assert(j < m_height);
+
+                unsigned int x = i * m_tileWidth;
+                unsigned int y = j * m_tileHeight;
+
+                drawGID(x, y, GID, window);
+            }
+
+            k++;
+        }
+    }
+
+    void ClientMap::loadStaticMap() {
+        m_vertices.setPrimitiveType(sf::Quads);
+        m_vertices.resize(m_width * m_height * 4);
+
+        int k = 0;
+
+        int mapLength = m_width * m_height;
+
+        for (int index = 0; index < mapLength; ++index) {
+            int GID = m_staticGIDs[index];
+
+            if (GID == 0) {
+                continue;
+            }
+
             unsigned int i = k % m_width;
             unsigned int j = k / m_width;
 
@@ -60,15 +115,38 @@ namespace gzzzt {
             unsigned int x = i * m_tileWidth;
             unsigned int y = j * m_tileHeight;
 
-            drawGID(x, y, GID, window);
+            sf::Vertex* quad = &m_vertices[(i + j * m_width) * 4];
+
+            quad[0].position = sf::Vector2f(x, y);
+            quad[1].position = sf::Vector2f(x + m_tileWidth, y);
+            quad[2].position = sf::Vector2f(x + m_tileWidth, y + m_tileHeight);
+            quad[3].position = sf::Vector2f(x, y + m_tileHeight);
+
+            tmx::TileSet *tileset = m_tmxMap->getTileSetFromGID(GID);
+            GID = GID - tileset->getFirstGID();
+
+            if (tileset->hasImage()) {
+                const tmx::Image *image = tileset->getImage();
+
+                tmx::Size size = image->getSize();
+                tmx::Rect rect = tileset->getCoords(GID, size);
+
+                quad[0].texCoords = sf::Vector2f(rect.x, rect.y);
+                quad[1].texCoords = sf::Vector2f(rect.x + rect.width, rect.y);
+                quad[2].texCoords = sf::Vector2f(rect.x + rect.width, rect.y + rect.height);
+                quad[3].texCoords = sf::Vector2f(rect.x, rect.y + rect.height);
+            }
+
             k++;
         }
     }
 
-    void ClientMap::drawGID(unsigned int x, unsigned int y, unsigned int GID, sf::RenderWindow& window) {
-        tmx::TileSet *tileset = m_tmxMap->getTileSetFromGID(GID);
-        GID = GID - tileset->getFirstGID();
+    void ClientMap::drawGID(unsigned int x, unsigned int y, unsigned int GID, sf::RenderWindow & window) {
 
+        tmx::TileSet *tileset = m_tmxMap->getTileSetFromGID(GID);
+        
+        GID = GID - tileset->getFirstGID();
+        
         if (tileset->hasImage()) {
             const tmx::Image *image = tileset->getImage();
 

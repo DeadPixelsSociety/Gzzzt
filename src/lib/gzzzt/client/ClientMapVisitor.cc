@@ -25,25 +25,29 @@
 
 namespace gzzzt {
 
-    ClientMapVisitor::ClientMapVisitor(std::vector<unsigned int>* GID) {
-        m_GID = GID;
+    ClientMapVisitor::ClientMapVisitor(unsigned int* staticGIDs, unsigned int* dynamicGIDs) {
+        m_staticGIDs = staticGIDs;
+        m_dynamicGIDs = dynamicGIDs;
     }
 
     void ClientMapVisitor::visitTileLayer(tmx::TileLayer& layer) {
         
         if (strcmp(layer.getName().c_str(), "Background") == 0) {
+            int index = 0;
             for (auto obj : layer) {
 
                 if (obj.getGID() != 0) {
-                    m_GID->push_back(obj.getGID());
+                    m_staticGIDs[index] = obj.getGID();
                 }
+                
+                index++;
             }
         } else if (strcmp(layer.getName().c_str(), "Adamantium") == 0) {
             int index = 0;
 
             for (auto obj : layer) {
                 if (obj.getGID() != 0) {
-                    m_GID->at(index) = obj.getGID();
+                    m_staticGIDs[index] = obj.getGID();
                 }
 
                 index++;
@@ -53,7 +57,7 @@ namespace gzzzt {
 
             for (auto obj : layer) {
                 if (obj.getGID() != 0) {
-                    m_GID->at(index) = obj.getGID();
+                    m_dynamicGIDs[index] = obj.getGID();
                 }
 
                 index++;

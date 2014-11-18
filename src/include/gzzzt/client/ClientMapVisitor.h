@@ -27,14 +27,15 @@ namespace gzzzt {
     public:
         
         ClientMapVisitor() {};
-        ClientMapVisitor(std::vector<unsigned int>* GID);
+        ClientMapVisitor(unsigned int* m_staticGIDs, unsigned int* m_dynamicGIDs);
         
         virtual void visitTileLayer(tmx::TileLayer& layer) override;
         virtual void visitObjectLayer(tmx::ObjectLayer& layer) override;
         virtual void visitImageLayer(tmx::ImageLayer& layer) override;
         
     private:
-        std::vector<unsigned int>* m_GID;
+        unsigned int* m_staticGIDs;
+        unsigned int* m_dynamicGIDs;
     };
 
 }
