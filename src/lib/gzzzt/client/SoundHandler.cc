@@ -23,40 +23,44 @@ namespace gzzzt {
 
     SoundHandler::SoundHandler(ResourceManager& manager) {
         // Loading all sounds needed by the game
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/EnteringGame.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/StartGame.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/EndGame.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/BombDrop.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/BombExplode.ogg"));
-        m_SoundsBuffer.push_back(manager.getSoundBuffer("sounds/Death.ogg"));
+        load(manager, "sounds/EnteringGame.ogg");
+        load(manager, "sounds/StartGame.ogg");
+        load(manager, "sounds/EndGame.ogg");
+        load(manager, "sounds/BombDrop.ogg");
+        load(manager, "sounds/BombExplode.ogg");
+        load(manager, "sounds/Death.ogg");
     }
 
     void SoundHandler::play(Sound id){
-        sf::Sound sound;
-
         switch (id) {
             case Sound::GAME_IN:
                 Log::info(Log::GENERAL, "Inside play!\n");
-                sound.setBuffer(*m_SoundsBuffer.at(0));
+                m_SoundPlayer.at(0).play();
                 break;
             case Sound::GAME_START:
-                sound.setBuffer(*m_SoundsBuffer.at(1));
+                m_SoundPlayer.at(1).play();
                 break;
             case Sound::GAME_END:
-                sound.setBuffer(*m_SoundsBuffer.at(2));
+                m_SoundPlayer.at(2).play();
                 break;
             case Sound::BOMB_DROP:
-                sound.setBuffer(*m_SoundsBuffer.at(3));
+                m_SoundPlayer.at(3).play();
                 break;
             case Sound::BOMB_EXPLODE:
-                sound.setBuffer(*m_SoundsBuffer.at(4));
+                m_SoundPlayer.at(4).play();
                 break;
             case Sound::DEATH:
-                sound.setBuffer(*m_SoundsBuffer.at(5));
+                m_SoundPlayer.at(5).play();
                 break;
         }
-
-        sound.play();
+    }
+    
+    void SoundHandler::load(ResourceManager& manager, const std::string& filename){
+        auto soundBuffer = manager.getSoundBuffer(filename);
+        m_SoundsBuffer.push_back(soundBuffer);
+        sf::Sound sound;
+        sound.setBuffer(*soundBuffer);
+        m_SoundPlayer.push_back(sound);
     }
 
 } /* namespace gzzzt */

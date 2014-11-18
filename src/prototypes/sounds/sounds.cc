@@ -49,6 +49,10 @@ int main() {
             } else if (event.type == sf::Event::KeyPressed) {
 
                 switch (event.key.code) {
+                    case sf::Keyboard::Escape:
+                        window.close();
+                        break;
+                        
                     case sf::Keyboard::A:
                         gzzzt::Log::info(gzzzt::Log::GENERAL, "Game In!\n");
                         handler.play(gzzzt::Sound::GAME_IN);
