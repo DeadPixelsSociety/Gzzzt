@@ -90,7 +90,7 @@ namespace gzzzt {
     }
 
     uint8_t Serializer::deserializeInt8(std::vector<uint8_t>& bytes) {
-        uint8_t integer = bytes.front();
+        uint8_t integer = bytes[0];
         bytes.erase(bytes.begin(), bytes.begin() + 1);
         return integer;
     }

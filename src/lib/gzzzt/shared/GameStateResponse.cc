@@ -41,9 +41,7 @@ namespace gzzzt {
     }
 
     std::vector<uint8_t> GameStateResponse::serialize() const {
-        std::vector<uint8_t> bytes, respBytes;
-        respBytes = Response::serialize();
-        bytes.insert(bytes.end(), respBytes.begin(), respBytes.end());
+        std::vector<uint8_t> bytes = Response::serialize();
         Serializer::serializeFloat(bytes, m_pos.x);
         Serializer::serializeFloat(bytes, m_pos.y);
         Serializer::serializeFloat(bytes, m_speed.dx);

@@ -35,9 +35,7 @@ namespace gzzzt {
     }
 
     std::vector<uint8_t> ErrorResponse::serialize() const {
-        std::vector<uint8_t> bytes, respBytes;
-        respBytes = Response::serialize();
-        bytes.insert(bytes.end(), respBytes.begin(), respBytes.end());
+        std::vector<uint8_t> bytes = Response::serialize();
         Serializer::serializeString(bytes, m_reason);
         return bytes;
     }

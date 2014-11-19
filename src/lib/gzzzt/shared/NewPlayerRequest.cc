@@ -35,9 +35,7 @@ namespace gzzzt {
     }
 
     std::vector<uint8_t> NewPlayerRequest::serialize() const {
-        std::vector<uint8_t> bytes, reqBytes;
-        reqBytes = Request::serialize();
-        bytes.insert(bytes.end(), reqBytes.begin(), reqBytes.end());
+        std::vector<uint8_t> bytes = Request::serialize();
         Serializer::serializeString(bytes, m_playerName);
         return bytes;
     }

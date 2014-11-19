@@ -24,6 +24,7 @@
 #include <gzzzt/client/ClientPlayer.h>
 #include <gzzzt/client/World.h>
 #include <gzzzt/shared/ErrorResponse.h>
+#include <gzzzt/shared/IdentifyRequest.h>
 #include <gzzzt/shared/Log.h>
 #include <gzzzt/shared/NewPlayerRequest.h>
 #include <gzzzt/shared/StartGameResponse.h>
@@ -97,9 +98,13 @@ int main(int argc, char** argv) {
     gzzzt::StartGameResponse resp(bytes);
     std::map<uint8_t, std::string> playersData = resp.getPlayers();
     gzzzt::Log::info(gzzzt::Log::GENERAL, "List of players :\n");
+    uint8_t playerId = 0;
     for (auto p : playersData) {
         players.push_back(gzzzt::ClientPlayer(p.second, p.first));
         gzzzt::Log::info(gzzzt::Log::GENERAL, "- %s (%d)\n", p.second.c_str(), p.first);
+        if (p.second.compare(playerName) == 0) {
+            playerId = p.first;
+        }
     }
     
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the game...\n");
@@ -107,12 +112,20 @@ int main(int argc, char** argv) {
     // Initialize the UDP socket
     unsigned short serverPortUDP = resp.getServerPortUDP();
     sf::UdpSocket udpSocket;
-    const char* s = "abc";
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "Port = %d\n", serverPortUDP);
-    if (udpSocket.send(s, 3, serverAddress, serverPortUDP) != sf::Socket::Status::Done) {
+    bytes = gzzzt::IdentifyRequest(playerId).serialize();
+    if (udpSocket.send(&bytes[0], bytes.size(), serverAddress, serverPortUDP) != sf::Socket::Status::Done) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
         return 5;
     }
+    bytes.assign(64, 0);
+    std::size_t sizeRecv;
+    sf::IpAddress tmp1;
+    if (udpSocket.receive(&bytes[0], bytes.size(), sizeRecv, tmp1, serverPortUDP) != sf::Socket::Status::Done) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not recv data\n");
+        return 5;
+    }
+    bytes.resize(sizeRecv);
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "RECV : %d from %s, %d\n", sizeRecv, tmp1.toString().c_str(), serverPortUDP);
 
     // initialize
     gzzzt::World world;

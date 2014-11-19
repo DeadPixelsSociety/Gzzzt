@@ -46,9 +46,7 @@ namespace gzzzt {
     }
 
     std::vector<uint8_t> StartGameResponse::serialize() const {
-        std::vector<uint8_t> bytes, respBytes;
-        respBytes = Response::serialize();
-        bytes.insert(bytes.end(), respBytes.begin(), respBytes.end());
+        std::vector<uint8_t> bytes = Response::serialize();
         gzzzt::Serializer::serializeInt(bytes, static_cast<int> (m_players.size()));
         for (auto player : m_players) {
             gzzzt::Serializer::serializeInt8(bytes, player.first);

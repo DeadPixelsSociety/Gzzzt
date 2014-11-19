@@ -15,28 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/ActionRequest.h>
+#include <gzzzt/shared/IdentifyRequest.h>
 #include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
 
-    ActionRequest::ActionRequest(ActionType type)
+    IdentifyRequest::IdentifyRequest(uint8_t id)
     : Request(RequestType::ACTION),
-    m_type(type) {
+    m_id(id) {
     }
 
-    ActionRequest::ActionRequest(std::vector<uint8_t>& bytes) : Request(bytes) {
-        m_type = static_cast<ActionType>(bytes[0]);
-        bytes.erase(bytes.begin());
+    IdentifyRequest::IdentifyRequest(std::vector<uint8_t>& bytes) : Request(bytes) {
+        m_id = Serializer::deserializeInt8(bytes);
     }
 
-    ActionType ActionRequest::getType() const {
-        return m_type;
+    uint8_t IdentifyRequest::getID() const {
+        return m_id;
     }
 
-    std::vector<uint8_t> ActionRequest::serialize() const {
+    std::vector<uint8_t> IdentifyRequest::serialize() const {
         std::vector<uint8_t> bytes = Request::serialize();
-        bytes.push_back(static_cast<uint8_t>(m_type));
+        bytes.push_back(m_id);
         return bytes;
     }
 }
