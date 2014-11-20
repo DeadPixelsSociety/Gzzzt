@@ -40,7 +40,7 @@ namespace gzzzt {
     std::map<uint8_t, std::string> StartGameResponse::getPlayers() const {
         return m_players;
     }
-    
+
     unsigned short StartGameResponse::getServerPortUDP() const {
         return m_serverPortUDP;
     }

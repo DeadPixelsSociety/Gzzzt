@@ -201,41 +201,41 @@ int main(int argc, char** argv) {
     }
 
     // Initialize the UDP sockets
-    sf::UdpSocket udpSocket;
-    if (udpSocket.bind(udpPort) != sf::Socket::Done) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind UDP socket to port %d\n", port);
-        return 4;
-    }
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "UDP socket created\n");
-    std::size_t received;
-    sf::IpAddress sender;
-    unsigned short senderPort;
-    selector.add(udpSocket);
-    udpSocket.setBlocking(false);
-    bytes.assign(64, 0);
-    while (should_continue) {
-        if (selector.wait()) {
-            if (selector.isReady(udpSocket)) {
-                if (udpSocket.receive(&bytes[0], bytes.size(), received, sender, senderPort) != sf::Socket::Status::Done) {
-                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not receive data\n");
-                    return 5;
-                }
-                uint8_t id = gzzzt::IdentifyRequest(bytes).getID();
-                gzzzt::ServerPlayer* player = players.getById(id);
-                player->setUDPPort(senderPort);
-                gzzzt::Log::info(gzzzt::Log::NETWORK, "%s(%d) is on port %d\n", player->getName().c_str(), id, senderPort);
-
-                // TODO: remove this
-                // Send response
-                if (udpSocket.send(player->getName().data(), player->getName().size(), player->getAddress(), senderPort) != sf::Socket::Status::Done) {
-                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
-                    return 5;
-                }
-            }
-        }
-        bytes.assign(64, 0);
-    }
-    udpSocket.unbind();
+//    sf::UdpSocket udpSocket;
+//    if (udpSocket.bind(udpPort) != sf::Socket::Done) {
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind UDP socket to port %d\n", port);
+//        return 4;
+//    }
+//    gzzzt::Log::info(gzzzt::Log::NETWORK, "UDP socket created\n");
+//    std::size_t received;
+//    sf::IpAddress sender;
+//    unsigned short senderPort;
+//    selector.add(udpSocket);
+//    udpSocket.setBlocking(false);
+//    bytes.assign(64, 0);
+//    while (should_continue) {
+//        if (selector.wait()) {
+//            if (selector.isReady(udpSocket)) {
+//                if (udpSocket.receive(&bytes[0], bytes.size(), received, sender, senderPort) != sf::Socket::Status::Done) {
+//                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not receive data\n");
+//                    return 5;
+//                }
+//                uint8_t id = gzzzt::IdentifyRequest(bytes).getID();
+//                gzzzt::ServerPlayer* player = players.getById(id);
+//                player->setUDPPort(senderPort);
+//                gzzzt::Log::info(gzzzt::Log::NETWORK, "%s(%d) is on port %d\n", player->getName().c_str(), id, senderPort);
+//
+//                // TODO: remove this
+//                // Send response
+//                if (udpSocket.send(player->getName().data(), player->getName().size(), player->getAddress(), senderPort) != sf::Socket::Status::Done) {
+//                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
+//                    return 5;
+//                }
+//            }
+//        }
+//        bytes.assign(64, 0);
+//    }
+//    udpSocket.unbind();
 
     //
     //    // launch the threads
@@ -264,6 +264,7 @@ int main(int argc, char** argv) {
         game.update(elapsed.asSeconds());
     }
 
+    tcpListener.close();
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the server...\n");
 
     //    receiver.wait();

@@ -19,13 +19,16 @@
 #include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
-
+ 
     Response::Response(ResponseType type) : m_respType(type) {
     }
 
     Response::Response(std::vector<uint8_t>& bytes) {
         m_respType = static_cast<ResponseType>(bytes[0]);
         bytes.erase(bytes.begin());
+    }
+    
+    Response::~Response() {
     }
 
     ResponseType Response::getRespType() const {

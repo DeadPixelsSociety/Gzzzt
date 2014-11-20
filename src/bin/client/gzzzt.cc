@@ -17,11 +17,13 @@
  */
 #include <iostream>
 #include <cstdlib>
+#include <list>
 
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 
 #include <gzzzt/client/ClientPlayer.h>
+#include <gzzzt/client/ClientTCPManager.h>
 #include <gzzzt/client/World.h>
 #include <gzzzt/shared/ErrorResponse.h>
 #include <gzzzt/shared/IdentifyRequest.h>
@@ -51,81 +53,121 @@ int main(int argc, char** argv) {
     }
     std::string serverAddress = serverURL.substr(0, pos);
     unsigned short serverPortTCP = std::strtoul(serverURL.substr(pos + 1).c_str(), nullptr, 10);
+    gzzzt::ClientTCPManager tcpManager(serverAddress, serverPortTCP);
     gzzzt::Log::info(gzzzt::Log::NETWORK, "Connecting to %s on port %d...\n", serverAddress.c_str(), serverPortTCP);
-    sf::TcpSocket tcpSocket;
-    if (tcpSocket.connect(serverAddress, serverPortTCP) != sf::Socket::Done) {
+    std::string error;
+    if (!tcpManager.connect()) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not connect to %s on port %d\n", serverAddress.c_str(), serverPortTCP);
         return 3;
     }
+    
     // Send a request to be a player
-    gzzzt::NewPlayerRequest playerReq(playerName);
-    std::vector<uint8_t> bytes = playerReq.serialize();
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to \"%s:%d\" using port %d...\n", serverAddress.c_str(), serverPortTCP, tcpSocket.getLocalPort());
-    if (tcpSocket.send(&bytes[0], bytes.size()) != sf::Socket::Done) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data to server\n");
-        tcpSocket.disconnect();
-        return 5;
+    if (!tcpManager.declareAsNewPlayer(playerName, error)) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "%s\n", error.c_str());
+        tcpManager.disconnect();
+        return 3;
     }
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Waiting for the response...\n");
-
-    // Wait for the response
-    std::size_t nbBytesRead;
-    bytes.assign(64, 0);
-    if (tcpSocket.receive(&bytes[0], bytes.size(), nbBytesRead) != sf::Socket::Done) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not received the server's response\n");
-        tcpSocket.disconnect();
-        return 6;
-    }
-    bytes.resize(nbBytesRead);
-    gzzzt::ResponseType respType = gzzzt::Response::getType(bytes);
-    if (respType == gzzzt::ResponseType::ERROR) {
-        gzzzt::ErrorResponse err(bytes);
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Response: Error: %s\n", err.getReason().c_str());
-        tcpSocket.disconnect();
-        return 7;
-    }
+    
+//    // Send a request to be a player
+//    if (!tcpManager.send(gzzzt::NewPlayerRequest(playerName))) {
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send request to server\n");
+//        tcpManager.disconnect();
+//        return 4;
+//    }
+//    
+//    // Wait for the response
+//    gzzzt::Response resp;
+//    if (!tcpManager.receive(resp)) {
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not receive data to server\n");
+//        tcpManager.disconnect();
+//        return 5;
+//    }
+//    if (resp.getRespType() == gzzzt::ResponseType::ERROR) {
+//        gzzzt::ErrorResponse err = static_cast<gzzzt::ErrorResponse>(resp);
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Response: Error: %s\n", err.getReason().c_str());
+//        tcpManager.disconnect();
+//        return 6;
+//    }
+    
     gzzzt::Log::info(gzzzt::Log::NETWORK, "Name accepted.\n");
+    
+//    gzzzt::NewPlayerRequest playerReq(playerName);
+//    std::vector<uint8_t> bytes = playerReq.serialize();
+//    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connected to \"%s:%d\" using port %d...\n", serverAddress.c_str(), serverPortTCP, tcpSocket.getLocalPort());
+//    if (tcpSocket.send(&bytes[0], bytes.size()) != sf::Socket::Done) {
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data to server\n");
+//        tcpSocket.disconnect();
+//        return 5;
+//    }
+//    gzzzt::Log::info(gzzzt::Log::NETWORK, "Waiting for the response...\n");
+//
+//    // Wait for the response
+//    std::size_t nbBytesRead;
+//    bytes.assign(64, 0);
+//    if (tcpSocket.receive(&bytes[0], bytes.size(), nbBytesRead) != sf::Socket::Done) {
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not received the server's response\n");
+//        tcpSocket.disconnect();
+//        return 6;
+//    }
+//    bytes.resize(nbBytesRead);
+//    gzzzt::ResponseType respType = gzzzt::Response::getType(bytes);
+//    if (respType == gzzzt::ResponseType::ERROR) {
+//        gzzzt::ErrorResponse err(bytes);
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Response: Error: %s\n", err.getReason().c_str());
+//        tcpSocket.disconnect();
+//        return 7;
+//    }
+//    gzzzt::Log::info(gzzzt::Log::NETWORK, "Name accepted.\n");
 
+    std::list<gzzzt::ClientPlayer> players;
+    if (!tcpManager.receivePlayers(players, error)) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "%s\n", error.c_str());
+        tcpManager.disconnect();
+        return 3;
+    }
+    
+    
+    
     // Wait for the players list
-    std::vector<gzzzt::ClientPlayer> players;
-    bytes.assign(64, 0);
-    if (tcpSocket.receive(&bytes[0], bytes.size(), nbBytesRead) != sf::Socket::Done) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not received the server's msg\n");
-        tcpSocket.disconnect();
-        return 6;
-    }
-    bytes.resize(nbBytesRead);
-    gzzzt::StartGameResponse resp(bytes);
-    std::map<uint8_t, std::string> playersData = resp.getPlayers();
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "List of players :\n");
-    uint8_t playerId = 0;
-    for (auto p : playersData) {
-        players.push_back(gzzzt::ClientPlayer(p.second, p.first));
-        gzzzt::Log::info(gzzzt::Log::GENERAL, "- %s (%d)\n", p.second.c_str(), p.first);
-        if (p.second.compare(playerName) == 0) {
-            playerId = p.first;
-        }
-    }
+//    std::vector<gzzzt::ClientPlayer> players;
+//    bytes.assign(64, 0);
+//    if (tcpSocket.receive(&bytes[0], bytes.size(), nbBytesRead) != sf::Socket::Done) {
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not received the server's msg\n");
+//        tcpSocket.disconnect();
+//        return 6;
+//    }
+//    bytes.resize(nbBytesRead);
+//    gzzzt::StartGameResponse resp(bytes);
+//    std::map<uint8_t, std::string> playersData = resp.getPlayers();
+//    gzzzt::Log::info(gzzzt::Log::GENERAL, "List of players :\n");
+//    uint8_t playerId = 0;
+//    for (auto p : playersData) {
+//        players.push_back(gzzzt::ClientPlayer(p.second, p.first));
+//        gzzzt::Log::info(gzzzt::Log::GENERAL, "- %s (%d)\n", p.second.c_str(), p.first);
+//        if (p.second.compare(playerName) == 0) {
+//            playerId = p.first;
+//        }
+//    }
     
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the game...\n");
 
     // Initialize the UDP socket
-    unsigned short serverPortUDP = resp.getServerPortUDP();
-    sf::UdpSocket udpSocket;
-    bytes = gzzzt::IdentifyRequest(playerId).serialize();
-    if (udpSocket.send(&bytes[0], bytes.size(), serverAddress, serverPortUDP) != sf::Socket::Status::Done) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
-        return 5;
-    }
-    bytes.assign(64, 0);
-    std::size_t sizeRecv;
-    sf::IpAddress tmp1;
-    if (udpSocket.receive(&bytes[0], bytes.size(), sizeRecv, tmp1, serverPortUDP) != sf::Socket::Status::Done) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not recv data\n");
-        return 5;
-    }
-    bytes.resize(sizeRecv);
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "RECV : %d from %s, %d\n", sizeRecv, tmp1.toString().c_str(), serverPortUDP);
+//    unsigned short serverPortUDP = resp.getServerPortUDP();
+//    sf::UdpSocket udpSocket;
+//    bytes = gzzzt::IdentifyRequest(playerId).serialize();
+//    if (udpSocket.send(&bytes[0], bytes.size(), serverAddress, serverPortUDP) != sf::Socket::Status::Done) {
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
+//        return 5;
+//    }
+//    bytes.assign(64, 0);
+//    std::size_t sizeRecv;
+//    sf::IpAddress tmp1;
+//    if (udpSocket.receive(&bytes[0], bytes.size(), sizeRecv, tmp1, serverPortUDP) != sf::Socket::Status::Done) {
+//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not recv data\n");
+//        return 5;
+//    }
+//    bytes.resize(sizeRecv);
+//    gzzzt::Log::info(gzzzt::Log::GENERAL, "RECV : %d from %s, %d\n", sizeRecv, tmp1.toString().c_str(), serverPortUDP);
 
     // initialize
     gzzzt::World world;
@@ -171,7 +213,7 @@ int main(int argc, char** argv) {
         world.render(window);
         window.display();
     }
-    tcpSocket.disconnect();
+    tcpManager.disconnect();
 
     return 0;
 }
