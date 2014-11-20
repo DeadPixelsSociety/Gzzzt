@@ -92,7 +92,7 @@ namespace gzzzt {
         return true;
     }
 
-    bool ClientTCPManager::receivePlayers(std::list<gzzzt::ClientPlayer>& players, std::string& error) {
+    bool ClientTCPManager::receiveGameData(std::list<gzzzt::ClientPlayer>& players, unsigned short& serverPortUDP, std::string& error) {
         gzzzt::Response* resp = receive();
         if (resp == nullptr) {
             error = "Could not receive data from server";
@@ -102,10 +102,12 @@ namespace gzzzt {
             error = dynamic_cast<gzzzt::ErrorResponse*> (resp)->getReason();
             return false;
         }
-        std::map<uint8_t, std::string> playersData = dynamic_cast<gzzzt::StartGameResponse*> (resp)->getPlayers();
+        gzzzt::StartGameResponse startGameResp = *(dynamic_cast<gzzzt::StartGameResponse*>(resp));
+        std::map<uint8_t, std::string> playersData = startGameResp.getPlayers();
         for (auto p : playersData) {
             players.push_back(gzzzt::ClientPlayer(p.second, p.first));
         }
+        serverPortUDP = startGameResp.getServerPortUDP();
         delete resp;
         return true;
     }

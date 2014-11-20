@@ -69,9 +69,10 @@ int main(int argc, char** argv) {
     }
     gzzzt::Log::info(gzzzt::Log::NETWORK, "Name accepted.\n");
 
-    // Receive the players list
+    // Receive the game's data (list of players + server UDP port)
+    unsigned short serverPortUDP;
     std::list<gzzzt::ClientPlayer> players;
-    if (!tcpManager.receivePlayers(players, error)) {
+    if (!tcpManager.receiveGameData(players, serverPortUDP, error)) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "%s\n", error.c_str());
         tcpManager.disconnect();
         return 3;
@@ -79,6 +80,7 @@ int main(int argc, char** argv) {
     for (auto& p : players) {
         gzzzt::Log::info(gzzzt::Log::GENERAL, "Player #%d : %s\n", p.getID(), p.getName().c_str());
     }
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Server port UDP : %d\n", serverPortUDP);
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the game...\n");
 
     // Initialize the UDP socket
