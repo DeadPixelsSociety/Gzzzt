@@ -27,6 +27,7 @@
 #include <gzzzt/server/Game.h>
 #include <gzzzt/server/ServerPlayer.h>
 #include <gzzzt/server/ServerPlayerList.h>
+#include <gzzzt/server/ServerTCPManager.h>
 #include <gzzzt/shared/ErrorResponse.h>
 #include <gzzzt/shared/IdentifyRequest.h>
 #include <gzzzt/shared/Log.h>
@@ -43,15 +44,6 @@ static std::atomic_bool should_continue
 
 static void help(void) {
     std::cout << "Usage: gzzzt-server <TCP_PORT> <UDP_PORT>" << std::endl;
-}
-
-static bool isDuplicatedName(const gzzzt::ServerPlayerList& players, const std::string& name) {
-    for (auto player : players) {
-        if (player->getName().compare(name) == 0) {
-            return true;
-        }
-    }
-    return false;
 }
 
 static void signal_handler(int sig) {
@@ -99,92 +91,19 @@ int main(int argc, char** argv) {
 
     unsigned short port = std::strtoul(argv[1], nullptr, 10);
     unsigned short udpPort = std::strtoul(argv[2], nullptr, 10);
-    sf::SocketSelector selector;
-
-    // initialize the listener
-    sf::TcpListener tcpListener;
-    if (tcpListener.listen(port) != sf::Socket::Done) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind listener on port %d\n", port);
+    
+    // Init the TCP manager
+    gzzzt::ServerTCPManager tcpManager(port);
+    if (!tcpManager.init()) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not init TCP connection\n");
         return 3;
     }
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Waiting for connections on port %d...\n", port);
-    selector.add(tcpListener);
-
-    // wait for players
+    
+    // Wait for the players
     gzzzt::ServerPlayerList players;
-    uint8_t nbPlayersRegistered = 0;
-    while (should_continue && nbPlayersRegistered < 2) {
-        if (selector.wait()) {
-            sf::TcpSocket* playerSocket;
-            if (selector.isReady(tcpListener)) {
-                // New pending connection
-                playerSocket = new sf::TcpSocket;
-                if (tcpListener.accept(*playerSocket) != sf::Socket::Done) {
-                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not accept connection\n");
-                    delete playerSocket;
-                } else {
-                    playerSocket->setBlocking(false);
-                    selector.add(*playerSocket);
-                    gzzzt::ServerPlayer* player = new gzzzt::ServerPlayer(playerSocket);
-                    players.add(player);
-                    gzzzt::Log::info(gzzzt::Log::NETWORK, "New connection from %s\n", player->toString().c_str());
-                }
-            } else {
-                // Find the client's socket which is ready
-                auto it = players.begin();
-                while (!selector.isReady(*((*it)->getTCPSocket()))) {
-                    it++;
-                }
-                gzzzt::ServerPlayer* player = *it;
-                sf::TcpSocket* playerSocket = player->getTCPSocket();
-                gzzzt::RequestType reqType;
-                gzzzt::NewPlayerRequest* playerReq;
-                std::vector<uint8_t> bytes(64);
-                std::size_t nbBytesRead;
-                sf::Socket::Status state = playerSocket->receive(&bytes[0], bytes.size(), nbBytesRead);
-                bytes.resize(nbBytesRead);
-                switch (state) {
-                    case sf::Socket::Status::Done:
-                        reqType = gzzzt::Request::getType(bytes);
-                        if (reqType != gzzzt::RequestType::NEW_PLAYER) {
-                            gzzzt::Log::error(gzzzt::Log::NETWORK, "Bad type of message from %s\n", player->toString().c_str());
-                            break;
-                        }
-                        playerReq = new gzzzt::NewPlayerRequest(bytes);
-                        if (isDuplicatedName(players, playerReq->getPlayerName())) {
-                            gzzzt::Log::info(gzzzt::Log::NETWORK,
-                                    "Name \"%s\" already taken. %s needs to choose another one\n",
-                                    playerReq->getPlayerName().c_str(),
-                                    player->toString().c_str());
-                            // Send an error to the client 
-                            bytes = gzzzt::ErrorResponse("Name already taken").serialize();
-                            playerSocket->send(&bytes[0], bytes.size());
-                        } else {
-                            player->setName(playerReq->getPlayerName());
-                            player->setID(nbPlayersRegistered); // Use the nb of players registered as id
-                            nbPlayersRegistered++;
-                            gzzzt::Log::info(gzzzt::Log::NETWORK, "Client chose a name : %s\n", player->toString().c_str());
-                            bytes = gzzzt::NewPlayerResponse().serialize();
-                            playerSocket->send(&bytes[0], bytes.size());
-                        }
-                        delete playerReq;
-                        break;
-                    case sf::Socket::Status::Disconnected:
-                        gzzzt::Log::info(gzzzt::Log::NETWORK, "Client %s is disconnected\n", player->toString().c_str());
-                        selector.remove(*playerSocket);
-                        playerSocket->disconnect();
-                        delete playerSocket;
-                        players.remove(*it);
-                        break;
-                    case sf::Socket::Status::NotReady:
-                        gzzzt::Log::error(gzzzt::Log::NETWORK, "The socket is not ready\n");
-                        break;
-                    case sf::Socket::Status::Error:
-                        gzzzt::Log::error(gzzzt::Log::NETWORK, "Error while receiving data\n");
-                        break;
-                }
-            }
-        }
+    if (!tcpManager.waitPlayers(2, players)) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Error while waiting for players\n");
+        return 4;
     }
 
     // Broadcast the players list
@@ -193,11 +112,8 @@ int main(int argc, char** argv) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "-> %s(%d)\n", player->getName().c_str(), player->getID());
         playersData.insert(std::pair<uint8_t, std::string>(player->getID(), player->getName()));
     }
-    std::vector<uint8_t> bytes = gzzzt::StartGameResponse(playersData, udpPort).serialize();
-    for (auto player : players) {
-        if (player->getTCPSocket()->send(&bytes[0], bytes.size()) != sf::Socket::Done) {
-            gzzzt::Log::fatal(gzzzt::Log::NETWORK, "Error while broadcasting to the players\n");
-        }
+    if (!tcpManager.broadcast(players, gzzzt::StartGameResponse(playersData, udpPort))) {
+        gzzzt::Log::fatal(gzzzt::Log::NETWORK, "Error while broadcasting to the players\n");
     }
 
     // Initialize the UDP sockets
@@ -264,7 +180,8 @@ int main(int argc, char** argv) {
         game.update(elapsed.asSeconds());
     }
 
-    tcpListener.close();
+//    tcpListener.close();
+    tcpManager.close();
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the server...\n");
 
     //    receiver.wait();
