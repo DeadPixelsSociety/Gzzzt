@@ -26,13 +26,6 @@ namespace gzzzt {
     public:
         explicit IdentifyRequest(uint8_t id);
         explicit IdentifyRequest(std::vector<uint8_t>& bytes);
-
-        uint8_t getID() const;
-
-        std::vector<uint8_t> serialize() const override;
-
-    private:
-        uint8_t m_id;
     };
 }
 

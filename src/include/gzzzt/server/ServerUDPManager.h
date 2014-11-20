@@ -15,27 +15,35 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ERROR_RESPONSE_H
-#define ERROR_RESPONSE_H
+#ifndef GZZZT_SERVER_UDP_MANAGER_H
+#define GZZZT_SERVER_UDP_MANAGER_H
 
-#include <string>
+#include <SFML/Network.hpp>
 
+#include <gzzzt/server/ServerPlayerList.h>
+#include <gzzzt/shared/ActionRequest.h>
 #include <gzzzt/shared/Response.h>
 
 namespace gzzzt {
 
-    class ErrorResponse : public Response {
+    class ServerUDPManager {
     public:
-        explicit ErrorResponse(std::string reason);
-        explicit ErrorResponse(std::vector<uint8_t>& bytes);
+        explicit ServerUDPManager(unsigned short port);
+        virtual ~ServerUDPManager();
 
-        std::string getReason() const;
+        bool init();
+        void close();
 
-        std::vector<uint8_t> serialize() const override;
+        bool broadcast(const gzzzt::ServerPlayerList& players, const gzzzt::Response& resp);
+        bool send(const gzzzt::ServerPlayer& player, const gzzzt::Response& resp);
+        gzzzt::Request* receive();
+        bool receiveIdentifyRequest(gzzzt::ServerPlayerList& players);
 
     private:
-        std::string m_reason;
+        sf::UdpSocket m_socket;
+        unsigned short m_port;
     };
+
 }
 
-#endif	// ERROR_RESPONSE_H
+#endif // GZZZT_SERVER_UDP_MANAGER_H

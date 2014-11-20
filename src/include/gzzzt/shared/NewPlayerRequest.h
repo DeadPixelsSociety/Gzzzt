@@ -23,14 +23,14 @@
 #include <gzzzt/shared/Request.h>
 
 namespace gzzzt {
-    
+
     class NewPlayerRequest : public Request {
     public:
         explicit NewPlayerRequest(std::string playerName);
         explicit NewPlayerRequest(std::vector<uint8_t>& bytes);
 
         std::string getPlayerName() const;
-        
+
         std::vector<uint8_t> serialize() const override;
 
     private:

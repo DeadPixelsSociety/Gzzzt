@@ -28,18 +28,18 @@ namespace gzzzt {
     class ServerTCPManager {
     public:
         explicit ServerTCPManager(unsigned short port);
-        
+
         bool init();
         void close();
         bool waitPlayers(int nbPlayers, gzzzt::ServerPlayerList& players);
-        bool broadcast(gzzzt::ServerPlayerList& players, const gzzzt::Response& msg);
-        
+        bool broadcast(gzzzt::ServerPlayerList& players, const gzzzt::Response& msg) const;
+
     private:
         unsigned short m_port;
         sf::TcpListener m_listener;
         sf::SocketSelector m_selector;
-        
-        bool isDuplicatedName(const gzzzt::ServerPlayerList& players, const std::string& name);
+
+        bool isDuplicatedName(const gzzzt::ServerPlayerList& players, const std::string& name) const;
     };
 
 }

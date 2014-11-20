@@ -47,18 +47,22 @@ namespace gzzzt {
         return nullptr;
     }
 
+    uint8_t ServerPlayerList::getSize() const {
+        return static_cast<uint8_t> (m_players.size());
+    }
+
     std::list<gzzzt::ServerPlayer*>::iterator ServerPlayerList::begin() {
         return m_players.begin();
     }
-    
+
     std::list<gzzzt::ServerPlayer*>::iterator ServerPlayerList::end() {
         return m_players.end();
     }
-    
+
     std::list<gzzzt::ServerPlayer*>::const_iterator ServerPlayerList::begin() const {
         return m_players.begin();
     }
-    
+
     std::list<gzzzt::ServerPlayer*>::const_iterator ServerPlayerList::end() const {
         return m_players.end();
     }

@@ -38,7 +38,7 @@ namespace gzzzt {
     unsigned short ServerPlayer::getTCPPort() const {
         return m_TCPPort;
     }
-    
+
     unsigned short ServerPlayer::getUDPPort() const {
         return m_UDPPort;
     }
@@ -46,7 +46,7 @@ namespace gzzzt {
     std::string ServerPlayer::getName() const {
         return m_name;
     }
-    
+
     uint8_t ServerPlayer::getID() const {
         return m_id;
     }
@@ -54,15 +54,15 @@ namespace gzzzt {
     void ServerPlayer::setName(std::string name) {
         m_name = name;
     }
-    
+
     void ServerPlayer::setID(uint8_t id) {
         m_id = id;
     }
-    
+
     void ServerPlayer::setUDPPort(unsigned short port) {
         m_UDPPort = port;
     }
-    
+
     void ServerPlayer::closeTCPSocket() {
         delete m_TCPSocket;
         m_TCPSocket = nullptr;

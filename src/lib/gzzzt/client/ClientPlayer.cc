@@ -22,15 +22,15 @@ namespace gzzzt {
     ClientPlayer::ClientPlayer(std::string name, uint8_t id)
     : m_name(name), m_id(id) {
     }
-    
+
     std::string ClientPlayer::getName() const {
         return m_name;
     }
-    
+
     uint8_t ClientPlayer::getID() const {
         return m_id;
     }
-    
+
     void ClientPlayer::update(float dt) {
         // TODO
     }

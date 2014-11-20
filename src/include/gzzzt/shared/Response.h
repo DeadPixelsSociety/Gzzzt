@@ -27,10 +27,10 @@ namespace gzzzt {
     protected:
         explicit Response(std::vector<uint8_t>& bytes);
         explicit Response(ResponseType respType);
-        
+
     public:
         virtual ~Response();
-        
+
         ResponseType getRespType() const;
 
         std::vector<uint8_t> serialize() const override;

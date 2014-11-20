@@ -28,6 +28,7 @@
 #include <gzzzt/server/ServerPlayer.h>
 #include <gzzzt/server/ServerPlayerList.h>
 #include <gzzzt/server/ServerTCPManager.h>
+#include <gzzzt/server/ServerUDPManager.h>
 #include <gzzzt/shared/ErrorResponse.h>
 #include <gzzzt/shared/IdentifyRequest.h>
 #include <gzzzt/shared/Log.h>
@@ -91,14 +92,14 @@ int main(int argc, char** argv) {
 
     unsigned short port = std::strtoul(argv[1], nullptr, 10);
     unsigned short udpPort = std::strtoul(argv[2], nullptr, 10);
-    
+
     // Init the TCP manager
     gzzzt::ServerTCPManager tcpManager(port);
     if (!tcpManager.init()) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not init TCP connection\n");
         return 3;
     }
-    
+
     // Wait for the players
     gzzzt::ServerPlayerList players;
     if (!tcpManager.waitPlayers(2, players)) {
@@ -116,44 +117,33 @@ int main(int argc, char** argv) {
         gzzzt::Log::fatal(gzzzt::Log::NETWORK, "Error while broadcasting to the players\n");
     }
 
-    // Initialize the UDP sockets
-//    sf::UdpSocket udpSocket;
-//    if (udpSocket.bind(udpPort) != sf::Socket::Done) {
-//        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind UDP socket to port %d\n", port);
-//        return 4;
-//    }
-//    gzzzt::Log::info(gzzzt::Log::NETWORK, "UDP socket created\n");
-//    std::size_t received;
-//    sf::IpAddress sender;
-//    unsigned short senderPort;
-//    selector.add(udpSocket);
-//    udpSocket.setBlocking(false);
-//    bytes.assign(64, 0);
-//    while (should_continue) {
-//        if (selector.wait()) {
-//            if (selector.isReady(udpSocket)) {
-//                if (udpSocket.receive(&bytes[0], bytes.size(), received, sender, senderPort) != sf::Socket::Status::Done) {
-//                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not receive data\n");
-//                    return 5;
-//                }
-//                uint8_t id = gzzzt::IdentifyRequest(bytes).getID();
-//                gzzzt::ServerPlayer* player = players.getById(id);
-//                player->setUDPPort(senderPort);
-//                gzzzt::Log::info(gzzzt::Log::NETWORK, "%s(%d) is on port %d\n", player->getName().c_str(), id, senderPort);
-//
-//                // TODO: remove this
-//                // Send response
-//                if (udpSocket.send(player->getName().data(), player->getName().size(), player->getAddress(), senderPort) != sf::Socket::Status::Done) {
-//                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
-//                    return 5;
-//                }
-//            }
-//        }
-//        bytes.assign(64, 0);
-//    }
-//    udpSocket.unbind();
+    // Initialize the UDP socket
+    gzzzt::ServerUDPManager udpManager(udpPort);
+    if (!udpManager.init()) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind UDP socket\n");
+        tcpManager.close();
+        return 5;
+    }
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "UDP socket created\n");
 
-    //
+    // Get the players UDP port
+    uint8_t nbPlayersReq = 0;
+    while (should_continue && nbPlayersReq < players.getSize()) {
+        if (!udpManager.receiveIdentifyRequest(players)) {
+            gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not associate players to UDP port\n");
+            udpManager.close();
+            tcpManager.close();
+            return 6;
+        }
+        nbPlayersReq++;
+    }
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Players :\n");
+    for (auto& p : players) {
+        gzzzt::Log::info(gzzzt::Log::NETWORK, "Player #%d = %s (%s:%d, UDP = %d)\n",
+                p->getID(), p->getName().c_str(), p->getAddress().toString().c_str(),
+                p->getTCPPort(), p->getUDPPort());
+    }
+
     //    // launch the threads
     //    sf::Thread receiver(&receiveMsg, std::ref(udpSocket));
     //    sf::Thread broadcaster(&broadcastMsg, std::ref(udpSocket));
@@ -180,8 +170,9 @@ int main(int argc, char** argv) {
         game.update(elapsed.asSeconds());
     }
 
-//    tcpListener.close();
+    //    tcpListener.close();
     tcpManager.close();
+    udpManager.close();
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the server...\n");
 
     //    receiver.wait();

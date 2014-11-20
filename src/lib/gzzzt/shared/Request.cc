@@ -20,12 +20,14 @@
 
 namespace gzzzt {
 
-    Request::Request(RequestType type) : m_reqType(type) {
+    Request::Request(RequestType type, uint8_t playerId)
+    : m_reqType(type),
+    m_playerId(playerId) {
     }
 
     Request::Request(std::vector<uint8_t>& bytes) {
-        m_reqType = static_cast<RequestType>(bytes[0]);
-        bytes.erase(bytes.begin());
+        m_reqType = static_cast<RequestType> (gzzzt::Serializer::deserializeInt8(bytes));
+        m_playerId = gzzzt::Serializer::deserializeInt8(bytes);
     }
 
     Request::~Request() {
@@ -35,13 +37,18 @@ namespace gzzzt {
         return m_reqType;
     }
 
+    uint8_t Request::getPlayerId() const {
+        return m_playerId;
+    }
+
     std::vector<uint8_t> Request::serialize() const {
         std::vector<uint8_t> bytes;
-        bytes.push_back(static_cast<uint8_t>(m_reqType));
+        Serializer::serializeInt8(bytes, static_cast<uint8_t> (m_reqType));
+        Serializer::serializeInt8(bytes, m_playerId);
         return bytes;
     }
 
     RequestType Request::getType(std::vector<uint8_t> bytes) {
-        return static_cast<RequestType>(bytes[0]);
+        return static_cast<RequestType> (bytes[0]);
     }
 }

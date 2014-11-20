@@ -25,7 +25,7 @@
 #include <gzzzt/shared/Response.h>
 
 namespace gzzzt {
-    
+
     class StartGameResponse : public Response {
     public:
         explicit StartGameResponse(const std::map<uint8_t, std::string>& players, unsigned short serverPort);
@@ -33,13 +33,13 @@ namespace gzzzt {
 
         std::map<uint8_t, std::string> getPlayers() const;
         unsigned short getServerPortUDP() const;
-        
+
         std::vector<uint8_t> serialize() const override;
 
     private:
         std::map<uint8_t, std::string> m_players;
         unsigned short m_serverPortUDP;
-        
+
     };
 }
 

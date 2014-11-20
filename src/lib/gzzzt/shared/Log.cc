@@ -24,10 +24,10 @@ namespace gzzzt {
 
     // default values
     std::map<Log::Category, Log::Level> Log::s_levels = {
-        { Log::GENERAL, Log::WARN },
-        { Log::RENDER,  Log::WARN },
-        { Log::NETWORK, Log::WARN },
-        { Log::PHYSICS, Log::WARN },
+        { Log::GENERAL, Log::WARN},
+        { Log::RENDER, Log::WARN},
+        { Log::NETWORK, Log::WARN},
+        { Log::PHYSICS, Log::WARN},
     };
 
     void Log::setLevel(Level level) {

@@ -25,10 +25,11 @@ namespace gzzzt {
 
     class ActionRequest : public Request {
     public:
-        explicit ActionRequest(ActionType type);
+        explicit ActionRequest(ActionType type, uint8_t playerId);
         explicit ActionRequest(std::vector<uint8_t>& bytes);
 
         ActionType getType() const;
+        uint8_t getPlayerId() const;
 
         std::vector<uint8_t> serialize() const override;
 

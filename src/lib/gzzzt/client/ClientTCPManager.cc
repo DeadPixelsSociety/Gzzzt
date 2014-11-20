@@ -102,7 +102,7 @@ namespace gzzzt {
             error = dynamic_cast<gzzzt::ErrorResponse*> (resp)->getReason();
             return false;
         }
-        gzzzt::StartGameResponse startGameResp = *(dynamic_cast<gzzzt::StartGameResponse*>(resp));
+        gzzzt::StartGameResponse startGameResp = *(dynamic_cast<gzzzt::StartGameResponse*> (resp));
         std::map<uint8_t, std::string> playersData = startGameResp.getPlayers();
         for (auto p : playersData) {
             players.push_back(gzzzt::ClientPlayer(p.second, p.first));

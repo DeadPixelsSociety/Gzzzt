@@ -28,10 +28,10 @@ namespace gzzzt {
     class ClientPlayer : public ClientEntity {
     public:
         explicit ClientPlayer(std::string name, uint8_t id);
-        
+
         std::string getName() const;
         uint8_t getID() const;
-        
+
         virtual void update(float dt) override;
         virtual void render(sf::RenderWindow& window) override;
 

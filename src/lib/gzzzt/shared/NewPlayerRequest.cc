@@ -29,7 +29,7 @@ namespace gzzzt {
     : Request(bytes) {
         m_playerName = Serializer::deserializeString(bytes);
     }
-    
+
     std::string NewPlayerRequest::getPlayerName() const {
         return m_playerName;
     }

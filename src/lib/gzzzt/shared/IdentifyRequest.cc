@@ -21,21 +21,10 @@
 namespace gzzzt {
 
     IdentifyRequest::IdentifyRequest(uint8_t id)
-    : Request(RequestType::ACTION),
-    m_id(id) {
+    : Request(RequestType::IDENTIFY, id) {
     }
 
-    IdentifyRequest::IdentifyRequest(std::vector<uint8_t>& bytes) : Request(bytes) {
-        m_id = Serializer::deserializeInt8(bytes);
-    }
-
-    uint8_t IdentifyRequest::getID() const {
-        return m_id;
-    }
-
-    std::vector<uint8_t> IdentifyRequest::serialize() const {
-        std::vector<uint8_t> bytes = Request::serialize();
-        bytes.push_back(m_id);
-        return bytes;
+    IdentifyRequest::IdentifyRequest(std::vector<uint8_t>& bytes)
+    : Request(bytes) {
     }
 }

@@ -21,10 +21,11 @@
 #include <cstdint>
 
 namespace gzzzt {
-    
+
     enum class RequestType : uint8_t {
         NEW_PLAYER = 0,
-        ACTION
+        ACTION,
+        IDENTIFY
     };
 }
 

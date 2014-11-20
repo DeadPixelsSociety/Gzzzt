@@ -20,13 +20,13 @@
 
 namespace gzzzt {
 
-    ActionRequest::ActionRequest(ActionType type)
-    : Request(RequestType::ACTION),
+    ActionRequest::ActionRequest(ActionType type, uint8_t playerId)
+    : Request(RequestType::ACTION, playerId),
     m_type(type) {
     }
 
     ActionRequest::ActionRequest(std::vector<uint8_t>& bytes) : Request(bytes) {
-        m_type = static_cast<ActionType>(bytes[0]);
+        m_type = static_cast<ActionType> (bytes[0]);
         bytes.erase(bytes.begin());
     }
 
@@ -34,9 +34,13 @@ namespace gzzzt {
         return m_type;
     }
 
+    uint8_t ActionRequest::getPlayerId() const {
+        return m_playerId;
+    }
+
     std::vector<uint8_t> ActionRequest::serialize() const {
         std::vector<uint8_t> bytes = Request::serialize();
-        bytes.push_back(static_cast<uint8_t>(m_type));
+        bytes.push_back(static_cast<uint8_t> (m_type));
         return bytes;
     }
 }

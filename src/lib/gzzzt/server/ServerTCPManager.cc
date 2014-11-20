@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <atomic>
 #include <cassert>
 #include <csignal>
 #include <iostream>
@@ -27,19 +26,17 @@
 
 namespace gzzzt {
 
-    static void signal_handler(int sig) {
+    static void signal_exit(int sig) {
         assert(sig == SIGINT || sig == SIGTERM);
         exit(1);
     }
 
     ServerTCPManager::ServerTCPManager(unsigned short port) : m_port(port) {
-        std::signal(SIGINT, signal_handler);
-        std::signal(SIGTERM, signal_handler);
+        std::signal(SIGINT, signal_exit);
+        std::signal(SIGTERM, signal_exit);
     }
 
     bool ServerTCPManager::init() {
-        std::signal(SIGINT, signal_handler);
-        std::signal(SIGTERM, signal_handler);
         if (m_listener.listen(m_port) != sf::Socket::Done) {
             return false;
         }
@@ -122,7 +119,7 @@ namespace gzzzt {
         return true;
     }
 
-    bool ServerTCPManager::broadcast(gzzzt::ServerPlayerList& players, const gzzzt::Response& msg) {
+    bool ServerTCPManager::broadcast(gzzzt::ServerPlayerList& players, const gzzzt::Response& msg) const {
         std::vector<uint8_t> bytes = msg.serialize();
         for (auto player : players) {
             if (player->getTCPSocket()->send(&bytes[0], bytes.size()) != sf::Socket::Done) {
@@ -132,7 +129,7 @@ namespace gzzzt {
         return true;
     }
 
-    bool ServerTCPManager::isDuplicatedName(const gzzzt::ServerPlayerList& players, const std::string& name) {
+    bool ServerTCPManager::isDuplicatedName(const gzzzt::ServerPlayerList& players, const std::string& name) const {
         for (auto player : players) {
             if (player->getName().compare(name) == 0) {
                 return true;

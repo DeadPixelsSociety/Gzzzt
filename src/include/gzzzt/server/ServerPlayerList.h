@@ -33,9 +33,10 @@ namespace gzzzt {
 
         bool add(gzzzt::ServerPlayer* player);
         void remove(gzzzt::ServerPlayer* player);
-        
+
         gzzzt::ServerPlayer* getById(uint8_t id) const;
-        
+        uint8_t getSize() const;
+
         // Custom iterators to use foreach
         std::list<gzzzt::ServerPlayer*>::iterator begin();
         std::list<gzzzt::ServerPlayer*>::iterator end();

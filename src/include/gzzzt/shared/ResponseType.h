@@ -21,7 +21,7 @@
 #include <cstdint>
 
 namespace gzzzt {
-    
+
     enum class ResponseType : uint8_t {
         ERROR = 0,
         NEW_PLAYER_OK,
