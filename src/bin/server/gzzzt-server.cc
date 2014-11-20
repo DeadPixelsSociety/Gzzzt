@@ -20,15 +20,14 @@
 #include <csignal>
 #include <iostream>
 #include <set>
-
-#include <SFML/Network.hpp>
-#include <SFML/System.hpp>
+#include <thread>
 
 #include <gzzzt/server/Game.h>
 #include <gzzzt/server/ServerPlayer.h>
 #include <gzzzt/server/ServerPlayerList.h>
 #include <gzzzt/server/ServerTCPManager.h>
 #include <gzzzt/server/ServerUDPManager.h>
+#include <gzzzt/shared/ConcurrentQueue.h>
 #include <gzzzt/shared/ErrorResponse.h>
 #include <gzzzt/shared/IdentifyRequest.h>
 #include <gzzzt/shared/Log.h>
@@ -52,21 +51,33 @@ static void signal_handler(int sig) {
     should_continue = false;
 }
 
-//static void receiveMsg(const sf::UdpSocket& socket) {
-//    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the receiving thread...\n");
-//    while (should_continue) {
-//        // TODO:
-//    }
-//    gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the receiving thread...\n");
-//}
-//
-//static void broadcastMsg(const sf::UdpSocket& socket) {
-//    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the broadcasting thread...\n");
-//    while (should_continue) {
-//        // TODO:
-//    }
-//    gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the broadcasting thread...\n");
-//}
+static void receiveMsg(gzzzt::ServerUDPManager& udpManager, gzzzt::ConcurrentQueue<gzzzt::Request*>& inQueue) {
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the receiving thread...\n");
+    gzzzt::Request* req;
+    while (should_continue) {
+        req = udpManager.receive();
+        if (req != nullptr) {
+            gzzzt::Log::info(gzzzt::Log::GENERAL, "PUSH : %d\n", req->getPlayerId());
+            inQueue.push(req);
+        }
+    }
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the receiving thread...\n");
+}
+
+static void broadcastMsg(gzzzt::ServerUDPManager& udpManager,
+        gzzzt::ConcurrentQueue<gzzzt::Response*>& outQueue,
+        const gzzzt::ServerPlayerList& players) {
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the broadcasting thread...\n");
+    gzzzt::Response* resp;
+    while (should_continue) {
+        resp = outQueue.pop();
+        if (resp != nullptr) {
+            gzzzt::Log::info(gzzzt::Log::GENERAL, "POP : %d\n", resp->getRespType());
+            udpManager.broadcast(players, *resp);
+        }
+    }
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the broadcasting thread...\n");
+}
 
 int main(int argc, char** argv) {
     if (argc != 3) {
@@ -144,11 +155,13 @@ int main(int argc, char** argv) {
                 p->getTCPPort(), p->getUDPPort());
     }
 
-    //    // launch the threads
-    //    sf::Thread receiver(&receiveMsg, std::ref(udpSocket));
-    //    sf::Thread broadcaster(&broadcastMsg, std::ref(udpSocket));
-    //    receiver.launch();
-    //    broadcaster.launch();
+    // Create concurrent queues for the messages
+    gzzzt::ConcurrentQueue<gzzzt::Request*> inQueue;
+    gzzzt::ConcurrentQueue<gzzzt::Response*> outQueue;
+
+    // Launch the threads
+    std::thread receiver(&receiveMsg, std::ref(udpManager), std::ref(inQueue));
+    std::thread broadcaster(&broadcastMsg, std::ref(udpManager), std::ref(outQueue), std::ref(players));
 
     // initialize
     gzzzt::Game game;
@@ -170,12 +183,14 @@ int main(int argc, char** argv) {
         game.update(elapsed.asSeconds());
     }
 
-    //    tcpListener.close();
-    tcpManager.close();
-    udpManager.close();
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the server...\n");
 
-    //    receiver.wait();
-    //    broadcaster.wait();
+    // Stop the threads
+    receiver.join();
+    broadcaster.join();
+    // Close the connections
+    tcpManager.close();
+    udpManager.close();
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Server stopped!\n");
     return 0;
 }

@@ -16,8 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
+#include <chrono>
 #include <cstdlib>
 #include <list>
+#include <thread>
 
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
@@ -97,17 +99,28 @@ int main(int argc, char** argv) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
         return 5;
     }
-    while (true) {
-        bytes.assign(64, 0);
-        std::size_t sizeRecv;
-        sf::IpAddress tmp1;
-        if (udpSocket.receive(&bytes[0], bytes.size(), sizeRecv, tmp1, serverPortUDP) != sf::Socket::Status::Done) {
-            gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not recv data\n");
+
+    //std::this_thread::sleep_for(std::chrono::seconds(2));
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "TEST\n");
+    std::string test("test");
+    for (int i = 0; i < 10; i++) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        bytes = gzzzt::IdentifyRequest(playerId).serialize();
+        if (udpSocket.send(&bytes[0], bytes.size(), serverAddress, serverPortUDP) != sf::Socket::Status::Done) {
+            gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
             return 5;
         }
-        bytes.resize(sizeRecv);
-        gzzzt::Log::info(gzzzt::Log::GENERAL, "RECV : %d from %s, %d\n", sizeRecv, tmp1.toString().c_str(), serverPortUDP);
+        gzzzt::Log::info(gzzzt::Log::GENERAL, "SENT!\n");
     }
+    //    bytes.assign(64, 0);
+    //    std::size_t sizeRecv;
+    //    sf::IpAddress tmp1;
+    //    if (udpSocket.receive(&bytes[0], bytes.size(), sizeRecv, tmp1, serverPortUDP) != sf::Socket::Status::Done) {
+    //        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not recv data\n");
+    //        return 5;
+    //    }
+    //    bytes.resize(sizeRecv);
+    //    gzzzt::Log::info(gzzzt::Log::GENERAL, "RECV : %d from %s, %d\n", sizeRecv, tmp1.toString().c_str(), serverPortUDP);
 
     // initialize
     gzzzt::World world;
@@ -153,7 +166,7 @@ int main(int argc, char** argv) {
         world.render(window);
         window.display();
     }
-    tcpManager.disconnect();
 
+    tcpManager.disconnect();
     return 0;
 }

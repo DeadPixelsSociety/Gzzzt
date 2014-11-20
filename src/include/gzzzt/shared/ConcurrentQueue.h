@@ -15,33 +15,42 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SERVER_TCP_MANAGER_H
-#define GZZZT_SERVER_TCP_MANAGER_H
+#ifndef GZZZT_CONCURRENT_QUEUE_H
+#define GZZZT_CONCURRENT_QUEUE_H
 
-#include <SFML/Network.hpp>
-
-#include <gzzzt/server/ServerPlayerList.h>
-#include <gzzzt/shared/Response.h>
+#include <mutex>
+#include <queue>
 
 namespace gzzzt {
 
-    class ServerTCPManager {
+    template<class T>
+    class ConcurrentQueue {
     public:
-        explicit ServerTCPManager(unsigned short port);
+        bool empty() {
+            m_qMutex.lock();
+            bool isEmpty = m_queue.empty();
+            m_qMutex.unlock();
+            return isEmpty;
+        }
 
-        bool init();
-        void close();
-        bool waitPlayers(int nbPlayers, gzzzt::ServerPlayerList& players);
-        bool broadcast(gzzzt::ServerPlayerList& players, const gzzzt::Response& msg) const;
+        T pop() {
+            m_qMutex.lock();
+            T value = m_queue.front();
+            m_qMutex.unlock();
+            return value;
+        }
+
+        void push(T value) {
+            m_qMutex.lock();
+            m_queue.push(value);
+            m_qMutex.unlock();
+        }
 
     private:
-        unsigned short m_port;
-        sf::TcpListener m_listener;
-        sf::SocketSelector m_selector;
-
-        bool isDuplicatedName(const gzzzt::ServerPlayerList& players, const std::string& name) const;
-        static void closeOnSignal(int sig);
+        std::queue<T> m_queue;
+        std::mutex m_qMutex;
     };
+
 }
 
-#endif // GZZZT_SERVER_TCP_MANAGER_H
+#endif // GZZZT_CONCURRENT_QUEUE_H
