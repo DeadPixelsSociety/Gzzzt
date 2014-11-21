@@ -26,9 +26,14 @@
 
 namespace gzzzt {
 
+    static void closeOnSignal(int sig) {
+        assert(sig == SIGINT || sig == SIGTERM);
+        exit(1);
+    }
+
     ServerTCPManager::ServerTCPManager(unsigned short port) : m_port(port) {
-        std::signal(SIGINT, ServerTCPManager::closeOnSignal);
-        std::signal(SIGTERM, ServerTCPManager::closeOnSignal);
+        std::signal(SIGINT, &closeOnSignal);
+        std::signal(SIGTERM, &closeOnSignal);
     }
 
     bool ServerTCPManager::init() {
@@ -131,10 +136,5 @@ namespace gzzzt {
             }
         }
         return false;
-    }
-
-    void ServerTCPManager::closeOnSignal(int sig) {
-        assert(sig == SIGINT || sig == SIGTERM);
-        exit(1);
     }
 }

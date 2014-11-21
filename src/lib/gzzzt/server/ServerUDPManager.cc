@@ -50,7 +50,7 @@ namespace gzzzt {
     bool ServerUDPManager::broadcast(const gzzzt::ServerPlayerList& players, const gzzzt::Response& resp) {
         std::vector<uint8_t> bytes = resp.serialize();
         for (auto player : players) {
-            if (!m_socket.send(&bytes[0], bytes.size(), player->getAddress(), player->getUDPPort()) != sf::Socket::Done) {
+            if (m_socket.send(&bytes[0], bytes.size(), player->getAddress(), player->getUDPPort()) != sf::Socket::Done) {
                 return false;
             }
         }
@@ -70,6 +70,7 @@ namespace gzzzt {
         if (m_socket.receive(&bytes[0], bytes.size(), bytesRecv, senderAddress, senderPort) != sf::Socket::Done) {
             return nullptr;
         }
+        bytes.resize(bytesRecv);
         gzzzt::Request* req = nullptr;
         gzzzt::RequestType reqType = gzzzt::Request::getType(bytes);
         switch (reqType) {

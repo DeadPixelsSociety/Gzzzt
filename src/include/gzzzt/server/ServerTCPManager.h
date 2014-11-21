@@ -40,7 +40,6 @@ namespace gzzzt {
         sf::SocketSelector m_selector;
 
         bool isDuplicatedName(const gzzzt::ServerPlayerList& players, const std::string& name) const;
-        static void closeOnSignal(int sig);
     };
 }
 

@@ -29,6 +29,7 @@
 #include <gzzzt/server/ServerUDPManager.h>
 #include <gzzzt/shared/ConcurrentQueue.h>
 #include <gzzzt/shared/ErrorResponse.h>
+#include <gzzzt/shared/GameStateResponse.h>
 #include <gzzzt/shared/IdentifyRequest.h>
 #include <gzzzt/shared/Log.h>
 #include <gzzzt/shared/NewPlayerRequest.h>
@@ -57,7 +58,6 @@ static void receiveMsg(gzzzt::ServerUDPManager& udpManager, gzzzt::ConcurrentQue
     while (should_continue) {
         req = udpManager.receive();
         if (req != nullptr) {
-            gzzzt::Log::info(gzzzt::Log::GENERAL, "PUSH : %d\n", req->getPlayerId());
             inQueue.push(req);
         }
     }
@@ -70,10 +70,15 @@ static void broadcastMsg(gzzzt::ServerUDPManager& udpManager,
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the broadcasting thread...\n");
     gzzzt::Response* resp;
     while (should_continue) {
-        resp = outQueue.pop();
-        if (resp != nullptr) {
-            gzzzt::Log::info(gzzzt::Log::GENERAL, "POP : %d\n", resp->getRespType());
-            udpManager.broadcast(players, *resp);
+        if (!outQueue.empty()) {
+            resp = outQueue.pop();
+            if (resp != nullptr) {
+                gzzzt::Log::debug(gzzzt::Log::GENERAL, "Broadcast response\n");
+                if (!udpManager.broadcast(players, *resp)) {
+                    gzzzt::Log::error(gzzzt::Log::GENERAL, "Could not broadcast msg\n");
+                }
+                delete resp;
+            }
         }
     }
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the broadcasting thread...\n");
@@ -118,6 +123,15 @@ int main(int argc, char** argv) {
         return 4;
     }
 
+    // Initialize the UDP socket
+    gzzzt::ServerUDPManager udpManager(udpPort);
+    if (!udpManager.init()) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind UDP socket\n");
+        tcpManager.close();
+        return 5;
+    }
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "UDP socket created\n");
+
     // Broadcast the players list
     std::map<uint8_t, std::string> playersData;
     for (auto player : players) {
@@ -128,14 +142,7 @@ int main(int argc, char** argv) {
         gzzzt::Log::fatal(gzzzt::Log::NETWORK, "Error while broadcasting to the players\n");
     }
 
-    // Initialize the UDP socket
-    gzzzt::ServerUDPManager udpManager(udpPort);
-    if (!udpManager.init()) {
-        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not bind UDP socket\n");
-        tcpManager.close();
-        return 5;
-    }
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "UDP socket created\n");
+
 
     // Get the players UDP port
     uint8_t nbPlayersReq = 0;
@@ -176,7 +183,20 @@ int main(int argc, char** argv) {
     sf::Clock clock;
 
     while (should_continue) {
-        // input (network)
+        if (!inQueue.empty()) {
+            gzzzt::Request* req = inQueue.pop();
+            gzzzt::ServerPlayer* player = players.getById(req->getPlayerId());
+            if (req->getReqType() == gzzzt::RequestType::ACTION) {
+                //gzzzt::ActionRequest actionReq = dynamic_cast<gzzzt::ActionRequest>(*req);
+                gzzzt::Log::debug(gzzzt::Log::GENERAL, "Process action msg from %s\n", player->getName().c_str());
+            }
+            // TODO: handle msg
+
+            // broadcast response
+            gzzzt::GameStateResponse* resp = new gzzzt::GameStateResponse();
+            outQueue.push(resp);
+            delete req;
+        }
 
         // update
         sf::Time elapsed = clock.restart();

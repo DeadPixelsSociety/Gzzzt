@@ -15,25 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GAME_STATE_RESPONSE_H
-#define GAME_STATE_RESPONSE_H
+#ifndef GZZZT_CLIENT_UDP_MANAGER_H
+#define GZZZT_CLIENT_UDP_MANAGER_H
 
-#include <gzzzt/shared/Position.h>
+#include <SFML/Network.hpp>
+
 #include <gzzzt/shared/Response.h>
-#include <gzzzt/shared/Speed.h>
+#include <gzzzt/shared/Request.h>
 
 namespace gzzzt {
 
-    class GameStateResponse : public Response {
+    class ClientUDPManager {
     public:
-        explicit GameStateResponse();
-        explicit GameStateResponse(std::vector<uint8_t>& bytes);
+        explicit ClientUDPManager(const std::string& address, unsigned short port);
+        virtual ~ClientUDPManager();
 
-        std::vector<uint8_t> serialize() const override;
+        bool send(const gzzzt::Request& req);
+        gzzzt::Response* receive();
 
     private:
-        // TODO:
+        sf::IpAddress m_address;
+        sf::UdpSocket m_socket;
+        unsigned short m_port;
     };
+
 }
 
-#endif	// GAME_STATE_RESPONSE_H
+#endif // GZZZT_CLIENT_UDP_MANAGER_H

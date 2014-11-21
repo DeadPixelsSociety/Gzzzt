@@ -20,12 +20,14 @@
 
 #include <mutex>
 #include <queue>
+#include <condition_variable>
 
 namespace gzzzt {
 
     template<class T>
     class ConcurrentQueue {
     public:
+
         bool empty() {
             m_qMutex.lock();
             bool isEmpty = m_queue.empty();
@@ -36,6 +38,7 @@ namespace gzzzt {
         T pop() {
             m_qMutex.lock();
             T value = m_queue.front();
+            m_queue.pop();
             m_qMutex.unlock();
             return value;
         }
