@@ -30,7 +30,7 @@ namespace gzzzt {
     }
 
     void ClientMapVisitor::visitTileLayer(tmx::TileLayer& layer) {
-        
+
         if (strcmp(layer.getName().c_str(), "Background") == 0) {
             int index = 0;
             for (auto obj : layer) {
@@ -38,7 +38,7 @@ namespace gzzzt {
                 if (obj.getGID() != 0) {
                     m_map->setStaticGID(index, obj.getGID());
                 }
-                
+
                 index++;
             }
         } else if (strcmp(layer.getName().c_str(), "Adamantium") == 0) {

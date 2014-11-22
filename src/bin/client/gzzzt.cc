@@ -28,7 +28,6 @@ int main(void) {
     gzzzt::ResourceManager resourceManager;
     
     resourceManager.addSearchDir(GAME_DATADIR);
-    resourceManager.addSearchDir("..");
     
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
     window.setKeyRepeatEnabled(false);
@@ -36,6 +35,7 @@ int main(void) {
     // load resources
     
 #if _DEBUG_
+    resourceManager.addSearchDir("..");
     map = new gzzzt::ClientMap("../../../src/share/gzzzt/maps/simple/simple.tmx", resourceManager);
 #else
     assert(true);

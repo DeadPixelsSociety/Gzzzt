@@ -29,9 +29,10 @@ namespace gzzzt {
         m_tileHeight = m_tmxMap->getTileHeight();
         m_width = m_tmxMap->getWidth();
         m_height = m_tmxMap->getHeight();
-
-        m_staticGIDs = new unsigned int[m_width * m_height];
-        m_dynamicGIDs = new unsigned int[m_width * m_height];
+        
+        m_mapLength = m_width * m_height;
+        m_staticGIDs = new unsigned int[m_mapLength];
+        m_dynamicGIDs = new unsigned int[m_mapLength];
 
         int mapLength = m_width * m_height;
 
@@ -66,14 +67,12 @@ namespace gzzzt {
     void ClientMap::render(sf::RenderWindow & window) {
 
         //static blocks
-        window.draw(m_vertices, m_tileSetTexture);
+        window.draw(m_staticVertices, m_tileSetTexture);
 
         //dynamic blocks
         int k = 0;
 
-        int mapLength = m_width * m_height;
-
-        for (int index = 0; index < mapLength; ++index) {
+        for (int index = 0; index < m_mapLength; ++index) {
             int GID = m_dynamicGIDs[index];
 
             if (GID != 0) {
@@ -93,19 +92,13 @@ namespace gzzzt {
     }
 
     void ClientMap::loadStaticMap() {
-        m_vertices.setPrimitiveType(sf::Quads);
-        m_vertices.resize(m_width * m_height * 4);
+        m_staticVertices.setPrimitiveType(sf::Quads);
+        m_staticVertices.resize(m_width * m_height * 4);
 
         int k = 0;
 
-        int mapLength = m_width * m_height;
-
-        for (int index = 0; index < mapLength; ++index) {
+        for (int index = 0; index < m_mapLength; ++index) {
             int GID = m_staticGIDs[index];
-
-            if (GID == 0) {
-                continue;
-            }
 
             unsigned int i = k % m_width;
             unsigned int j = k / m_width;
@@ -115,7 +108,7 @@ namespace gzzzt {
             unsigned int x = i * m_tileWidth;
             unsigned int y = j * m_tileHeight;
 
-            sf::Vertex* quad = &m_vertices[(i + j * m_width) * 4];
+            sf::Vertex* quad = &m_staticVertices[(i + j * m_width) * 4];
 
             quad[0].position = sf::Vector2f(x, y);
             quad[1].position = sf::Vector2f(x + m_tileWidth, y);

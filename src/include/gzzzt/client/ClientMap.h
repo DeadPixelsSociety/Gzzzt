@@ -53,8 +53,9 @@ namespace gzzzt {
         unsigned int* m_dynamicGIDs;
 
         sf::Texture* m_tileSetTexture;
-        sf::VertexArray m_vertices;
+        sf::VertexArray m_staticVertices;
 
+        unsigned int m_mapLength;
         unsigned int m_tileWidth;
         unsigned int m_tileHeight;
         unsigned int m_width;
