@@ -18,6 +18,8 @@
 #ifndef GZZZT_SERVER_PHYSICS_H
 #define GZZZT_SERVER_PHYSICS_H
 
+#include <functional>
+#include <map>
 #include <vector>
 
 #include <gzzzt/server/Body.h>
@@ -26,14 +28,21 @@ namespace gzzzt {
 
     class Physics {
     public:
+        typedef std::function<void(Body*, Body*)> CollisionCallback;
 
         void addBody(Body *body);
+        void clear();
+
+        void setCallback(Body *body, CollisionCallback callback);
+        void removeCallback(Body *body);
 
         void update(float dt);
 
     private:
         std::vector<Body *> m_dynamic_bodies;
         std::vector<Body *> m_static_bodies;
+
+        std::map<Body *, CollisionCallback> m_callbacks;
     };
 
 }

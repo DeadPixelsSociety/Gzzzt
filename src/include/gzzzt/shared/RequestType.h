@@ -27,6 +27,7 @@ namespace gzzzt {
         ACTION,
         IDENTIFY
     };
+
 }
 
 #endif	// GZZZT_REQUEST_TYPE_H

@@ -27,4 +27,5 @@ namespace gzzzt {
     IdentifyRequest::IdentifyRequest(std::vector<uint8_t>& bytes)
     : Request(bytes) {
     }
+
 }
