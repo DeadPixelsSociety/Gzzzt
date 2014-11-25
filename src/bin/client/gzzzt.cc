@@ -67,7 +67,7 @@ static void sendMsg(gzzzt::ClientUDPManager& udpManager, gzzzt::ConcurrentQueue<
             req = outQueue.pop();
             if (req != nullptr) {
                 udpManager.send(*req);
-                //delete req;
+                delete req;
             }
         }
     }
