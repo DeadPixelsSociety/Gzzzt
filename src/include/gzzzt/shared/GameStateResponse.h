@@ -18,9 +18,7 @@
 #ifndef GAME_STATE_RESPONSE_H
 #define GAME_STATE_RESPONSE_H
 
-#include <gzzzt/shared/Position.h>
 #include <gzzzt/shared/Response.h>
-#include <gzzzt/shared/Speed.h>
 
 namespace gzzzt {
 

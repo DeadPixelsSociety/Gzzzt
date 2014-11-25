@@ -24,12 +24,15 @@
 #include <list>
 #include <thread>
 
+#include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 
+#include <gzzzt/client/ClientMap.h>
 #include <gzzzt/client/ClientPlayer.h>
 #include <gzzzt/client/ClientTCPManager.h>
 #include <gzzzt/client/ClientUDPManager.h>
+#include <gzzzt/client/Resource.h>
 #include <gzzzt/client/World.h>
 #include <gzzzt/shared/ActionRequest.h>
 #include <gzzzt/shared/ConcurrentQueue.h>
@@ -40,6 +43,7 @@
 #include <gzzzt/shared/StartGameResponse.h>
 
 #include "config.h"
+#include "gzzzt/client/SoundHandler.h"
 
 static std::atomic_bool should_continue
 {
@@ -175,14 +179,26 @@ int main(int argc, char** argv) {
 
     // initialize
     gzzzt::World world;
+    gzzzt::ClientMap* map;
+
+    gzzzt::ResourceManager resourceManager;
+
+    resourceManager.addSearchDir(GAME_DATADIR);
+    resourceManager.addSearchDir("..");
+
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
     window.setKeyRepeatEnabled(false);
 
     // load resources
 
+#if _DEBUG_
+    map = new gzzzt::ClientMap("../../../src/share/gzzzt/maps/simple/simple.tmx", resourceManager);
+#else
+    assert(true);
+#endif
 
     // add entities
-
+    world.addEntity(map);
 
     // main loop
     sf::Clock clock;

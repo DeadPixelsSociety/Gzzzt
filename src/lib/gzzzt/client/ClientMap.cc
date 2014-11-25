@@ -15,16 +15,76 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <gzzzt/client/ClientMap.h>
+#include <gzzzt/client/ClientMapVisitor.h>
+#include <tmx/TMX.h>
+#include <tmx/TileLayer.h>
 
 namespace gzzzt {
+
+    ClientMap::ClientMap(const boost::filesystem::path & path, ResourceManager & resourceManager) {
+        m_tmxMap = tmx::parseMapFile(path);
+        m_tileWidth = m_tmxMap->getTileWidth();
+        m_tileHeight = m_tmxMap->getTileHeight();
+        m_width = m_tmxMap->getWidth();
+        m_height = m_tmxMap->getHeight();
+
+#if _DEBUG_
+        m_tileSetTexture = resourceManager.getTexture("../../src/share/gzzzt/maps/simple/tileset.png");
+#else
+        assert(true);
+#endif
+
+        ClientMapVisitor visitor(&m_GID);
+        m_tmxMap->visitLayers(visitor);
+    }
+
+    ClientMap::~ClientMap() {
+        delete m_tmxMap;
+    }
 
     void ClientMap::update(float dt) {
         // TODO
     }
 
     void ClientMap::render(sf::RenderWindow& window) {
-        // TODO
+        unsigned int k = 0;
+
+        for (int GID : m_GID) {
+            unsigned int i = k % m_width;
+            unsigned int j = k / m_width;
+
+            assert(j < m_height);
+
+            unsigned int x = i * m_tileWidth;
+            unsigned int y = j * m_tileHeight;
+
+            drawGID(x, y, GID, window);
+            k++;
+        }
     }
 
+    void ClientMap::drawGID(unsigned int x, unsigned int y, unsigned int GID, sf::RenderWindow& window) {
+        tmx::TileSet *tileset = m_tmxMap->getTileSetFromGID(GID);
+        GID = GID - tileset->getFirstGID();
+
+        if (tileset->hasImage()) {
+            const tmx::Image *image = tileset->getImage();
+
+            tmx::Size size = image->getSize();
+            tmx::Rect rect = tileset->getCoords(GID, size);
+
+            sf::IntRect subRect;
+            subRect.left = rect.x;
+            subRect.height = rect.height;
+            subRect.top = rect.y;
+            subRect.width = rect.width;
+
+            sf::Sprite sprite(*m_tileSetTexture);
+            sprite.setTextureRect(subRect);
+            sprite.setPosition(x, y);
+            window.draw(sprite);
+        }
+    }
 }

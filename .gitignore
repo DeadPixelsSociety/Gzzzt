@@ -7,3 +7,7 @@ build/
 # Temporary files
 *~
 *.bak
+
+# eclipse auto-gen files
+.cproject
+.project

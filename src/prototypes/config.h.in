@@ -1,0 +1,7 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define GAME_VERSION "@CPACK_PACKAGE_VERSION@"
+#define GAME_DATADIR "@CMAKE_INSTALL_PREFIX@/share/games/gzzzt"
+
+#endif // CONFIG_H

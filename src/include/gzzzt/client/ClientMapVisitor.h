@@ -15,19 +15,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_REQUEST_TYPE_H
-#define GZZZT_REQUEST_TYPE_H
+#ifndef GZZZT_CLIENT_MAP_VISITOR_H
+#define GZZZT_CLIENT_MAP_VISITOR_H
 
-#include <cstdint>
+#include <vector>
+#include <tmx/LayerVisitor.h>
 
 namespace gzzzt {
 
-    enum class RequestType : uint8_t {
-        NEW_PLAYER = 0,
-        ACTION,
-        IDENTIFY
+    class ClientMapVisitor : public tmx::LayerVisitor {
+    public:
+        
+        ClientMapVisitor() {};
+        ClientMapVisitor(std::vector<unsigned int>* GID);
+        
+        virtual void visitTileLayer(tmx::TileLayer& layer) override;
+        virtual void visitObjectLayer(tmx::ObjectLayer& layer) override;
+        virtual void visitImageLayer(tmx::ImageLayer& layer) override;
+        
+    private:
+        std::vector<unsigned int>* m_GID;
     };
 
 }
 
-#endif	// GZZZT_REQUEST_TYPE_H
+
+#endif // GZZZT_CLIENT_MAP_VISITOR_H

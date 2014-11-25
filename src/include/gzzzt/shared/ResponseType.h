@@ -28,6 +28,7 @@ namespace gzzzt {
         START_GAME,
         GAME_STATE
     };
+
 }
 
 #endif	// GZZZT_RESPONSE_TYPE_H

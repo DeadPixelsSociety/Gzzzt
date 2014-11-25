@@ -15,16 +15,36 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_POSITION_H
-#define GZZZT_POSITION_H
+#ifndef GZZZT_SOUNDHANDLER_H
+#define GZZZT_SOUNDHANDLER_H
+
+#include <vector>
+
+#include <SFML/Audio.hpp>
+
+#include <gzzzt/client/Resource.h>
 
 namespace gzzzt {
 
-    struct Position {
-        float x;
-        float y;
+    enum class Sound {
+        GAME_IN       = 0,
+        GAME_START    = 1,
+        GAME_END      = 2,
+        BOMB_DROP     = 3,
+        BOMB_EXPLODE  = 4,
+        DEATH         = 5,
+    };
+
+    class SoundHandler {
+    public:
+        SoundHandler(ResourceManager& manager);
+        void play(Sound id);
+
+    private:
+        void load(ResourceManager& manager, const std::string& filename);
+        std::vector<sf::Sound> m_SoundPlayer;
     };
 
 }
 
-#endif // GZZZT_POSITION_H
+#endif // GZZZT_SOUNDHANDLER_H
