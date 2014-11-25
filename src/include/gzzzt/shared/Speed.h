@@ -15,20 +15,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_MOVEMENT_H
-#define GZZZT_MOVEMENT_H
-
-#include <gzzzt/shared/Action.h>
+#ifndef GZZZT_SPEED_H
+#define GZZZT_SPEED_H
 
 namespace gzzzt {
 
-    class Movement : public Action {
-    public:
-        explicit Movement(ActionType type);
-
-    private:
-        // TODO: add members here
+    struct Speed {
+        float dx;
+        float dy;
     };
+
 }
 
-#endif  // GZZZT_MOVEMENT_H
+#endif // GZZZT_SPEED_H

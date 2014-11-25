@@ -15,10 +15,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/DropBomb.h>
+#ifndef GAME_STATE_RESPONSE_H
+#define GAME_STATE_RESPONSE_H
+
+#include <gzzzt/shared/Position.h>
+#include <gzzzt/shared/Response.h>
+#include <gzzzt/shared/Speed.h>
 
 namespace gzzzt {
 
-    DropBomb::DropBomb() : Action(ActionType::DROP_BOMB) {
-    }
+    class GameStateResponse : public Response {
+    public:
+        explicit GameStateResponse();
+        explicit GameStateResponse(std::vector<uint8_t>& bytes);
+
+        std::vector<uint8_t> serialize() const override;
+
+    private:
+        // TODO:
+    };
 }
+
+#endif	// GAME_STATE_RESPONSE_H

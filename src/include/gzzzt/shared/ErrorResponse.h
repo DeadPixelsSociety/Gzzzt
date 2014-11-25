@@ -15,10 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/Movement.h>
+#ifndef ERROR_RESPONSE_H
+#define ERROR_RESPONSE_H
+
+#include <string>
+
+#include <gzzzt/shared/Response.h>
 
 namespace gzzzt {
 
-    Movement::Movement(ActionType type) : Action(type) {
-    }
+    class ErrorResponse : public Response {
+    public:
+        explicit ErrorResponse(std::string reason);
+        explicit ErrorResponse(std::vector<uint8_t>& bytes);
+
+        std::string getReason() const;
+
+        std::vector<uint8_t> serialize() const override;
+
+    private:
+        std::string m_reason;
+    };
 }
+
+#endif	// ERROR_RESPONSE_H

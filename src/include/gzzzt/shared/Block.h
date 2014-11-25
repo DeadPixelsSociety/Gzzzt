@@ -21,6 +21,7 @@
 namespace gzzzt {
 
     class Block {
+        
     public:
         Block();
 

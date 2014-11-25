@@ -10,6 +10,7 @@ add_library(gzzzt0 SHARED
 target_link_libraries(gzzzt0
   ${Boost_LIBRARIES}
   ${SFML2_LIBRARIES}
+  ${LIBTMX_LIBRARIES}
 )
 
 set_target_properties(gzzzt0

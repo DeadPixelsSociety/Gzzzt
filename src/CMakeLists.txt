@@ -15,6 +15,7 @@ pkg_check_modules(LIBTMX REQUIRED libtmx0)
 
 add_definitions(-Wall -g -O2)
 add_definitions(-std=c++11)
+add_definitions(-D_DEBUG_)
 
 include_directories("${CMAKE_SOURCE_DIR}/include")
 

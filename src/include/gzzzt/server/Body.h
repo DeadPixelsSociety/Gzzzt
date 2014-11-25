@@ -31,7 +31,9 @@ namespace gzzzt {
         };
 
         Kind kind;
+
         union {
+
             struct {
                 float radius;
             } circle;
@@ -53,6 +55,7 @@ namespace gzzzt {
     };
 
     struct Body {
+
         enum Type {
             STATIC,
             DYNAMIC,

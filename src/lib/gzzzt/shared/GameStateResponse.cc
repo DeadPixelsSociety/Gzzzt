@@ -15,23 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_ACTION_H
-#define GZZZT_ACTION_H
-
-#include <gzzzt/shared/ActionType.h>
+#include <gzzzt/shared/GameStateResponse.h>
+#include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
 
-    class Action {
-    public:
-        ActionType getType() const;
+    GameStateResponse::GameStateResponse()
+    : Response(ResponseType::GAME_STATE) {
+    }
 
-    protected:
-        explicit Action(ActionType type);
+    GameStateResponse::GameStateResponse(std::vector<uint8_t>& bytes)
+    : Response(bytes) {
+        // TODO:
+    }
 
-    private:
-        ActionType m_type;
-    };
+    std::vector<uint8_t> GameStateResponse::serialize() const {
+        std::vector<uint8_t> bytes = Response::serialize();
+        // TODO:
+        return bytes;
+    }
 }
-
-#endif  // GZZZT_ACTION_H

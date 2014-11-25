@@ -15,20 +15,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_DROPBOMB_H
-#define GZZZT_DROPBOMB_H
+#ifndef GZZZT_RESPONSE_TYPE_H
+#define GZZZT_RESPONSE_TYPE_H
 
-#include <gzzzt/shared/Action.h>
+#include <cstdint>
 
 namespace gzzzt {
 
-    class DropBomb : public Action {
-    public:
-        explicit DropBomb();
-
-    private:
-        // TODO: add members here
+    enum class ResponseType : uint8_t {
+        ERROR = 0,
+        NEW_PLAYER_OK,
+        START_GAME,
+        GAME_STATE
     };
+
 }
 
-#endif  // GZZZT_DROPBOMB_H
+#endif	// GZZZT_RESPONSE_TYPE_H

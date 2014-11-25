@@ -15,15 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/Action.h>
+#ifndef GZZZT_REQUEST_TYPE_H
+#define GZZZT_REQUEST_TYPE_H
+
+#include <cstdint>
 
 namespace gzzzt {
 
-    Action::Action(ActionType type) : m_type(type) {
-    }
-
-    ActionType Action::getType() const {
-        return m_type;
-    }
+    enum class RequestType : uint8_t {
+        NEW_PLAYER = 0,
+        ACTION,
+        IDENTIFY
+    };
 
 }
+
+#endif	// GZZZT_REQUEST_TYPE_H
