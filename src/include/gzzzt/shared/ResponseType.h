@@ -15,21 +15,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/DropBomb.h>
+#ifndef GZZZT_RESPONSE_TYPE_H
+#define GZZZT_RESPONSE_TYPE_H
+
+#include <cstdint>
 
 namespace gzzzt {
 
-    DropBomb::DropBomb(Position pos) : Action(ActionType::DROP_BOMB, pos) {
-    }
-    
-    DropBomb::DropBomb(unsigned char* bytes) : Action(bytes) {
-    }
+    enum class ResponseType : uint8_t {
+        ERROR = 0,
+        NEW_PLAYER_OK,
+        START_GAME,
+        GAME_STATE
+    };
 
-    unsigned char* DropBomb::serialize(unsigned char* bytes, unsigned int* size) const {
-        if (Action::serialize(bytes, size) == nullptr) {
-            return nullptr;
-        }
-        // TODO: Serialize members
-        return bytes;
-    }
 }
+
+#endif	// GZZZT_RESPONSE_TYPE_H

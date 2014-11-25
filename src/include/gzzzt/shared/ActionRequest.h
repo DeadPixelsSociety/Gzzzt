@@ -15,16 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#ifndef GZZZT_ACTION_REQUEST_H
+#define GZZZT_ACTION_REQUEST_H
+
+#include <gzzzt/shared/ActionType.h>
+#include <gzzzt/shared/Request.h>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
-    };
+    class ActionRequest : public Request {
+    public:
+        explicit ActionRequest(ActionType type, uint8_t playerId);
+        explicit ActionRequest(std::vector<uint8_t>& bytes);
 
+        ActionType getType() const;
+        uint8_t getPlayerId() const;
+
+        std::vector<uint8_t> serialize() const override;
+
+    private:
+        ActionType m_type;
+    };
 }
 
-#endif // GZZZT_SPEED_H
+#endif  // GZZZT_ACTION_REQUEST_H

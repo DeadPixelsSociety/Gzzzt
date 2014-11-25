@@ -15,29 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_ACTION_H
-#define GZZZT_ACTION_H
+#ifndef GZZZT_REQUEST_TYPE_H
+#define GZZZT_REQUEST_TYPE_H
 
-#include <gzzzt/shared/ActionType.h>
-#include <gzzzt/shared/Position.h>
+#include <cstdint>
 
 namespace gzzzt {
 
-    class Action {
-    public:
-        ActionType getType() const;
-        Position getPosition() const;
-
-    protected:
-        explicit Action(ActionType type, Position pos);
-        explicit Action(unsigned char* bytes);
-
-        virtual unsigned char* serialize(unsigned char* bytes, unsigned int* size) const;
-
-    private:
-        ActionType m_type;
-        Position m_pos;
+    enum class RequestType : uint8_t {
+        NEW_PLAYER = 0,
+        ACTION,
+        IDENTIFY
     };
+
 }
 
-#endif  // GZZZT_ACTION_H
+#endif	// GZZZT_REQUEST_TYPE_H

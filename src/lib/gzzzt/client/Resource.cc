@@ -53,7 +53,6 @@ namespace gzzzt {
     template class ResourceCache<sf::SoundBuffer>;
     template class ResourceCache<sf::Texture>;
 
-
     void ResourceManager::addSearchDir(std::string path) {
         m_searchdirs.emplace_back(std::move(path));
     }

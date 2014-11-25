@@ -15,27 +15,187 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/client/World.h>
-#include <gzzzt/client/ClientMap.h>
+#include <atomic>
+#include <cassert>
+#include <chrono>
+#include <csignal>
+#include <cstdlib>
+#include <iostream>
+#include <list>
+#include <thread>
+
 #include <SFML/Audio.hpp>
+#include <SFML/Network.hpp>
+#include <SFML/System.hpp>
+
+#include <gzzzt/client/ClientMap.h>
+#include <gzzzt/client/ClientPlayer.h>
+#include <gzzzt/client/ClientTCPManager.h>
+#include <gzzzt/client/ClientUDPManager.h>
+#include <gzzzt/client/Resource.h>
+#include <gzzzt/client/World.h>
+#include <gzzzt/shared/ActionRequest.h>
+#include <gzzzt/shared/ConcurrentQueue.h>
+#include <gzzzt/shared/ErrorResponse.h>
+#include <gzzzt/shared/IdentifyRequest.h>
+#include <gzzzt/shared/Log.h>
+#include <gzzzt/shared/NewPlayerRequest.h>
+#include <gzzzt/shared/StartGameResponse.h>
 
 #include "config.h"
 #include "gzzzt/client/SoundHandler.h"
 
-int main(void) {
+static std::atomic_bool should_continue
+{
+    true
+};
+
+static void stopThreads() {
+    should_continue = false;
+}
+
+static void signal_handler(int sig) {
+    assert(sig == SIGINT || sig == SIGTERM);
+    stopThreads();
+}
+
+static void help(void) {
+    std::cout << "Usage: gzzzt <PLAYER_NAME> <SERVER_ADDRESS:PORT>" << std::endl;
+}
+
+static void sendMsg(gzzzt::ClientUDPManager& udpManager, gzzzt::ConcurrentQueue<gzzzt::Request*>& outQueue) {
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the sender thread...\n");
+    gzzzt::Request* req;
+    while (should_continue) {
+        if (!outQueue.empty()) {
+            req = outQueue.pop();
+            if (req != nullptr) {
+                udpManager.send(*req);
+                delete req;
+            }
+        }
+    }
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the sender thread...\n");
+}
+
+static void receiveMsg(gzzzt::ClientUDPManager& udpManager, gzzzt::ConcurrentQueue<gzzzt::Response*>& inQueue) {
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the receiver thread...\n");
+    gzzzt::Response* resp;
+    while (should_continue) {
+        resp = udpManager.receive();
+        if (resp != nullptr) {
+            inQueue.push(resp);
+        }
+    }
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the receiver thread...\n");
+}
+
+int main(int argc, char** argv) {
+    if (argc != 3) {
+        help();
+        return 1;
+    }
+    gzzzt::Log::setLevel(gzzzt::Log::DEBUG);
+    std::string playerName(argv[1]);
+    std::string serverURL(argv[2]);
+    std::size_t pos = serverURL.find(":");
+    if (pos == std::string::npos) {
+        gzzzt::Log::error(gzzzt::Log::GENERAL, "Bad address format\n");
+        help();
+        return 2;
+    }
+
+    // set signal handlers
+    auto previous_sigint_handler = std::signal(SIGINT, signal_handler);
+    if (previous_sigint_handler == SIG_ERR) {
+        gzzzt::Log::error(gzzzt::Log::GENERAL, "Could not set the signal handler for SIGINT\n");
+        return 2;
+    }
+
+    auto previous_sigterm_handler = std::signal(SIGTERM, signal_handler);
+    if (previous_sigterm_handler == SIG_ERR) {
+        gzzzt::Log::error(gzzzt::Log::GENERAL, "Could not set the signal handler for SIGTERM\n");
+        return 2;
+    }
+
+    // Create the TCP manager
+    std::string serverAddress = serverURL.substr(0, pos);
+    unsigned short serverPortTCP = std::strtoul(serverURL.substr(pos + 1).c_str(), nullptr, 10);
+    gzzzt::ClientTCPManager tcpManager(serverAddress, serverPortTCP);
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Connecting to %s on port %d...\n", serverAddress.c_str(), serverPortTCP);
+    std::string error;
+    if (!tcpManager.connect()) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not connect to %s on port %d\n", serverAddress.c_str(), serverPortTCP);
+        return 3;
+    }
+
+    // Send a request to be a player
+    if (!tcpManager.declareAsNewPlayer(playerName, error)) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "%s\n", error.c_str());
+        tcpManager.disconnect();
+        return 3;
+    }
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Name accepted.\n");
+
+    // Receive the game's data (list of players + server UDP port)
+    unsigned short serverPortUDP;
+    std::list<gzzzt::ClientPlayer> players;
+    if (!tcpManager.receiveGameData(players, serverPortUDP, error)) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "%s\n", error.c_str());
+        tcpManager.disconnect();
+        return 3;
+    }
+
+    uint8_t playerId = 0;
+    for (auto& p : players) {
+        gzzzt::Log::info(gzzzt::Log::GENERAL, "Player #%d : %s\n", p.getID(), p.getName().c_str());
+        // Get current player's ID
+        if (p.getName().compare(playerName) == 0) {
+            playerId = p.getID();
+        }
+    }
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "My ID : %d\n", playerId);
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Server port UDP : %d\n", serverPortUDP);
+
+
+    // Initialize the UDP socket
+    gzzzt::ClientUDPManager udpManager(serverAddress, serverPortUDP);
+
+    // Send a request to identify
+    if (!udpManager.send(gzzzt::IdentifyRequest(playerId))) {
+        gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not send data\n");
+        tcpManager.disconnect();
+        return 5;
+    }
+
+    // Create concurrent queues for the messages
+    gzzzt::ConcurrentQueue<gzzzt::Response*> inQueue;
+    gzzzt::ConcurrentQueue<gzzzt::Request*> outQueue;
+    // Launch the threads
+    std::thread sender(&sendMsg, std::ref(udpManager), std::ref(outQueue));
+    std::thread receiver(&receiveMsg, std::ref(udpManager), std::ref(inQueue));
+
+    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the game...\n");
+
     // initialize
     gzzzt::World world;
     gzzzt::ClientMap* map;
-    //gzzzt::SoundHandler* sounds;
-    
+
+    gzzzt::ResourceManager resourceManager;
+
+    resourceManager.addSearchDir(GAME_DATADIR);
+    resourceManager.addSearchDir("..");
+
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
     window.setKeyRepeatEnabled(false);
 
     // load resources
-    
-    //map = new gzzzt::ClientMap("../../../share/gzzzt/maps/simple/simple.tmx");
-    map = new gzzzt::ClientMap("../src/share/gzzzt/maps/simple/simple.tmx");
-    //sounds = new gzzzt::SoundHandler();
+
+#if _DEBUG_
+    map = new gzzzt::ClientMap("../../../src/share/gzzzt/maps/simple/simple.tmx", resourceManager);
+#else
+    assert(true);
+#endif
 
     // add entities
     world.addEntity(map);
@@ -51,19 +211,45 @@ int main(void) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             } else if (event.type == sf::Event::KeyPressed) {
-
                 switch (event.key.code) {
                     case sf::Keyboard::Escape:
                         window.close();
                         break;
-
+                    case sf::Keyboard::Up:
+                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "UP\n");
+                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::MOVE_UP, playerId));
+                        break;
+                    case sf::Keyboard::Down:
+                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "DOWN\n");
+                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::MOVE_DOWN, playerId));
+                        break;
+                    case sf::Keyboard::Left:
+                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "LEFT\n");
+                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::MOVE_LEFT, playerId));
+                        break;
+                    case sf::Keyboard::Right:
+                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "RIGHT\n");
+                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::MOVE_RIGHT, playerId));
+                        break;
+                    case sf::Keyboard::Space:
+                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "SPACE\n");
+                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::DROP_BOMB, playerId));
+                        break;
                     default:
                         break;
                 }
 
             }
         }
-        
+
+        if (!inQueue.empty()) {
+            // There is a pending message
+            gzzzt::Response* resp = inQueue.pop();
+            gzzzt::Log::debug(gzzzt::Log::GENERAL, "Receive msg from server\n");
+            // TODO: handle msg
+            delete resp;
+        }
+
         // update
         sf::Time elapsed = clock.restart();
         world.update(elapsed.asSeconds());
@@ -73,6 +259,9 @@ int main(void) {
         world.render(window);
         window.display();
     }
-
+    stopThreads();
+    receiver.join();
+    sender.join();
+    tcpManager.disconnect();
     return 0;
 }

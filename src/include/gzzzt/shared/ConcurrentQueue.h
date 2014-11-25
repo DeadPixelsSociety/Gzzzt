@@ -15,16 +15,45 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#ifndef GZZZT_CONCURRENT_QUEUE_H
+#define GZZZT_CONCURRENT_QUEUE_H
+
+#include <mutex>
+#include <queue>
+#include <condition_variable>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
+    template<class T>
+    class ConcurrentQueue {
+    public:
+
+        bool empty() {
+            m_qMutex.lock();
+            bool isEmpty = m_queue.empty();
+            m_qMutex.unlock();
+            return isEmpty;
+        }
+
+        T pop() {
+            m_qMutex.lock();
+            T value = m_queue.front();
+            m_queue.pop();
+            m_qMutex.unlock();
+            return value;
+        }
+
+        void push(T value) {
+            m_qMutex.lock();
+            m_queue.push(value);
+            m_qMutex.unlock();
+        }
+
+    private:
+        std::queue<T> m_queue;
+        std::mutex m_qMutex;
     };
 
 }
 
-#endif // GZZZT_SPEED_H
+#endif // GZZZT_CONCURRENT_QUEUE_H

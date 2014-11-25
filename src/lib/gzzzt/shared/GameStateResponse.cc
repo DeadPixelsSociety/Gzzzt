@@ -15,39 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/Action.h>
+#include <gzzzt/shared/GameStateResponse.h>
 #include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
 
-    Action::Action(ActionType type, Position pos)
-    : m_type(type), m_pos(pos) {
-    }
-    
-    Action::Action(unsigned char* bytes) {
-        unsigned int index;
-        m_type = (ActionType) bytes[0];
-        index = 1;
-        m_pos.x = Serializer::deserializeFloat(bytes, &index);
-        m_pos.y = Serializer::deserializeFloat(bytes, &index);
+    GameStateResponse::GameStateResponse()
+    : Response(ResponseType::GAME_STATE) {
     }
 
-    ActionType Action::getType() const {
-        return m_type;
+    GameStateResponse::GameStateResponse(std::vector<uint8_t>& bytes)
+    : Response(bytes) {
+        // TODO:
     }
 
-    Position Action::getPosition() const {
-        return m_pos;
-    }
-
-    unsigned char* Action::serialize(unsigned char* bytes, unsigned int* size) const {
-        if (bytes == nullptr || size == nullptr) {
-            return nullptr;
-        }
-        bytes[0] = (unsigned char) m_type;
-        *size = 1;
-        Serializer::serializeFloat(bytes, size, m_pos.x);
-        Serializer::serializeFloat(bytes, size, m_pos.y);
+    std::vector<uint8_t> GameStateResponse::serialize() const {
+        std::vector<uint8_t> bytes = Response::serialize();
+        // TODO:
         return bytes;
     }
 }

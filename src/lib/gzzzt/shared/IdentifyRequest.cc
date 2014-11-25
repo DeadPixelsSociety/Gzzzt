@@ -15,16 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#include <gzzzt/shared/IdentifyRequest.h>
+#include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
-    };
+    IdentifyRequest::IdentifyRequest(uint8_t id)
+    : Request(RequestType::IDENTIFY, id) {
+    }
+
+    IdentifyRequest::IdentifyRequest(std::vector<uint8_t>& bytes)
+    : Request(bytes) {
+    }
 
 }
-
-#endif // GZZZT_SPEED_H

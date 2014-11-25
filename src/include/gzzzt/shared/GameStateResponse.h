@@ -15,23 +15,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_MOVEMENT_H
-#define GZZZT_MOVEMENT_H
+#ifndef GAME_STATE_RESPONSE_H
+#define GAME_STATE_RESPONSE_H
 
-#include <gzzzt/shared/Action.h>
+#include <gzzzt/shared/Position.h>
+#include <gzzzt/shared/Response.h>
+#include <gzzzt/shared/Speed.h>
 
 namespace gzzzt {
 
-    class Movement : public Action {
+    class GameStateResponse : public Response {
     public:
-        explicit Movement(ActionType type, Position pos);
-        explicit Movement(unsigned char* bytes);
+        explicit GameStateResponse();
+        explicit GameStateResponse(std::vector<uint8_t>& bytes);
 
-        unsigned char* serialize(unsigned char* bytes, unsigned int* size) const override;
+        std::vector<uint8_t> serialize() const override;
 
     private:
-        // TODO: add members here
+        // TODO:
     };
 }
 
-#endif  // GZZZT_MOVEMENT_H
+#endif	// GAME_STATE_RESPONSE_H

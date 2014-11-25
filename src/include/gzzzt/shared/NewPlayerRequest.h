@@ -15,16 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_POSITION_H
-#define GZZZT_POSITION_H
+#ifndef GZZZT_NEW_PLAYER_REQUEST_H
+#define GZZZT_NEW_PLAYER_REQUEST_H
+
+#include <string>
+
+#include <gzzzt/shared/Request.h>
 
 namespace gzzzt {
 
-    struct Position {
-        float x;
-        float y;
-    };
+    class NewPlayerRequest : public Request {
+    public:
+        explicit NewPlayerRequest(std::string playerName);
+        explicit NewPlayerRequest(std::vector<uint8_t>& bytes);
 
+        std::string getPlayerName() const;
+
+        std::vector<uint8_t> serialize() const override;
+
+    private:
+        std::string m_playerName;
+    };
 }
 
-#endif // GZZZT_POSITION_H
+#endif	// GZZZT_NEW_PLAYER_REQUEST_H

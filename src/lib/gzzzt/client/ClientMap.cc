@@ -23,15 +23,18 @@
 
 namespace gzzzt {
 
-    ClientMap::ClientMap(const boost::filesystem::path & path) {
+    ClientMap::ClientMap(const boost::filesystem::path & path, ResourceManager & resourceManager) {
         m_tmxMap = tmx::parseMapFile(path);
         m_tileWidth = m_tmxMap->getTileWidth();
         m_tileHeight = m_tmxMap->getTileHeight();
         m_width = m_tmxMap->getWidth();
         m_height = m_tmxMap->getHeight();
 
-        m_resourceManager.addSearchDir("../");
-        m_tileSetTexture = m_resourceManager.getTexture("src/share/gzzzt/maps/simple/tileset.png");
+#if _DEBUG_
+        m_tileSetTexture = resourceManager.getTexture("../../src/share/gzzzt/maps/simple/tileset.png");
+#else
+        assert(true);
+#endif
 
         ClientMapVisitor visitor(&m_GID);
         m_tmxMap->visitLayers(visitor);
@@ -43,7 +46,6 @@ namespace gzzzt {
 
     void ClientMap::update(float dt) {
         // TODO
-
     }
 
     void ClientMap::render(sf::RenderWindow& window) {

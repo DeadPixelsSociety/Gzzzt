@@ -37,17 +37,16 @@ namespace gzzzt {
         return Hash(str.c_str(), str.size());
     }
 
-
     struct Event {
         static const EventType type = INVALID_EVENT;
     };
 
     enum class EventStatus {
         KEEP, /**< The handler must be kept */
-        DIE,  /**< The handler can be removed */
+        DIE, /**< The handler can be removed */
     };
 
-    typedef std::function<EventStatus(ClientEntity *, EventType, Event *)> EventHandler;
+    typedef std::function<EventStatus(ClientEntity *, EventType, Event *) > EventHandler;
 
 }
 

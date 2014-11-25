@@ -15,23 +15,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_DROPBOMB_H
-#define GZZZT_DROPBOMB_H
+#ifndef GZZZT_SERIALIZABLE_H
+#define GZZZT_SERIALIZABLE_H
 
-#include <gzzzt/shared/Action.h>
+#include <cstdint>
+#include <vector>
 
 namespace gzzzt {
 
-    class DropBomb : public Action {
+    class Serializable {
     public:
-        explicit DropBomb(Position pos);
-        explicit DropBomb(unsigned char* bytes);
-
-        unsigned char* serialize(unsigned char* bytes, unsigned int* size) const override;
-
-    private:
-        // TODO: add members here
+        virtual std::vector<uint8_t> serialize() const = 0;
     };
 }
 
-#endif  // GZZZT_DROPBOMB_H
+#endif	// GZZZT_SERIALIZABLE_H
