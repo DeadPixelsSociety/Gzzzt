@@ -32,8 +32,6 @@ namespace gzzzt {
         
         m_mapLength = m_width * m_height;
 
-        int mapLength = m_width * m_height;
-
         ServerMapVisitor visitor(this);
         m_tmxMap->visitLayers(visitor);
 

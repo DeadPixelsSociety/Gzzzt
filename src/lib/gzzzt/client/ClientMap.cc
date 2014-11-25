@@ -34,9 +34,7 @@ namespace gzzzt {
         m_staticGIDs = new unsigned int[m_mapLength];
         m_dynamicGIDs = new unsigned int[m_mapLength];
 
-        int mapLength = m_width * m_height;
-
-        for (int i = 0; i < mapLength; ++i) {
+        for (unsigned int i = 0; i < m_mapLength; ++i) {
             m_dynamicGIDs[i] = 0;
             m_staticGIDs[i] = 0;
         }
