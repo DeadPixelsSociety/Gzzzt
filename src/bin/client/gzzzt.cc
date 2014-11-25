@@ -192,7 +192,7 @@ int main(int argc, char** argv) {
     // load resources
 
 #if _DEBUG_
-    map = new gzzzt::ClientMap("../../../src/share/gzzzt/maps/simple/simple.tmx", resourceManager);
+    map = new gzzzt::ClientMap("maps/simple/simple.tmx", resourceManager);
 #else
     assert(true);
 #endif

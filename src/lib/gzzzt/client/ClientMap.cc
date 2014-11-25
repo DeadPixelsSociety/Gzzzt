@@ -24,14 +24,14 @@
 namespace gzzzt {
 
     ClientMap::ClientMap(const boost::filesystem::path & path, ResourceManager & resourceManager) {
-        m_tmxMap = tmx::parseMapFile(path);
+        m_tmxMap = resourceManager.getMap(path.string());
         m_tileWidth = m_tmxMap->getTileWidth();
         m_tileHeight = m_tmxMap->getTileHeight();
         m_width = m_tmxMap->getWidth();
         m_height = m_tmxMap->getHeight();
 
 #if _DEBUG_
-        m_tileSetTexture = resourceManager.getTexture("../../src/share/gzzzt/maps/simple/tileset.png");
+        m_tileSetTexture = resourceManager.getTexture("maps/simple/tileset.png");
 #else
         assert(true);
 #endif

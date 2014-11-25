@@ -21,6 +21,8 @@
 
 #include <boost/filesystem.hpp>
 
+#include <tmx/TMX.h>
+
 namespace fs = boost::filesystem;
 
 namespace gzzzt {
@@ -68,6 +70,23 @@ namespace gzzzt {
     sf::Texture *ResourceManager::getTexture(const std::string& path) {
         return getResource(path, m_textures);
     }
+
+    tmx::Map *ResourceManager::getMap(const std::string& path) {
+        fs::path file(path);
+
+        for (fs::path base : m_searchdirs) {
+            fs::path absolute_path = base / file;
+
+            if (fs::is_regular_file(absolute_path)) {
+                std::clog << "Found a resource file: " << absolute_path << std::endl;
+                return tmx::parseMapFile(absolute_path);
+            }
+        }
+
+        std::cerr << "Error! Could not find the following file: " << path << std::endl;
+        return nullptr;
+    }
+
 
     template<typename T>
     T *ResourceManager::getResource(const std::string& path, ResourceCache<T>& cache) {
