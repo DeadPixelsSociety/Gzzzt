@@ -24,6 +24,7 @@
 #include <list>
 #include <thread>
 
+#include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 
@@ -42,6 +43,7 @@
 #include <gzzzt/shared/StartGameResponse.h>
 
 #include "config.h"
+#include "gzzzt/client/SoundHandler.h"
 
 static std::atomic_bool should_continue
 {
@@ -178,6 +180,7 @@ int main(int argc, char** argv) {
     // initialize
     gzzzt::World world;
     gzzzt::ClientMap* map;
+
     gzzzt::ResourceManager resourceManager;
 
     resourceManager.addSearchDir(GAME_DATADIR);
