@@ -15,41 +15,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SERVER_MAP_H
-#define GZZZT_SERVER_MAP_H
 
-#include <vector>
-#include <tmx/Map.h>
-#include <boost/filesystem.hpp>
-
-#include <gzzzt/server/ServerEntity.h>
-#include <gzzzt/shared/Block.h>
+#include <cstdio>
+#include <cstring>
+#include <gzzzt/server/ServerMapVisitor.h>
+#include <tmx/ObjectLayer.h>
+#include <tmx/TileLayer.h>
+#include <tmx/Tile.h>
 
 namespace gzzzt {
 
-    class ServerMap : public ServerEntity {
-    public:
+    ServerMapVisitor::ServerMapVisitor(ServerMap* map) {
+        m_map = map;
+    }
 
-        ServerMap(const boost::filesystem::path & path);
-        virtual ~ServerMap();
+    void ServerMapVisitor::visitTileLayer(tmx::TileLayer& layer) {
 
-        virtual void update(float dt) override;
-    private:
+        if (strcmp(layer.getName().c_str(), "Background") == 0) {
 
-    public:
+        } else if (strcmp(layer.getName().c_str(), "Adamantium") == 0) {
 
+        } else if (strcmp(layer.getName().c_str(), "Aluminium") == 0) {
 
-    private:
-        tmx::Map* m_tmxMap;
-        
-        unsigned int m_mapLength;
-        unsigned int m_tileWidth;
-        unsigned int m_tileHeight;
-        unsigned int m_width;
-        unsigned int m_height;
-    };
+        }
+    }
 
+    void ServerMapVisitor::visitObjectLayer(tmx::ObjectLayer& layer) {
+    }
+
+    void ServerMapVisitor::visitImageLayer(tmx::ImageLayer& layer) {
+    }
 }
-
-
-#endif // GZZZT_SERVER_MAP_H

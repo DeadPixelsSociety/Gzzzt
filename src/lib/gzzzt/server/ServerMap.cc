@@ -15,12 +15,35 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <gzzzt/server/ServerMap.h>
+#include <gzzzt/server/ServerMapVisitor.h>
+#include <tmx/TMX.h>
+#include <tmx/TileLayer.h>
 
 namespace gzzzt {
+
+    ServerMap::ServerMap(const boost::filesystem::path & path) {
+        m_tmxMap = tmx::parseMapFile(path);
+        m_tileWidth = m_tmxMap->getTileWidth();
+        m_tileHeight = m_tmxMap->getTileHeight();
+        m_width = m_tmxMap->getWidth();
+        m_height = m_tmxMap->getHeight();
+        
+        m_mapLength = m_width * m_height;
+
+        int mapLength = m_width * m_height;
+
+        ServerMapVisitor visitor(this);
+        m_tmxMap->visitLayers(visitor);
+
+    }
+
+    ServerMap::~ServerMap() {
+        delete m_tmxMap;
+    }
 
     void ServerMap::update(float dt) {
         // TODO
     }
-
 }

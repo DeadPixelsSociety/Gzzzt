@@ -46,7 +46,7 @@ int main(void) {
 
     // main loop
     sf::Clock clock;
-
+ 
     while (window.isOpen()) {
         // input
         sf::Event event;

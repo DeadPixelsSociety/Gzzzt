@@ -15,41 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SERVER_MAP_H
-#define GZZZT_SERVER_MAP_H
+#ifndef GZZZT_SERVER_MAP_VISITOR_H
+#define GZZZT_SERVER_MAP_VISITOR_H
 
 #include <vector>
-#include <tmx/Map.h>
-#include <boost/filesystem.hpp>
+#include <tmx/LayerVisitor.h>
 
-#include <gzzzt/server/ServerEntity.h>
-#include <gzzzt/shared/Block.h>
+#include <gzzzt/server/ServerMap.h>
 
 namespace gzzzt {
 
-    class ServerMap : public ServerEntity {
+    class ServerMapVisitor : public tmx::LayerVisitor {
     public:
-
-        ServerMap(const boost::filesystem::path & path);
-        virtual ~ServerMap();
-
-        virtual void update(float dt) override;
-    private:
-
-    public:
-
-
-    private:
-        tmx::Map* m_tmxMap;
         
-        unsigned int m_mapLength;
-        unsigned int m_tileWidth;
-        unsigned int m_tileHeight;
-        unsigned int m_width;
-        unsigned int m_height;
+        ServerMapVisitor() {};
+        ServerMapVisitor(ServerMap* map);
+        
+        virtual void visitTileLayer(tmx::TileLayer& layer) override;
+        virtual void visitObjectLayer(tmx::ObjectLayer& layer) override;
+        virtual void visitImageLayer(tmx::ImageLayer& layer) override;
+        
+    private:
+        ServerMap* m_map;
     };
 
 }
 
 
-#endif // GZZZT_SERVER_MAP_H
+#endif // GZZZT_SERVER_MAP_VISITOR_H

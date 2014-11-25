@@ -72,7 +72,7 @@ namespace gzzzt {
         //dynamic blocks
         int k = 0;
 
-        for (int index = 0; index < m_mapLength; ++index) {
+        for (unsigned int index = 0; index < m_mapLength; ++index) {
             int GID = m_dynamicGIDs[index];
 
             if (GID != 0) {
@@ -97,7 +97,7 @@ namespace gzzzt {
 
         int k = 0;
 
-        for (int index = 0; index < m_mapLength; ++index) {
+        for (unsigned int index = 0; index < m_mapLength; ++index) {
             int GID = m_staticGIDs[index];
 
             unsigned int i = k % m_width;
