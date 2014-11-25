@@ -15,16 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#ifndef GZZZT_RESPONSE_TYPE_H
+#define GZZZT_RESPONSE_TYPE_H
+
+#include <cstdint>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
+    enum class ResponseType : uint8_t {
+        ERROR = 0,
+        NEW_PLAYER_OK,
+        START_GAME,
+        GAME_STATE
     };
-
 }
 
-#endif // GZZZT_SPEED_H
+#endif	// GZZZT_RESPONSE_TYPE_H

@@ -15,21 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <gzzzt/shared/DropBomb.h>
+#ifndef GZZZT_NEW_PLAYER_REQUEST_H
+#define GZZZT_NEW_PLAYER_REQUEST_H
+
+#include <string>
+
+#include <gzzzt/shared/Request.h>
 
 namespace gzzzt {
 
-    DropBomb::DropBomb(Position pos) : Action(ActionType::DROP_BOMB, pos) {
-    }
-    
-    DropBomb::DropBomb(unsigned char* bytes) : Action(bytes) {
-    }
+    class NewPlayerRequest : public Request {
+    public:
+        explicit NewPlayerRequest(std::string playerName);
+        explicit NewPlayerRequest(std::vector<uint8_t>& bytes);
 
-    unsigned char* DropBomb::serialize(unsigned char* bytes, unsigned int* size) const {
-        if (Action::serialize(bytes, size) == nullptr) {
-            return nullptr;
-        }
-        // TODO: Serialize members
-        return bytes;
-    }
+        std::string getPlayerName() const;
+
+        std::vector<uint8_t> serialize() const override;
+
+    private:
+        std::string m_playerName;
+    };
 }
+
+#endif	// GZZZT_NEW_PLAYER_REQUEST_H

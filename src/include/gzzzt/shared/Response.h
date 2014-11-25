@@ -15,16 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#ifndef GZZZT_RESPONSE_H
+#define GZZZT_RESPONSE_H
+
+#include <gzzzt/shared/ResponseType.h>
+#include <gzzzt/shared/Serializable.h>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
-    };
+    class Response : public Serializable {
+    protected:
+        explicit Response(std::vector<uint8_t>& bytes);
+        explicit Response(ResponseType respType);
 
+    public:
+        virtual ~Response();
+
+        ResponseType getRespType() const;
+
+        std::vector<uint8_t> serialize() const override;
+
+        static ResponseType getType(std::vector<uint8_t> bytes);
+
+    private:
+        ResponseType m_respType;
+    };
 }
 
-#endif // GZZZT_SPEED_H
+#endif	// GZZZT_RESPONSE_H

@@ -15,16 +15,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#ifndef GZZZT_REQUEST_TYPE_H
+#define GZZZT_REQUEST_TYPE_H
+
+#include <cstdint>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
+    enum class RequestType : uint8_t {
+        NEW_PLAYER = 0,
+        ACTION,
+        IDENTIFY
     };
-
 }
 
-#endif // GZZZT_SPEED_H
+#endif	// GZZZT_REQUEST_TYPE_H

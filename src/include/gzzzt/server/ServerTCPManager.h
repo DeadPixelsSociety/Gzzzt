@@ -15,16 +15,32 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#ifndef GZZZT_SERVER_TCP_MANAGER_H
+#define GZZZT_SERVER_TCP_MANAGER_H
+
+#include <SFML/Network.hpp>
+
+#include <gzzzt/server/ServerPlayerList.h>
+#include <gzzzt/shared/Response.h>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
-    };
+    class ServerTCPManager {
+    public:
+        explicit ServerTCPManager(unsigned short port);
 
+        bool init();
+        void close();
+        bool waitPlayers(int nbPlayers, gzzzt::ServerPlayerList& players);
+        bool broadcast(gzzzt::ServerPlayerList& players, const gzzzt::Response& msg) const;
+
+    private:
+        unsigned short m_port;
+        sf::TcpListener m_listener;
+        sf::SocketSelector m_selector;
+
+        bool isDuplicatedName(const gzzzt::ServerPlayerList& players, const std::string& name) const;
+    };
 }
 
-#endif // GZZZT_SPEED_H
+#endif // GZZZT_SERVER_TCP_MANAGER_H

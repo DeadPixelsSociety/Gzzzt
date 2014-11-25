@@ -15,16 +15,32 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#include <gzzzt/shared/ActionRequest.h>
+#include <gzzzt/shared/Serializer.h>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
-    };
+    ActionRequest::ActionRequest(ActionType type, uint8_t playerId)
+    : Request(RequestType::ACTION, playerId),
+    m_type(type) {
+    }
 
+    ActionRequest::ActionRequest(std::vector<uint8_t>& bytes) : Request(bytes) {
+        m_type = static_cast<ActionType> (bytes[0]);
+        bytes.erase(bytes.begin());
+    }
+
+    ActionType ActionRequest::getType() const {
+        return m_type;
+    }
+
+    uint8_t ActionRequest::getPlayerId() const {
+        return m_playerId;
+    }
+
+    std::vector<uint8_t> ActionRequest::serialize() const {
+        std::vector<uint8_t> bytes = Request::serialize();
+        bytes.push_back(static_cast<uint8_t> (m_type));
+        return bytes;
+    }
 }
-
-#endif // GZZZT_SPEED_H

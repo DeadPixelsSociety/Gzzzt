@@ -15,16 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#ifndef GZZZT_CLIENT_UDP_MANAGER_H
+#define GZZZT_CLIENT_UDP_MANAGER_H
+
+#include <SFML/Network.hpp>
+
+#include <gzzzt/shared/Response.h>
+#include <gzzzt/shared/Request.h>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
+    class ClientUDPManager {
+    public:
+        explicit ClientUDPManager(const std::string& address, unsigned short port);
+        virtual ~ClientUDPManager();
+
+        bool send(const gzzzt::Request& req);
+        gzzzt::Response* receive();
+
+    private:
+        sf::IpAddress m_address;
+        sf::UdpSocket m_socket;
+        unsigned short m_port;
     };
 
 }
 
-#endif // GZZZT_SPEED_H
+#endif // GZZZT_CLIENT_UDP_MANAGER_H

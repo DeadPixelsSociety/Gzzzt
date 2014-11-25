@@ -15,16 +15,32 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#ifndef START_GAME_RESPONSE_H
+#define START_GAME_RESPONSE_H
+
+#include <map>
+#include <string>
+
+#include <gzzzt/server/ServerPlayer.h>
+#include <gzzzt/shared/Response.h>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
-    };
+    class StartGameResponse : public Response {
+    public:
+        explicit StartGameResponse(const std::map<uint8_t, std::string>& players, unsigned short serverPort);
+        explicit StartGameResponse(std::vector<uint8_t>& bytes);
 
+        std::map<uint8_t, std::string> getPlayers() const;
+        unsigned short getServerPortUDP() const;
+
+        std::vector<uint8_t> serialize() const override;
+
+    private:
+        std::map<uint8_t, std::string> m_players;
+        unsigned short m_serverPortUDP;
+
+    };
 }
 
-#endif // GZZZT_SPEED_H
+#endif	// START_GAME_RESPONSE_H

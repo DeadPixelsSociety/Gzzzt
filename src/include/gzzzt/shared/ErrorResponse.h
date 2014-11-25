@@ -15,29 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_ACTION_H
-#define GZZZT_ACTION_H
+#ifndef ERROR_RESPONSE_H
+#define ERROR_RESPONSE_H
 
-#include <gzzzt/shared/ActionType.h>
-#include <gzzzt/shared/Position.h>
+#include <string>
+
+#include <gzzzt/shared/Response.h>
 
 namespace gzzzt {
 
-    class Action {
+    class ErrorResponse : public Response {
     public:
-        ActionType getType() const;
-        Position getPosition() const;
+        explicit ErrorResponse(std::string reason);
+        explicit ErrorResponse(std::vector<uint8_t>& bytes);
 
-    protected:
-        explicit Action(ActionType type, Position pos);
-        explicit Action(unsigned char* bytes);
+        std::string getReason() const;
 
-        virtual unsigned char* serialize(unsigned char* bytes, unsigned int* size) const;
+        std::vector<uint8_t> serialize() const override;
 
     private:
-        ActionType m_type;
-        Position m_pos;
+        std::string m_reason;
     };
 }
 
-#endif  // GZZZT_ACTION_H
+#endif	// ERROR_RESPONSE_H

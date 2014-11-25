@@ -15,16 +15,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_SPEED_H
-#define GZZZT_SPEED_H
+#ifndef NEW_PLAYER_RESPONSE_H
+#define NEW_PLAYER_RESPONSE_H
+
+#include <gzzzt/shared/Response.h>
 
 namespace gzzzt {
 
-    struct Speed {
-        float dx;
-        float dy;
-    };
+    class NewPlayerResponse : public Response {
+    public:
+        explicit NewPlayerResponse();
+        explicit NewPlayerResponse(std::vector<uint8_t>& bytes);
 
+        std::vector<uint8_t> serialize() const override;
+    };
 }
 
-#endif // GZZZT_SPEED_H
+#endif	// NEW_PLAYER_RESPONSE_H

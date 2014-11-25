@@ -24,13 +24,16 @@
 namespace gzzzt {
 
     struct Shape {
+
         enum Kind {
             CIRCLE,
             RECTANGLE,
         };
 
         Kind kind;
+
         union {
+
             struct {
                 float radius;
             } circle;
@@ -43,6 +46,7 @@ namespace gzzzt {
     };
 
     struct Body {
+
         enum Type {
             STATIC,
             DYNAMIC,

@@ -28,6 +28,7 @@ namespace gzzzt {
         template<typename T>
         class null_delete {
         public:
+
             void operator()(T *) const {
                 // nothing to do
             }
@@ -64,7 +65,7 @@ namespace gzzzt {
     }
 
     void World::removeEntity(ClientEntity *e) {
-        std::remove_if(m_entities.begin(), m_entities.end(), [ = ](const ClientEntityPtr & ptr) {
+        std::remove_if(m_entities.begin(), m_entities.end(), [ = ](const ClientEntityPtr & ptr){
             return e == ptr.get();
         });
     }
