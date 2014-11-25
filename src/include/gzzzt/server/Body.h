@@ -28,7 +28,7 @@ namespace gzzzt {
         enum Kind : unsigned {
             CIRCLE = 0,
             RECTANGLE = 1,
-        };
+          };
 
         Kind kind;
 

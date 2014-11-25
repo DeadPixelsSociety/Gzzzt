@@ -8,6 +8,7 @@ target_link_libraries(gzzzt
   gzzzt0
   gzzzt-shared0
   ${Boost_LIBRARIES}
+  ${CMAKE_THREAD_LIBS_INIT}
 )
 
 install(
