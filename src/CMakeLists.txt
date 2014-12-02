@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(GZZZT CXX)
+project(GZZZT)
 
 include(CPackConfig.cmake)
 include(GNUInstallDirs)
 
+find_package(Threads)
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 find_package(ZLIB REQUIRED)
 
@@ -31,3 +32,5 @@ install(
   DIRECTORY "${CMAKE_SOURCE_DIR}/share/gzzzt"
   DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/games"
 )
+
+add_subdirectory(prototypes)

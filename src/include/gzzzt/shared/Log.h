@@ -26,6 +26,7 @@ namespace gzzzt {
 
     class Log {
     public:
+
         enum Level : int {
             DEBUG,
             INFO,

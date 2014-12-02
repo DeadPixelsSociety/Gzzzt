@@ -27,6 +27,8 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 
+#include <tmx/Map.h>
+
 namespace gzzzt {
 
     template<typename T>
@@ -49,6 +51,8 @@ namespace gzzzt {
         sf::Font *getFont(const std::string& path);
         sf::SoundBuffer *getSoundBuffer(const std::string& path);
         sf::Texture *getTexture(const std::string& path);
+
+        tmx::Map *getMap(const std::string& path);
 
     private:
         std::vector<std::string> m_searchdirs;

@@ -18,19 +18,22 @@
 #ifndef GZZZT_SERVER_BODY_H
 #define GZZZT_SERVER_BODY_H
 
-#include <gzzzt/shared/Position.h>
-#include <gzzzt/shared/Speed.h>
+#include <cstdint>
+
+#include <SFML/System/Vector2.hpp>
 
 namespace gzzzt {
 
     struct Shape {
-        enum Kind {
-            CIRCLE,
-            RECTANGLE,
-        };
+        enum Kind : unsigned {
+            CIRCLE = 0,
+            RECTANGLE = 1,
+          };
 
         Kind kind;
+
         union {
+
             struct {
                 float radius;
             } circle;
@@ -42,16 +45,32 @@ namespace gzzzt {
         };
     };
 
+    struct Body;
+
+    struct Manifold {
+        Body *a;
+        Body *b;
+        float penetration;
+        sf::Vector2f normal;
+    };
+
     struct Body {
+
         enum Type {
             STATIC,
             DYNAMIC,
         };
 
         Type type;
-        Position pos; /**< center of the body */
-        Speed speed;
+        sf::Vector2f pos; /**< center of the body */
+        sf::Vector2f velocity;
         Shape shape;
+        float restitution;
+        uint32_t layers;
+
+        static constexpr uint32_t ALL_LAYERS = static_cast<uint32_t>(-1);
+
+        static bool collides(const Body& lhs, const Body& rhs, Manifold *m);
     };
 
 }

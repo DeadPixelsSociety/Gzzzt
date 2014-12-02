@@ -29,6 +29,7 @@
 #include <gzzzt/client/Event.h>
 
 namespace gzzzt {
+
     enum class Memory {
         FROM_HEAP,
         FROM_STACK,
@@ -72,17 +73,18 @@ namespace gzzzt {
 
         class ClientEntityPtr {
         public:
-            ClientEntityPtr(ClientEntity *entity, std::function<void(ClientEntity *)> deleter)
-                : m_entity(entity)
-                , m_deleter(deleter) {
+
+            ClientEntityPtr(ClientEntity *entity, std::function<void(ClientEntity *) > deleter)
+            : m_entity(entity)
+            , m_deleter(deleter) {
             }
 
             ClientEntityPtr(const ClientEntityPtr&) = delete;
             ClientEntityPtr& operator=(const ClientEntityPtr&) = delete;
 
             ClientEntityPtr(ClientEntityPtr&& other)
-                : m_entity(other.m_entity)
-                , m_deleter(std::move(other.m_deleter)) {
+            : m_entity(other.m_entity)
+            , m_deleter(std::move(other.m_deleter)) {
             }
 
             ClientEntityPtr& operator=(ClientEntityPtr && other) {
@@ -122,7 +124,7 @@ namespace gzzzt {
 
         private:
             ClientEntity *m_entity;
-            std::function<void(ClientEntity *)> m_deleter;
+            std::function<void(ClientEntity *) > m_deleter;
         };
 
         std::vector<ClientEntityPtr> m_entities;

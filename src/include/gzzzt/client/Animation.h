@@ -35,8 +35,9 @@ namespace gzzzt {
 
     class Animation {
     public:
+
         Animation(std::string name)
-            : m_name(std::move(name)) {
+        : m_name(std::move(name)) {
         }
 
         const std::string& name() {
