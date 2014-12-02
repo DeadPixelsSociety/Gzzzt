@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="64" tileheight="64">
+ <tileset firstgid="1" name="tileset" tilewidth="64" tileheight="64">
+  <image source="tileset.png" width="256" height="256"/>
+ </tileset>
+ <layer name="Background" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjZmBgYB7Fo3gUj+JRPIpJxAC2cgSx
+  </data>
+ </layer>
+ <layer name="Adamantium" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJy9lDsOACAIQ+H+lzauhtby0SYMDjzBIm5mPhxTOnkRn93L8hGLnRlD7RsxUU0d/fAjm4941TqZv1V1/FV5HWZmhlUW4nX0ksf+kcKJeArzNsPKe6KdpeZXNb3ndyx+PwB5
+  </data>
+ </layer>
+ <layer name="Aluminium" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJy1kt0KQCEIg6P3f+huY2xz/SgEHdTvbOYYfTHJqfJY47gveaZB9asavCsfjrf3qvztqXipPucd/SOP+WPfiqd0JDzX6/7hdP3gufmpd0n3mfFO59exL7/3mXFTfcwvq014jIGR7lUV1VxUTWcs0UwBiQ==
+  </data>
+ </layer>
+</map>
