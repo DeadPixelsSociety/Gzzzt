@@ -38,6 +38,9 @@
 
 #include "config.h"
 
+#define DEFAULT_TCP_PORT 5000
+#define DEFAULT_UDP_PORT 5001
+
 static std::atomic_bool should_continue
 {
     true
@@ -85,7 +88,7 @@ static void broadcastMsg(gzzzt::ServerUDPManager& udpManager,
 }
 
 int main(int argc, char** argv) {
-    if (argc != 3) {
+    if (argc != 1 && argc != 3) {
         help();
         return 1;
     }
@@ -106,8 +109,8 @@ int main(int argc, char** argv) {
         return 2;
     }
 
-    unsigned short port = std::strtoul(argv[1], nullptr, 10);
-    unsigned short udpPort = std::strtoul(argv[2], nullptr, 10);
+    unsigned short port = argc <= 1 ? DEFAULT_TCP_PORT : std::strtoul(argv[1], nullptr, 10);
+    unsigned short udpPort = argc <= 2 ? DEFAULT_UDP_PORT :std::strtoul(argv[2], nullptr, 10);
 
     // Init the TCP manager
     gzzzt::ServerTCPManager tcpManager(port);
