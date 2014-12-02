@@ -88,7 +88,7 @@ static void broadcastMsg(gzzzt::ServerUDPManager& udpManager,
 }
 
 int main(int argc, char** argv) {
-    if (argc != 1 && argc != 3) {
+    if (argc <= 1 || argc > 3) {
         help();
         return 1;
     }
