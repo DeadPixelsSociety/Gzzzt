@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include <atomic>
 #include <cassert>
 #include <chrono>
@@ -185,7 +186,7 @@ int main(int argc, char** argv) {
 
     resourceManager.addSearchDir(GAME_DATADIR);
     resourceManager.addSearchDir("..");
-
+    
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
     window.setKeyRepeatEnabled(false);
 
@@ -202,7 +203,7 @@ int main(int argc, char** argv) {
 
     // main loop
     sf::Clock clock;
-
+ 
     while (window.isOpen()) {
         // input
         sf::Event event;

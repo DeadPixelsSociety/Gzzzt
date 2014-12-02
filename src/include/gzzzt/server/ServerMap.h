@@ -18,15 +18,35 @@
 #ifndef GZZZT_SERVER_MAP_H
 #define GZZZT_SERVER_MAP_H
 
+#include <vector>
+#include <tmx/Map.h>
+#include <boost/filesystem.hpp>
+
 #include <gzzzt/server/ServerEntity.h>
+#include <gzzzt/shared/Block.h>
 
 namespace gzzzt {
 
     class ServerMap : public ServerEntity {
     public:
 
-        virtual void update(float dt) override;
+        ServerMap(const boost::filesystem::path & path);
+        virtual ~ServerMap();
 
+        virtual void update(float dt) override;
+    private:
+
+    public:
+
+
+    private:
+        tmx::Map* m_tmxMap;
+        
+        unsigned int m_mapLength;
+        unsigned int m_tileWidth;
+        unsigned int m_tileHeight;
+        unsigned int m_width;
+        unsigned int m_height;
     };
 
 }

@@ -36,7 +36,11 @@ namespace gzzzt {
 
         virtual void update(float dt) override;
         virtual void render(sf::RenderWindow& window) override;
+
+        void setStaticGID(const int index, unsigned const int value);
+        void setDynamicGID(const int index, unsigned const int value);
     private:
+        void loadStaticMap();
         void drawGID(unsigned int x, unsigned int y, unsigned int GID, sf::RenderWindow& window);
 
     public:
@@ -44,8 +48,14 @@ namespace gzzzt {
 
     private:
         tmx::Map* m_tmxMap;
-        std::vector<unsigned int> m_GID;
+
+        unsigned int* m_staticGIDs;
+        unsigned int* m_dynamicGIDs;
+
         sf::Texture* m_tileSetTexture;
+        sf::VertexArray m_staticVertices;
+
+        unsigned int m_mapLength;
         unsigned int m_tileWidth;
         unsigned int m_tileHeight;
         unsigned int m_width;

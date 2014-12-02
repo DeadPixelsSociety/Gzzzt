@@ -16,32 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gzzzt/server/ServerMap.h>
+#include <cstdio>
+#include <cstring>
 #include <gzzzt/server/ServerMapVisitor.h>
-#include <tmx/TMX.h>
+#include <tmx/ObjectLayer.h>
 #include <tmx/TileLayer.h>
+#include <tmx/Tile.h>
 
 namespace gzzzt {
 
-    ServerMap::ServerMap(const boost::filesystem::path & path) {
-        m_tmxMap = tmx::parseMapFile(path);
-        m_tileWidth = m_tmxMap->getTileWidth();
-        m_tileHeight = m_tmxMap->getTileHeight();
-        m_width = m_tmxMap->getWidth();
-        m_height = m_tmxMap->getHeight();
-        
-        m_mapLength = m_width * m_height;
-
-        ServerMapVisitor visitor(this);
-        m_tmxMap->visitLayers(visitor);
-
+    ServerMapVisitor::ServerMapVisitor(ServerMap* map) {
+        m_map = map;
     }
 
-    ServerMap::~ServerMap() {
-        delete m_tmxMap;
+    void ServerMapVisitor::visitTileLayer(tmx::TileLayer& layer) {
+
+        if (strcmp(layer.getName().c_str(), "Background") == 0) {
+
+        } else if (strcmp(layer.getName().c_str(), "Adamantium") == 0) {
+
+        } else if (strcmp(layer.getName().c_str(), "Aluminium") == 0) {
+
+        }
     }
 
-    void ServerMap::update(float dt) {
-        // TODO
+    void ServerMapVisitor::visitObjectLayer(tmx::ObjectLayer& layer) {
+    }
+
+    void ServerMapVisitor::visitImageLayer(tmx::ImageLayer& layer) {
     }
 }
