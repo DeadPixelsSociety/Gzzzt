@@ -24,13 +24,15 @@ namespace gzzzt {
 
     class GameStateResponse : public Response {
     public:
-        explicit GameStateResponse();
+        explicit GameStateResponse(std::vector<float> playersPositions);
         explicit GameStateResponse(std::vector<uint8_t>& bytes);
 
+        std::vector<float> getPlayersPositions() const;
+        
         std::vector<uint8_t> serialize() const override;
 
     private:
-        // TODO:
+        std::vector<float> m_playersPositions;
     };
 }
 

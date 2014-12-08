@@ -91,6 +91,15 @@ static void receiveMsg(gzzzt::ClientUDPManager& udpManager, gzzzt::ConcurrentQue
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the receiver thread...\n");
 }
 
+static sf::Vector2f getPos(uint8_t id, std::vector<float> values) {
+    for (unsigned int i = 0; i < values.size(); i += 3) {
+        if (id == static_cast<uint8_t>(values[i])) {
+            return sf::Vector2f(values[i + 1], values[i + 2]);
+        }
+    }
+    return sf::Vector2f(-1., -1.);
+}
+
 int main(int argc, char** argv) {
     if (argc != 3) {
         help();
@@ -140,7 +149,7 @@ int main(int argc, char** argv) {
 
     // Receive the game's data (list of players + server UDP port)
     unsigned short serverPortUDP;
-    std::list<gzzzt::ClientPlayer> players;
+    std::list<gzzzt::ClientPlayer*> players;
     if (!tcpManager.receiveGameData(players, serverPortUDP, error)) {
         gzzzt::Log::error(gzzzt::Log::NETWORK, "%s\n", error.c_str());
         tcpManager.disconnect();
@@ -148,11 +157,11 @@ int main(int argc, char** argv) {
     }
 
     uint8_t playerId = 0;
-    for (auto& p : players) {
-        gzzzt::Log::info(gzzzt::Log::GENERAL, "Player #%d : %s\n", p.getID(), p.getName().c_str());
+    for (auto p : players) {
+        gzzzt::Log::info(gzzzt::Log::GENERAL, "Player #%d : %s\n", p->getID(), p->getName().c_str());
         // Get current player's ID
-        if (p.getName().compare(playerName) == 0) {
-            playerId = p.getID();
+        if (p->getName().compare(playerName) == 0) {
+            playerId = p->getID();
         }
     }
     gzzzt::Log::info(gzzzt::Log::GENERAL, "My ID : %d\n", playerId);
@@ -200,6 +209,10 @@ int main(int argc, char** argv) {
 
     // add entities
     world.addEntity(map);
+    for (auto p : players) {
+        gzzzt::Log::info(gzzzt::Log::GENERAL, "BEFORE %d\n", p->getID());
+        //world.addEntity(p); // TODO: fix exception "terminate called after throwing an instance of 'std::bad_function_call'"
+    }
 
     // main loop
     sf::Clock clock;
@@ -247,7 +260,13 @@ int main(int argc, char** argv) {
             // There is a pending message
             gzzzt::Response* resp = inQueue.pop();
             gzzzt::Log::debug(gzzzt::Log::GENERAL, "Receive msg from server\n");
-            // TODO: handle msg
+            gzzzt::GameStateResponse* gameStateResp = dynamic_cast<gzzzt::GameStateResponse*>(resp);
+            std::vector<float> positions = gameStateResp->getPlayersPositions();
+            // TODO: refactor this !
+            for (auto p : players) {
+                p->setPos(getPos(p->getID(), positions));
+                gzzzt::Log::debug(gzzzt::Log::GENERAL, "Position de %s = (%f;%f)\n", p->getName().c_str(), p->getPos().x, p->getPos().y);
+            }
             delete resp;
         }
 

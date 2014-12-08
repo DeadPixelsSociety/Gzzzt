@@ -21,6 +21,19 @@ namespace gzzzt {
 
     ClientPlayer::ClientPlayer(std::string name, uint8_t id)
     : m_name(name), m_id(id) {
+        m_shape.setRadius(30);
+        m_shape.setFillColor(sf::Color::Red);
+        m_pos = {128., 128.};
+    }
+
+    ClientPlayer::ClientPlayer(const ClientPlayer& other)
+    : m_name(other.getName()),
+    m_id(other.getID()),
+    m_pos(other.getPos()),
+    m_shape(other.getShape()) {
+    }
+
+    ClientPlayer::~ClientPlayer() {
     }
 
     std::string ClientPlayer::getName() const {
@@ -31,12 +44,24 @@ namespace gzzzt {
         return m_id;
     }
 
+    sf::Vector2f ClientPlayer::getPos() const {
+        return m_pos;
+    }
+
+    sf::CircleShape ClientPlayer::getShape() const {
+        return m_shape;
+    }
+
+    void ClientPlayer::setPos(const sf::Vector2f& pos) {
+        m_pos = pos;
+    }
+
     void ClientPlayer::update(float dt) {
-        // TODO
+        m_shape.setPosition(m_pos);
     }
 
     void ClientPlayer::render(sf::RenderWindow& window) {
-        // TODO
+        window.draw(m_shape);
     }
 
 }

@@ -23,14 +23,23 @@
 
 #include <gzzzt/client/ClientEntity.h>
 
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics.hpp>
+
 namespace gzzzt {
 
     class ClientPlayer : public ClientEntity {
     public:
         explicit ClientPlayer(std::string name, uint8_t id);
+        ClientPlayer(const ClientPlayer& other);
+        virtual ~ClientPlayer();
 
         std::string getName() const;
         uint8_t getID() const;
+        sf::CircleShape getShape() const;
+        sf::Vector2f getPos() const;
+        
+        void setPos(const sf::Vector2f& pos);
 
         virtual void update(float dt) override;
         virtual void render(sf::RenderWindow& window) override;
@@ -38,6 +47,8 @@ namespace gzzzt {
     private:
         std::string m_name;
         uint8_t m_id;
+        sf::Vector2f m_pos;
+        sf::CircleShape m_shape;
     };
 
 }

@@ -93,6 +93,17 @@ static void broadcastMsg(gzzzt::ServerUDPManager& udpManager,
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the broadcasting thread...\n");
 }
 
+static std::vector<float> getPlayersPosition(const gzzzt::ServerPlayerList& players) {
+    std::vector<float> positions;
+    positions.push_back(static_cast<float> (players.getSize()));
+    for (auto& p : players) {
+        positions.push_back(static_cast<float> (p->getID()));
+        positions.push_back(p->getBody()->pos.x);
+        positions.push_back(p->getBody()->pos.y);
+    }
+    return positions;
+}
+
 int main(int argc, char** argv) {
     if (argc > 3) {
         help();
@@ -190,14 +201,20 @@ int main(int argc, char** argv) {
     // load resources
     gzzzt::ServerMap serverMap("maps/simple/simple.tmx", resourceManager);
     serverMap.load(&physics);
-    /*
-    for (int i = 0; i < players.getSize(); i++) {
-        physics.addBody(players.->getBody());
+    int playerLayer = 0;
+    for (auto& p : players) {
+        physics.addBody(p->getBody());
+        p->getBody()->layers = playerLayer;
+        playerLayer++;
     }
-    */
 
     // add entities
 
+
+    // send the players position
+    std::vector<float> playersPositions = getPlayersPosition(players);
+    gzzzt::GameStateResponse* resp = new gzzzt::GameStateResponse(playersPositions);
+    outQueue.push(resp);
 
     // main loop
     sf::Clock clock;
@@ -226,12 +243,11 @@ int main(int argc, char** argv) {
                         break;
                 }
                 //gzzzt::Log::debug(gzzzt::Log::GENERAL, "Process action msg from %s\n", player->getName().c_str());
+                // broadcast response
+                std::vector<float> playersPositions = getPlayersPosition(players);
+                gzzzt::GameStateResponse* resp = new gzzzt::GameStateResponse(playersPositions);
+                outQueue.push(resp);
             }
-            // TODO: handle msg
-
-            // broadcast response
-            gzzzt::GameStateResponse* resp = new gzzzt::GameStateResponse();
-            outQueue.push(resp);
             delete req;
         }
 

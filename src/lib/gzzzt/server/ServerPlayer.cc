@@ -28,8 +28,8 @@ namespace gzzzt {
         m_body = new Body();
         m_body->type = Body::Type::DYNAMIC;
         m_body->shape.kind = Shape::CIRCLE;
-        m_body->shape.circle.radius = 32;
-        m_body->pos = {0., 0.};
+        m_body->shape.circle.radius = 30;
+        m_body->pos = {128., 128.};
         m_body->velocity = {0., 0.};
     }
 

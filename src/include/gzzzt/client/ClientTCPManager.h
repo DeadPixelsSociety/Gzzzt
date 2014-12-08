@@ -47,7 +47,7 @@ namespace gzzzt {
         Response* receive();
 
         bool declareAsNewPlayer(const std::string& name, std::string& error);
-        bool receiveGameData(std::list<gzzzt::ClientPlayer>& players, unsigned short& serverPortUDP, std::string& error);
+        bool receiveGameData(std::list<gzzzt::ClientPlayer*>& players, unsigned short& serverPortUDP, std::string& error);
 
     private:
         sf::TcpSocket m_socket;
