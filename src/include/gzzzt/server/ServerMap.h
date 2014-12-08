@@ -22,18 +22,25 @@
 #include <tmx/Map.h>
 #include <boost/filesystem.hpp>
 
+#include <gzzzt/server/Physics.h>
 #include <gzzzt/server/ServerEntity.h>
 #include <gzzzt/shared/Block.h>
+#include <gzzzt/shared/Resource.h>
 
 namespace gzzzt {
 
     class ServerMap : public ServerEntity {
     public:
 
-        ServerMap(const boost::filesystem::path & path);
+        ServerMap(const boost::filesystem::path & path, gzzzt::ResourceManager& resourceManager);
         virtual ~ServerMap();
 
+        void load(Physics* p);
+        tmx::Map* getTmxMap() const;
+        
         virtual void update(float dt) override;
+
+
     private:
 
     public:

@@ -24,12 +24,14 @@
 #include <SFML/Network.hpp>
 
 #include <gzzzt/server/ServerEntity.h>
+#include <gzzzt/server/Physics.h>
 
 namespace gzzzt {
 
     class ServerPlayer : public ServerEntity {
     public:
         explicit ServerPlayer(sf::TcpSocket* socket);
+        virtual ~ServerPlayer();
 
         sf::TcpSocket* getTCPSocket() const;
         sf::IpAddress getAddress() const;
@@ -38,6 +40,7 @@ namespace gzzzt {
         std::string getName() const;
         uint8_t getID() const;
         std::string toString() const;
+        Body* getBody() const;
 
         void setName(std::string name);
         void setID(uint8_t id);
@@ -53,6 +56,7 @@ namespace gzzzt {
         unsigned short m_UDPPort;
         std::string m_name;
         uint8_t m_id;
+        Body* m_body;
     };
 
 }

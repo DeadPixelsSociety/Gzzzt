@@ -27,6 +27,9 @@
 #include <gzzzt/server/ServerPlayerList.h>
 #include <gzzzt/server/ServerTCPManager.h>
 #include <gzzzt/server/ServerUDPManager.h>
+#include <gzzzt/server/Physics.h>
+#include <gzzzt/server/ServerMap.h>
+
 #include <gzzzt/shared/ConcurrentQueue.h>
 #include <gzzzt/shared/ErrorResponse.h>
 #include <gzzzt/shared/GameStateResponse.h>
@@ -37,6 +40,9 @@
 #include <gzzzt/shared/StartGameResponse.h>
 
 #include "config.h"
+#include "gzzzt/server/Physics.h"
+#include "gzzzt/server/ServerMap.h"
+#include "gzzzt/client/Resource.h"
 
 #define DEFAULT_TCP_PORT 5000
 #define DEFAULT_UDP_PORT 5001
@@ -88,7 +94,7 @@ static void broadcastMsg(gzzzt::ServerUDPManager& udpManager,
 }
 
 int main(int argc, char** argv) {
-    if (argc <= 1 || argc > 3) {
+    if (argc > 3) {
         help();
         return 1;
     }
@@ -110,7 +116,7 @@ int main(int argc, char** argv) {
     }
 
     unsigned short port = argc <= 1 ? DEFAULT_TCP_PORT : std::strtoul(argv[1], nullptr, 10);
-    unsigned short udpPort = argc <= 2 ? DEFAULT_UDP_PORT :std::strtoul(argv[2], nullptr, 10);
+    unsigned short udpPort = argc <= 2 ? DEFAULT_UDP_PORT : std::strtoul(argv[2], nullptr, 10);
 
     // Init the TCP manager
     gzzzt::ServerTCPManager tcpManager(port);
@@ -175,9 +181,20 @@ int main(int argc, char** argv) {
 
     // initialize
     gzzzt::Game game;
+    gzzzt::Physics physics;
+    gzzzt::ResourceManager resourceManager;
+
+    resourceManager.addSearchDir(GAME_DATADIR);
+    resourceManager.addSearchDir("..");
 
     // load resources
-
+    gzzzt::ServerMap serverMap("maps/simple/simple.tmx", resourceManager);
+    serverMap.load(&physics);
+    /*
+    for (int i = 0; i < players.getSize(); i++) {
+        physics.addBody(players.->getBody());
+    }
+    */
 
     // add entities
 
@@ -190,8 +207,25 @@ int main(int argc, char** argv) {
             gzzzt::Request* req = inQueue.pop();
             gzzzt::ServerPlayer* player = players.getById(req->getPlayerId());
             if (req->getReqType() == gzzzt::RequestType::ACTION) {
-                //gzzzt::ActionRequest actionReq = dynamic_cast<gzzzt::ActionRequest>(*req);
-                gzzzt::Log::debug(gzzzt::Log::GENERAL, "Process action msg from %s\n", player->getName().c_str());
+                gzzzt::ActionRequest* actionReq = dynamic_cast<gzzzt::ActionRequest*> (req);
+                gzzzt::Body* playerBody = player->getBody();
+                switch (actionReq->getType()) {
+                    case gzzzt::ActionType::MOVE_UP:
+                        playerBody->velocity.y = 0.5f;
+                        break;
+                    case gzzzt::ActionType::MOVE_DOWN:
+                        playerBody->velocity.y = -0.5f;
+                        break;
+                    case gzzzt::ActionType::MOVE_RIGHT:
+                        playerBody->velocity.x = 0.5f;
+                        break;
+                    case gzzzt::ActionType::MOVE_LEFT:
+                        playerBody->velocity.x = -0.5;
+                        break;
+                    case gzzzt::ActionType::DROP_BOMB:
+                        break;
+                }
+                //gzzzt::Log::debug(gzzzt::Log::GENERAL, "Process action msg from %s\n", player->getName().c_str());
             }
             // TODO: handle msg
 
@@ -203,6 +237,7 @@ int main(int argc, char** argv) {
 
         // update
         sf::Time elapsed = clock.restart();
+        physics.update(elapsed.asSeconds());
         game.update(elapsed.asSeconds());
     }
 

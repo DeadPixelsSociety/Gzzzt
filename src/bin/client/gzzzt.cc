@@ -33,7 +33,7 @@
 #include <gzzzt/client/ClientPlayer.h>
 #include <gzzzt/client/ClientTCPManager.h>
 #include <gzzzt/client/ClientUDPManager.h>
-#include <gzzzt/client/Resource.h>
+#include <gzzzt/shared/Resource.h>
 #include <gzzzt/client/World.h>
 #include <gzzzt/shared/ActionRequest.h>
 #include <gzzzt/shared/ConcurrentQueue.h>

@@ -21,6 +21,7 @@
 #include <vector>
 #include <tmx/LayerVisitor.h>
 
+#include <gzzzt/server/Physics.h>
 #include <gzzzt/server/ServerMap.h>
 
 namespace gzzzt {
@@ -28,8 +29,7 @@ namespace gzzzt {
     class ServerMapVisitor : public tmx::LayerVisitor {
     public:
         
-        ServerMapVisitor() {};
-        ServerMapVisitor(ServerMap* map);
+        ServerMapVisitor(ServerMap* map, Physics* p);
         
         virtual void visitTileLayer(tmx::TileLayer& layer) override;
         virtual void visitObjectLayer(tmx::ObjectLayer& layer) override;
@@ -37,9 +37,15 @@ namespace gzzzt {
         
     private:
         ServerMap* m_map;
+        Physics* m_physics;
+        unsigned int m_tileIndex;
+        unsigned int m_tileWidth;
+        unsigned int m_tileHeight;
+        unsigned int m_width;
+        unsigned int m_height;   
+        unsigned int m_mapLength;
     };
 
 }
-
 
 #endif // GZZZT_SERVER_MAP_VISITOR_H

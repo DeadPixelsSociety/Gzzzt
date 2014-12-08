@@ -25,6 +25,16 @@ namespace gzzzt {
     : m_TCPSocket(socket),
     m_address(socket->getRemoteAddress()),
     m_TCPPort(socket->getRemotePort()) {
+        m_body = new Body();
+        m_body->type = Body::Type::DYNAMIC;
+        m_body->shape.kind = Shape::CIRCLE;
+        m_body->shape.circle.radius = 32;
+        m_body->pos = {0., 0.};
+        m_body->velocity = {0., 0.};
+    }
+
+    ServerPlayer::~ServerPlayer() {
+        delete m_body;
     }
 
     sf::TcpSocket* ServerPlayer::getTCPSocket() const {
@@ -49,6 +59,10 @@ namespace gzzzt {
 
     uint8_t ServerPlayer::getID() const {
         return m_id;
+    }
+
+    Body* ServerPlayer::getBody() const {
+        return m_body;
     }
 
     void ServerPlayer::setName(std::string name) {

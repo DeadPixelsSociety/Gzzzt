@@ -21,19 +21,18 @@
 #include <tmx/TMX.h>
 #include <tmx/TileLayer.h>
 
+#include "gzzzt/client/Resource.h"
+
 namespace gzzzt {
 
-    ServerMap::ServerMap(const boost::filesystem::path & path) {
-        m_tmxMap = tmx::parseMapFile(path);
-        m_tileWidth = m_tmxMap->getTileWidth();
+    ServerMap::ServerMap(const boost::filesystem::path & path, gzzzt::ResourceManager& resourceManager) {
+        m_tmxMap = resourceManager.getMap(path.string());
+        /*m_tileWidth = m_tmxMap->getTileWidth();
         m_tileHeight = m_tmxMap->getTileHeight();
         m_width = m_tmxMap->getWidth();
         m_height = m_tmxMap->getHeight();
         
-        m_mapLength = m_width * m_height;
-
-        ServerMapVisitor visitor(this);
-        m_tmxMap->visitLayers(visitor);
+        m_mapLength = m_width * m_height;*/
 
     }
 
@@ -43,5 +42,14 @@ namespace gzzzt {
 
     void ServerMap::update(float dt) {
         // TODO
+    }
+
+    tmx::Map* ServerMap::getTmxMap() const {
+        return m_tmxMap;
+    }
+
+    void ServerMap::load(Physics* p) {
+        ServerMapVisitor visitor(this, p);
+        m_tmxMap->visitLayers(visitor);
     }
 }
