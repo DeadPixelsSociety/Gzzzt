@@ -127,7 +127,7 @@ namespace gzzzt {
             std::function<void(ClientEntity *) > m_deleter;
         };
 
-        std::vector<ClientEntityPtr> m_entities;
+        std::vector<ClientEntity*> m_entities;
         std::map<EventType, std::vector<EventHandler>> m_handlers;
     };
 

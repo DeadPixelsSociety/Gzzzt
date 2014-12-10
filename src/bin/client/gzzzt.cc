@@ -211,7 +211,7 @@ int main(int argc, char** argv) {
     world.addEntity(map);
     for (auto p : players) {
         gzzzt::Log::info(gzzzt::Log::GENERAL, "BEFORE %d\n", p->getID());
-        //world.addEntity(p); // TODO: fix exception "terminate called after throwing an instance of 'std::bad_function_call'"
+        world.addEntity(p); // TODO: fix exception "terminate called after throwing an instance of 'std::bad_function_call'"
     }
 
     // main loop

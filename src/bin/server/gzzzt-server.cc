@@ -228,16 +228,20 @@ int main(int argc, char** argv) {
                 gzzzt::Body* playerBody = player->getBody();
                 switch (actionReq->getType()) {
                     case gzzzt::ActionType::MOVE_UP:
-                        playerBody->velocity.y = 0.5f;
+                        playerBody->velocity.y = -5.0f;
+                        playerBody->velocity.x = 0.f;
                         break;
                     case gzzzt::ActionType::MOVE_DOWN:
-                        playerBody->velocity.y = -0.5f;
+                        playerBody->velocity.y = 5.0f;
+                        playerBody->velocity.x = 0.f;
                         break;
                     case gzzzt::ActionType::MOVE_RIGHT:
-                        playerBody->velocity.x = 0.5f;
+                        playerBody->velocity.x = 5.0f;
+                        playerBody->velocity.y = 0.f;
                         break;
                     case gzzzt::ActionType::MOVE_LEFT:
-                        playerBody->velocity.x = -0.5;
+                        playerBody->velocity.x = -5.0f;
+                        playerBody->velocity.y = 0.f;
                         break;
                     case gzzzt::ActionType::DROP_BOMB:
                         break;
