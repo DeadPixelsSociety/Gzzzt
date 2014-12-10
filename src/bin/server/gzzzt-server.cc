@@ -228,20 +228,16 @@ int main(int argc, char** argv) {
                 gzzzt::Body* playerBody = player->getBody();
                 switch (actionReq->getType()) {
                     case gzzzt::ActionType::MOVE_UP:
-                        playerBody->velocity.y = -5.0f;
-                        playerBody->velocity.x = 0.f;
+                        playerBody->velocity.y = -2000000.0f;
                         break;
                     case gzzzt::ActionType::MOVE_DOWN:
-                        playerBody->velocity.y = 5.0f;
-                        playerBody->velocity.x = 0.f;
+                        playerBody->velocity.y = 2000000.0f;
                         break;
                     case gzzzt::ActionType::MOVE_RIGHT:
-                        playerBody->velocity.x = 5.0f;
-                        playerBody->velocity.y = 0.f;
+                        playerBody->velocity.x = 2000000.0f;
                         break;
                     case gzzzt::ActionType::MOVE_LEFT:
-                        playerBody->velocity.x = -5.0f;
-                        playerBody->velocity.y = 0.f;
+                        playerBody->velocity.x = -2000000.0f;
                         break;
                     case gzzzt::ActionType::DROP_BOMB:
                         break;
@@ -258,6 +254,9 @@ int main(int argc, char** argv) {
         // update
         sf::Time elapsed = clock.restart();
         physics.update(elapsed.asSeconds());
+        for (auto& p : players) {
+            p->getBody()->velocity = {0.f, 0.f};
+        }
         game.update(elapsed.asSeconds());
     }
 
