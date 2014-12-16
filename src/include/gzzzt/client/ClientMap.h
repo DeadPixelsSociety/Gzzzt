@@ -22,9 +22,9 @@
 #include <tmx/Map.h>
 #include <boost/filesystem.hpp>
 
-#include <gzzzt/shared/Resource.h>
 #include <gzzzt/client/ClientEntity.h>
 #include <gzzzt/shared/Block.h>
+#include <gzzzt/shared/Resource.h>
 
 namespace gzzzt {
 

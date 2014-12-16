@@ -18,6 +18,8 @@
 #ifndef GZZZT_ACTION_REQUEST_H
 #define GZZZT_ACTION_REQUEST_H
 
+#include <bitset>
+
 #include <gzzzt/shared/ActionType.h>
 #include <gzzzt/shared/Request.h>
 
@@ -25,16 +27,16 @@ namespace gzzzt {
 
     class ActionRequest : public Request {
     public:
-        explicit ActionRequest(ActionType type, uint8_t playerId);
+        explicit ActionRequest(std::bitset<4> keys, uint8_t playerId);
         explicit ActionRequest(std::vector<uint8_t>& bytes);
 
-        ActionType getType() const;
+        std::bitset<4> getKeys() const;
         uint8_t getPlayerId() const;
 
         std::vector<uint8_t> serialize() const override;
 
     private:
-        ActionType m_type;
+        std::bitset<4>  m_keys;
     };
 }
 

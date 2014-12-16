@@ -20,16 +20,9 @@
 
 #include <cstdint>
 
-namespace gzzzt {
-
-    enum class ActionType : uint8_t {
-        MOVE_LEFT,
-        MOVE_RIGHT,
-        MOVE_UP,
-        MOVE_DOWN,
-        DROP_BOMB,
-    };
-
-}
+#define MOVE_LEFT 0
+#define MOVE_RIGHT 1
+#define MOVE_UP 2
+#define MOVE_DOWN 3
 
 #endif // GZZZT_ACTION_TYPE_H

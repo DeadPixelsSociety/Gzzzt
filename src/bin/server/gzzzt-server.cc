@@ -53,7 +53,7 @@ static std::atomic_bool should_continue
 };
 
 static void help(void) {
-    std::cout << "Usage: gzzzt-server <TCP_PORT> <UDP_PORT>" << std::endl;
+    std::cout << "Usage: gzzzt-server [TCP_PORT] [UDP_PORT]" << std::endl;
 }
 
 static void signal_handler(int sig) {
@@ -62,7 +62,7 @@ static void signal_handler(int sig) {
 }
 
 static void receiveMsg(gzzzt::ServerUDPManager& udpManager, gzzzt::ConcurrentQueue<gzzzt::Request*>& inQueue) {
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the receiving thread...\n");
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Starting the receiving thread...\n");
     gzzzt::Request* req;
     while (should_continue) {
         req = udpManager.receive();
@@ -70,27 +70,27 @@ static void receiveMsg(gzzzt::ServerUDPManager& udpManager, gzzzt::ConcurrentQue
             inQueue.push(req);
         }
     }
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the receiving thread...\n");
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Stopping the receiving thread...\n");
 }
 
 static void broadcastMsg(gzzzt::ServerUDPManager& udpManager,
         gzzzt::ConcurrentQueue<gzzzt::Response*>& outQueue,
         const gzzzt::ServerPlayerList& players) {
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the broadcasting thread...\n");
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Starting the broadcasting thread...\n");
     gzzzt::Response* resp;
     while (should_continue) {
         if (!outQueue.empty()) {
             resp = outQueue.pop();
             if (resp != nullptr) {
-                gzzzt::Log::debug(gzzzt::Log::GENERAL, "Broadcast response\n");
+                gzzzt::Log::debug(gzzzt::Log::NETWORK, "Broadcast response\n");
                 if (!udpManager.broadcast(players, *resp)) {
-                    gzzzt::Log::error(gzzzt::Log::GENERAL, "Could not broadcast msg\n");
+                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not broadcast msg\n");
                 }
                 delete resp;
             }
         }
     }
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the broadcasting thread...\n");
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Stopping the broadcasting thread...\n");
 }
 
 static std::vector<float> getPlayersPosition(const gzzzt::ServerPlayerList& players) {
@@ -162,8 +162,6 @@ int main(int argc, char** argv) {
         gzzzt::Log::fatal(gzzzt::Log::NETWORK, "Error while broadcasting to the players\n");
     }
 
-
-
     // Get the players UDP port
     uint8_t nbPlayersReq = 0;
     while (should_continue && nbPlayersReq < players.getSize()) {
@@ -208,9 +206,6 @@ int main(int argc, char** argv) {
         playerLayer++;
     }
 
-    // add entities
-
-
     // send the players position
     std::vector<float> playersPositions = getPlayersPosition(players);
     gzzzt::GameStateResponse* resp = new gzzzt::GameStateResponse(playersPositions);
@@ -226,38 +221,37 @@ int main(int argc, char** argv) {
             if (req->getReqType() == gzzzt::RequestType::ACTION) {
                 gzzzt::ActionRequest* actionReq = dynamic_cast<gzzzt::ActionRequest*> (req);
                 gzzzt::Body* playerBody = player->getBody();
-                switch (actionReq->getType()) {
-                    case gzzzt::ActionType::MOVE_UP:
-                        playerBody->velocity.y = -2000000.0f;
-                        break;
-                    case gzzzt::ActionType::MOVE_DOWN:
-                        playerBody->velocity.y = 2000000.0f;
-                        break;
-                    case gzzzt::ActionType::MOVE_RIGHT:
-                        playerBody->velocity.x = 2000000.0f;
-                        break;
-                    case gzzzt::ActionType::MOVE_LEFT:
-                        playerBody->velocity.x = -2000000.0f;
-                        break;
-                    case gzzzt::ActionType::DROP_BOMB:
-                        break;
+                std::bitset<4> keys = actionReq->getKeys();
+                playerBody->velocity.x = 0.f;
+                playerBody->velocity.y = 0.f;
+                if (keys.test(MOVE_UP)) {
+                    playerBody->velocity.y = -64.f;
                 }
-                //gzzzt::Log::debug(gzzzt::Log::GENERAL, "Process action msg from %s\n", player->getName().c_str());
-                // broadcast response
-                std::vector<float> playersPositions = getPlayersPosition(players);
-                gzzzt::GameStateResponse* resp = new gzzzt::GameStateResponse(playersPositions);
-                outQueue.push(resp);
+                if (keys.test(MOVE_DOWN)) {
+                    playerBody->velocity.y = 64.f;
+                }
+                if (keys.test(MOVE_LEFT)) {
+                    playerBody->velocity.x = -64.f;
+                }
+                if (keys.test(MOVE_RIGHT)) {
+                    playerBody->velocity.x = 64.f;
+                }
             }
             delete req;
+
         }
 
         // update
         sf::Time elapsed = clock.restart();
         physics.update(elapsed.asSeconds());
-        for (auto& p : players) {
-            p->getBody()->velocity = {0.f, 0.f};
-        }
         game.update(elapsed.asSeconds());
+
+        sf::sleep(sf::milliseconds(16));
+
+        // broadcast response
+        std::vector<float> playersPositions = getPlayersPosition(players);
+        gzzzt::GameStateResponse* resp = new gzzzt::GameStateResponse(playersPositions);
+        outQueue.push(resp);
     }
 
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the server...\n");

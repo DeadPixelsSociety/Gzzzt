@@ -21,6 +21,7 @@
 #include <chrono>
 #include <csignal>
 #include <cstdlib>
+#include <bitset>
 #include <iostream>
 #include <list>
 #include <thread>
@@ -93,7 +94,7 @@ static void receiveMsg(gzzzt::ClientUDPManager& udpManager, gzzzt::ConcurrentQue
 
 static sf::Vector2f getPos(uint8_t id, std::vector<float> values) {
     for (unsigned int i = 0; i < values.size(); i += 3) {
-        if (id == static_cast<uint8_t>(values[i])) {
+        if (id == static_cast<uint8_t> (values[i])) {
             return sf::Vector2f(values[i + 1], values[i + 2]);
         }
     }
@@ -165,7 +166,7 @@ int main(int argc, char** argv) {
         }
     }
     gzzzt::Log::info(gzzzt::Log::GENERAL, "My ID : %d\n", playerId);
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "Server port UDP : %d\n", serverPortUDP);
+    gzzzt::Log::info(gzzzt::Log::NETWORK, "Server port UDP : %d\n", serverPortUDP);
 
 
     // Initialize the UDP socket
@@ -210,17 +211,16 @@ int main(int argc, char** argv) {
     // add entities
     world.addEntity(map);
     for (auto p : players) {
-        gzzzt::Log::info(gzzzt::Log::GENERAL, "BEFORE %d\n", p->getID());
         world.addEntity(p);
     }
 
     // main loop
     sf::Clock clock;
-
+    std::bitset<4> keys;
+    uint64_t cpt = 0;
     while (window.isOpen()) {
         // input
         sf::Event event;
-
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
@@ -230,42 +230,55 @@ int main(int argc, char** argv) {
                         window.close();
                         break;
                     case sf::Keyboard::Up:
-                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "UP\n");
-                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::MOVE_UP, playerId));
+                        keys.set(MOVE_UP, true);
                         break;
                     case sf::Keyboard::Down:
-                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "DOWN\n");
-                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::MOVE_DOWN, playerId));
+                        keys.set(MOVE_DOWN, true);
                         break;
                     case sf::Keyboard::Left:
-                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "LEFT\n");
-                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::MOVE_LEFT, playerId));
+                        keys.set(MOVE_LEFT, true);
                         break;
                     case sf::Keyboard::Right:
-                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "RIGHT\n");
-                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::MOVE_RIGHT, playerId));
+                        keys.set(MOVE_RIGHT, true);
                         break;
                     case sf::Keyboard::Space:
-                        gzzzt::Log::debug(gzzzt::Log::GENERAL, "SPACE\n");
-                        outQueue.push(new gzzzt::ActionRequest(gzzzt::ActionType::DROP_BOMB, playerId));
                         break;
                     default:
                         break;
                 }
-
+            } else if (event.type == sf::Event::KeyReleased) {
+                switch (event.key.code) {
+                    case sf::Keyboard::Up:
+                        keys.set(MOVE_UP, false);
+                        break;
+                    case sf::Keyboard::Down:
+                        keys.set(MOVE_DOWN, false);
+                        break;
+                    case sf::Keyboard::Left:
+                        keys.set(MOVE_LEFT, false);
+                        break;
+                    case sf::Keyboard::Right:
+                        keys.set(MOVE_RIGHT, false);
+                        break;
+                    default:
+                        break;
+                }
             }
+        }
+
+        cpt++;
+        if (cpt % 10 == 0) {
+            outQueue.push(new gzzzt::ActionRequest(keys, playerId));
         }
 
         if (!inQueue.empty()) {
             // There is a pending message
             gzzzt::Response* resp = inQueue.pop();
-            gzzzt::Log::debug(gzzzt::Log::GENERAL, "Receive msg from server\n");
-            gzzzt::GameStateResponse* gameStateResp = dynamic_cast<gzzzt::GameStateResponse*>(resp);
+            gzzzt::GameStateResponse* gameStateResp = dynamic_cast<gzzzt::GameStateResponse*> (resp);
             std::vector<float> positions = gameStateResp->getPlayersPositions();
             // TODO: refactor this !
             for (auto p : players) {
                 p->setPos(getPos(p->getID(), positions));
-                gzzzt::Log::debug(gzzzt::Log::GENERAL, "Position de %s = (%f;%f)\n", p->getName().c_str(), p->getPos().x, p->getPos().y);
             }
             delete resp;
         }
