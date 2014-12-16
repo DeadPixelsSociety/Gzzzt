@@ -30,18 +30,13 @@
 
 namespace gzzzt {
 
-    enum class Memory {
-        FROM_HEAP,
-        FROM_STACK,
-    };
-
     class World {
     public:
 
         void update(float dt);
         void render(sf::RenderWindow& window);
 
-        void addEntity(ClientEntity *e, Memory from = Memory::FROM_HEAP);
+        void addEntity(ClientEntity *e);
         void removeEntity(ClientEntity *e);
 
         void registerHandler(EventType type, EventHandler handler);
@@ -70,63 +65,6 @@ namespace gzzzt {
         }
 
     private:
-
-        class ClientEntityPtr {
-        public:
-
-            ClientEntityPtr(ClientEntity *entity, std::function<void(ClientEntity *) > deleter)
-            : m_entity(entity)
-            , m_deleter(deleter) {
-            }
-
-            ClientEntityPtr(const ClientEntityPtr&) = delete;
-            ClientEntityPtr& operator=(const ClientEntityPtr&) = delete;
-
-            ClientEntityPtr(ClientEntityPtr&& other)
-            : m_entity(other.m_entity)
-            , m_deleter(std::move(other.m_deleter)) {
-            }
-
-            ClientEntityPtr& operator=(ClientEntityPtr && other) {
-                m_deleter(m_entity);
-                m_entity = other.m_entity;
-                m_deleter = std::move(other.m_deleter);
-                return *this;
-            }
-
-            ~ClientEntityPtr() {
-                m_deleter(m_entity);
-            }
-
-            ClientEntity *get() {
-                return m_entity;
-            }
-
-            const ClientEntity *get() const {
-                return m_entity;
-            }
-
-            ClientEntity *operator->() {
-                return get();
-            }
-
-            const ClientEntity *operator->() const {
-                return get();
-            }
-
-            ClientEntity& operator*() {
-                return *get();
-            }
-
-            const ClientEntity& operator*() const {
-                return *get();
-            }
-
-        private:
-            ClientEntity *m_entity;
-            std::function<void(ClientEntity *) > m_deleter;
-        };
-
         std::vector<ClientEntity*> m_entities;
         std::map<EventType, std::vector<EventHandler>> m_handlers;
     };

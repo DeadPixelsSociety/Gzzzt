@@ -22,7 +22,7 @@
 
 #include <SFML/Audio.hpp>
 
-#include <gzzzt/client/Resource.h>
+#include <gzzzt/shared/Resource.h>
 
 namespace gzzzt {
 

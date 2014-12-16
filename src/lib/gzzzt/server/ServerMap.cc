@@ -21,8 +21,6 @@
 #include <tmx/TMX.h>
 #include <tmx/TileLayer.h>
 
-#include "gzzzt/client/Resource.h"
-
 namespace gzzzt {
 
     ServerMap::ServerMap(const boost::filesystem::path & path, gzzzt::ResourceManager& resourceManager) {

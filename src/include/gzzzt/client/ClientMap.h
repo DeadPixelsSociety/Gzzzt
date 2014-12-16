@@ -22,7 +22,7 @@
 #include <tmx/Map.h>
 #include <boost/filesystem.hpp>
 
-#include <gzzzt/client/Resource.h>
+#include <gzzzt/shared/Resource.h>
 #include <gzzzt/client/ClientEntity.h>
 #include <gzzzt/shared/Block.h>
 

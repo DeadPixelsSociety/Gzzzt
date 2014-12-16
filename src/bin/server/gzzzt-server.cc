@@ -42,7 +42,7 @@
 #include "config.h"
 #include "gzzzt/server/Physics.h"
 #include "gzzzt/server/ServerMap.h"
-#include "gzzzt/client/Resource.h"
+#include "gzzzt/shared/Resource.h"
 
 #define DEFAULT_TCP_PORT 5000
 #define DEFAULT_UDP_PORT 5001

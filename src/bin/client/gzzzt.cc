@@ -195,7 +195,7 @@ int main(int argc, char** argv) {
 
     resourceManager.addSearchDir(GAME_DATADIR);
     resourceManager.addSearchDir("..");
-    
+
     sf::RenderWindow window(sf::VideoMode(1024, 768), "Gzzzt (version " GAME_VERSION ")");
     window.setKeyRepeatEnabled(false);
 
@@ -211,12 +211,12 @@ int main(int argc, char** argv) {
     world.addEntity(map);
     for (auto p : players) {
         gzzzt::Log::info(gzzzt::Log::GENERAL, "BEFORE %d\n", p->getID());
-        world.addEntity(p); // TODO: fix exception "terminate called after throwing an instance of 'std::bad_function_call'"
+        world.addEntity(p);
     }
 
     // main loop
     sf::Clock clock;
- 
+
     while (window.isOpen()) {
         // input
         sf::Event event;
