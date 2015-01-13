@@ -65,21 +65,6 @@ static void help(void) {
     std::cout << "Usage: gzzzt <PLAYER_NAME> <SERVER_ADDRESS:PORT>" << std::endl;
 }
 
-static void sendMsg(gzzzt::ClientUDPManager& udpManager, gzzzt::ConcurrentQueue<gzzzt::Request*>& outQueue) {
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the sender thread...\n");
-    gzzzt::Request* req;
-    while (should_continue) {
-        if (!outQueue.empty()) {
-            req = outQueue.pop();
-            if (req != nullptr) {
-                udpManager.send(*req);
-                delete req;
-            }
-        }
-    }
-    gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the sender thread...\n");
-}
-
 static void receiveMsg(gzzzt::ClientUDPManager& udpManager, gzzzt::ConcurrentQueue<gzzzt::Response*>& inQueue) {
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the receiver thread...\n");
     gzzzt::Response* resp;
@@ -179,11 +164,9 @@ int main(int argc, char** argv) {
         return 5;
     }
 
-    // Create concurrent queues for the messages
+    // Create concurrent queue for the messages
     gzzzt::ConcurrentQueue<gzzzt::Response*> inQueue;
-    gzzzt::ConcurrentQueue<gzzzt::Request*> outQueue;
-    // Launch the threads
-    std::thread sender(&sendMsg, std::ref(udpManager), std::ref(outQueue));
+    // Launch the thread
     std::thread receiver(&receiveMsg, std::ref(udpManager), std::ref(inQueue));
 
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the game...\n");
@@ -217,7 +200,6 @@ int main(int argc, char** argv) {
     // main loop
     sf::Clock clock;
     std::bitset<4> keys;
-    uint64_t cpt = 0;
     while (window.isOpen()) {
         // input
         sf::Event event;
@@ -264,11 +246,12 @@ int main(int argc, char** argv) {
                         break;
                 }
             }
-        }
-
-        cpt++;
-        if (cpt % 10 == 0) {
-            outQueue.push(new gzzzt::ActionRequest(keys, playerId));
+            gzzzt::ActionRequest req(keys, playerId);
+            if (udpManager.send(req)) {
+                gzzzt::Log::debug(gzzzt::Log::GENERAL, "Request sent\n");
+            } else {
+                gzzzt::Log::error(gzzzt::Log::GENERAL, "Error while sending a request\n");
+            }
         }
 
         if (!inQueue.empty()) {
@@ -294,7 +277,6 @@ int main(int argc, char** argv) {
     }
     stopThreads();
     receiver.join();
-    sender.join();
     tcpManager.disconnect();
     return 0;
 }

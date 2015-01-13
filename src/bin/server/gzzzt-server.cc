@@ -162,7 +162,6 @@ int main(int argc, char** argv) {
 
     // Create concurrent queues for the messages
     gzzzt::ConcurrentQueue<gzzzt::Request*> inQueue;
-    gzzzt::ConcurrentQueue<gzzzt::Response*> outQueue;
 
     // Launch the threads
     std::thread receiver(&receiveMsg, std::ref(udpManager), std::ref(inQueue));
@@ -187,8 +186,8 @@ int main(int argc, char** argv) {
 
     // send the players position
     std::vector<float> playersPositions = getPlayersPosition(players);
-    gzzzt::GameStateResponse* resp = new gzzzt::GameStateResponse(playersPositions);
-    outQueue.push(resp);
+    gzzzt::GameStateResponse resp(playersPositions);
+    udpManager.broadcast(players, resp);
 
     // main loop
     sf::Clock clock;
@@ -217,7 +216,6 @@ int main(int argc, char** argv) {
                 }
             }
             delete req;
-
         }
 
         // update
