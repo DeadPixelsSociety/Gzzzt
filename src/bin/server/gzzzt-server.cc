@@ -194,8 +194,8 @@ int main(int argc, char** argv) {
     sf::Clock clock;
 
     while (should_continue) {
-        if (!inQueue.empty()) {
-            gzzzt::Request* req = inQueue.pop();
+        gzzzt::Request* req;
+        if (inQueue.tryPop(req)) {
             gzzzt::ServerPlayer* player = players.getById(req->getPlayerId());
             if (req->getReqType() == gzzzt::RequestType::ACTION) {
                 gzzzt::ActionRequest* actionReq = dynamic_cast<gzzzt::ActionRequest*> (req);

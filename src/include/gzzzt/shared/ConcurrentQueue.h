@@ -42,6 +42,17 @@ namespace gzzzt {
             m_qMutex.unlock();
             return value;
         }
+        
+        bool tryPop(T& value) {
+            m_qMutex.lock();
+            bool pop = !m_queue.empty();
+            if (pop) {
+                value = m_queue.front();
+                m_queue.pop();
+            }
+            m_qMutex.unlock();
+            return pop;
+        }
 
         void push(T value) {
             m_qMutex.lock();
