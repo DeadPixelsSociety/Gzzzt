@@ -189,6 +189,7 @@ int main(int argc, char** argv) {
     gzzzt::GameStateResponse resp(playersPositions);
     udpManager.broadcast(players, resp);
 
+    gzzzt::Log::setLevel(gzzzt::Log::Level::FATAL);
     // main loop
     sf::Clock clock;
 
@@ -203,16 +204,16 @@ int main(int argc, char** argv) {
                 playerBody->velocity.x = 0.f;
                 playerBody->velocity.y = 0.f;
                 if (keys.test(MOVE_UP)) {
-                    playerBody->velocity.y = -64.f;
+                    playerBody->velocity.y = -128.f;
                 }
                 if (keys.test(MOVE_DOWN)) {
-                    playerBody->velocity.y = 64.f;
+                    playerBody->velocity.y = 128.f;
                 }
                 if (keys.test(MOVE_LEFT)) {
-                    playerBody->velocity.x = -64.f;
+                    playerBody->velocity.x = -128.f;
                 }
                 if (keys.test(MOVE_RIGHT)) {
-                    playerBody->velocity.x = 64.f;
+                    playerBody->velocity.x = 128.f;
                 }
             }
             delete req;

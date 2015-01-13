@@ -33,63 +33,85 @@ namespace gzzzt {
         m_tileWidth = map->getTmxMap()->getTileWidth();
         m_tileHeight = map->getTmxMap()->getTileHeight();
         m_width = map->getTmxMap()->getWidth();
-        m_height = map->getTmxMap()->getHeight();   
+        m_height = map->getTmxMap()->getHeight();
         m_mapLength = m_width * m_height;
     }
 
     void ServerMapVisitor::visitTileLayer(tmx::TileLayer& layer) {
 
         if (strcmp(layer.getName().c_str(), "Background") == 0) {
-            Body* body = new Body();
-            body->type = Body::Type::STATIC;
-            body->shape.kind = Shape::RECTANGLE;
-            body->shape.rectangle.height = m_tileHeight;
-            body->shape.rectangle.width = m_tileWidth;
-            body->pos.x = m_tileIndex % m_width;
-            body->pos.y = m_tileIndex / m_width;
-            body->velocity = {0., 0.};
-            body->layers = Body::ALL_LAYERS;
-            m_physics->addBody(body);
-            m_tileIndex++;
-            if (m_tileIndex == m_mapLength) {
-                m_tileIndex = 0;
-            }
-            
+
+            /*for (auto obj : layer) {
+
+                if (obj.getGID() != 0) {
+                    std::cout << "bg" << std::endl;
+                    Body* body = new Body();
+                    body->type = Body::Type::STATIC;
+                    body->shape.kind = Shape::RECTANGLE;
+                    body->shape.rectangle.height = m_tileHeight;
+                    body->shape.rectangle.width = m_tileWidth;
+                    body->pos.x = m_tileIndex % m_width;
+                    body->pos.y = m_tileIndex / m_width;
+                    body->velocity = {0., 0.};
+                    body->layers = Body::ALL_LAYERS;
+                    m_physics->addBody(body);
+                }
+                
+                m_tileIndex++;
+                if (m_tileIndex == m_mapLength) {
+                    m_tileIndex = 0;
+                }
+            }*/
         } else if (strcmp(layer.getName().c_str(), "Adamantium") == 0) {
-            Body* body = new Body();
-            body->type = Body::Type::STATIC;
-            body->shape.kind = Shape::RECTANGLE;
-            body->shape.rectangle.height = m_tileHeight;
-            body->shape.rectangle.width = m_tileWidth;
-            body->pos.x = m_tileIndex % m_width;
-            body->pos.y = m_tileIndex / m_width;
-            body->velocity = {0., 0.};
-            body->layers = Body::ALL_LAYERS;
-            m_physics->addBody(body);
-            m_tileIndex++;
-            if (m_tileIndex == m_mapLength) {
-                m_tileIndex = 0;
+
+            for (auto obj : layer) {
+
+                if (obj.getGID() != 0) {
+
+                    Body* body = new Body();
+                    body->type = Body::Type::STATIC;
+                    body->shape.kind = Shape::RECTANGLE;
+                    body->shape.rectangle.height = m_tileHeight;
+                    body->shape.rectangle.width = m_tileWidth;
+                    body->pos.x = (m_tileIndex % m_width) * m_tileWidth;
+                    body->pos.y = (m_tileIndex / m_width) * m_tileHeight;
+                    body->velocity = {0., 0.};
+                    body->layers = Body::ALL_LAYERS;
+                    m_physics->addBody(body);
+                }
+
+                m_tileIndex++;
+                if (m_tileIndex == m_mapLength) {
+                    m_tileIndex = 0;
+                }
             }
         } else if (strcmp(layer.getName().c_str(), "Aluminium") == 0) {
-            Body* body = new Body();
-            body->type = Body::Type::DYNAMIC;
-            body->shape.kind = Shape::CIRCLE;
-            body->shape.circle.radius = m_tileWidth / 2;
-            body->pos.x = m_tileIndex % m_width;
-            body->pos.y = m_tileIndex / m_width;
-            body->velocity = {0., 0.};
-            body->layers = Body::ALL_LAYERS;
-            m_physics->addBody(body);
-            m_tileIndex++;
-            if (m_tileIndex == m_mapLength) {
-                m_tileIndex = 0;
+            for (auto obj : layer) {
+
+                if (obj.getGID() != 0) {
+                    std::cout << "al" << std::endl;
+                    Body* body = new Body();
+                    body->type = Body::Type::STATIC;
+                    body->shape.kind = Shape::CIRCLE;
+                    body->shape.circle.radius = m_tileWidth / 2;
+                    body->pos.x = (m_tileIndex % m_width) * m_tileWidth;
+                    body->pos.y = (m_tileIndex / m_width) * m_tileHeight;
+                    body->velocity = {0., 0.};
+                    body->layers = Body::ALL_LAYERS;
+                    m_physics->addBody(body);
+                                        std::cout << m_mapLength << " " << m_tileIndex << " " << m_width << " " << body->pos.x << " " << body->pos.y << std::endl;
+                }
+                m_tileIndex++;
+                if (m_tileIndex == m_mapLength) {
+                    m_tileIndex = 0;
+                }
             }
         }
     }
 
-    void ServerMapVisitor::visitObjectLayer(tmx::ObjectLayer& layer) {
+    void ServerMapVisitor::visitObjectLayer(tmx::ObjectLayer & layer) {
     }
 
-    void ServerMapVisitor::visitImageLayer(tmx::ImageLayer& layer) {
+    void ServerMapVisitor::visitImageLayer(tmx::ImageLayer & layer) {
     }
 }
