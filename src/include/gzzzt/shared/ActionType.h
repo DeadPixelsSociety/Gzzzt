@@ -24,5 +24,6 @@
 #define MOVE_RIGHT 1
 #define MOVE_UP 2
 #define MOVE_DOWN 3
+#define DROP_BOMB 4
 
 #endif // GZZZT_ACTION_TYPE_H

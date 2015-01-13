@@ -41,11 +41,13 @@ namespace gzzzt {
         uint8_t getID() const;
         std::string toString() const;
         Body* getBody() const;
+        uint8_t getBombs() const;
 
         void setName(std::string name);
         void setID(uint8_t id);
         void setUDPPort(unsigned short port);
         void closeTCPSocket();
+        void dropBomb();
 
         virtual void update(float dt) override;
 
@@ -57,6 +59,7 @@ namespace gzzzt {
         std::string m_name;
         uint8_t m_id;
         Body* m_body;
+        uint8_t m_bombs;
     };
 
 }

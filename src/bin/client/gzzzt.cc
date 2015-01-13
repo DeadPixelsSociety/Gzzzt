@@ -199,7 +199,7 @@ int main(int argc, char** argv) {
 
     // main loop
     sf::Clock clock;
-    std::bitset<4> keys;
+    std::bitset<5> keys;
     while (window.isOpen()) {
         // input
         sf::Event event;
@@ -224,6 +224,7 @@ int main(int argc, char** argv) {
                         keys.set(MOVE_RIGHT, true);
                         break;
                     case sf::Keyboard::Space:
+                        keys.set(DROP_BOMB, true);
                         break;
                     default:
                         break;
@@ -252,6 +253,7 @@ int main(int argc, char** argv) {
             } else {
                 gzzzt::Log::error(gzzzt::Log::GENERAL, "Error while sending a request\n");
             }
+            keys.set(DROP_BOMB, false);
         }
 
         if (!inQueue.empty()) {

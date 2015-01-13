@@ -20,7 +20,7 @@
 
 namespace gzzzt {
 
-    ActionRequest::ActionRequest(std::bitset<4> keys, uint8_t playerId)
+    ActionRequest::ActionRequest(std::bitset<5> keys, uint8_t playerId)
     : Request(RequestType::ACTION, playerId),
     m_keys(keys) {
     }
@@ -30,7 +30,7 @@ namespace gzzzt {
         bytes.erase(bytes.begin());
     }
 
-    std::bitset<4> ActionRequest::getKeys() const {
+    std::bitset<5> ActionRequest::getKeys() const {
         return m_keys;
     }
 

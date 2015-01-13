@@ -65,6 +65,10 @@ namespace gzzzt {
         return m_body;
     }
 
+    uint8_t ServerPlayer::getBombs() const {
+        return m_bombs;
+    }
+
     void ServerPlayer::setName(std::string name) {
         m_name = name;
     }
@@ -80,6 +84,10 @@ namespace gzzzt {
     void ServerPlayer::closeTCPSocket() {
         delete m_TCPSocket;
         m_TCPSocket = nullptr;
+    }
+
+    void ServerPlayer::dropBomb() {
+        m_bombs--;
     }
 
     std::string ServerPlayer::toString() const {

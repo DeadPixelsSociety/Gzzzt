@@ -199,7 +199,7 @@ int main(int argc, char** argv) {
             if (req->getReqType() == gzzzt::RequestType::ACTION) {
                 gzzzt::ActionRequest* actionReq = dynamic_cast<gzzzt::ActionRequest*> (req);
                 gzzzt::Body* playerBody = player->getBody();
-                std::bitset<4> keys = actionReq->getKeys();
+                std::bitset<5> keys = actionReq->getKeys();
                 playerBody->velocity.x = 0.f;
                 playerBody->velocity.y = 0.f;
                 if (keys.test(MOVE_UP)) {
@@ -213,6 +213,9 @@ int main(int argc, char** argv) {
                 }
                 if (keys.test(MOVE_RIGHT)) {
                     playerBody->velocity.x = 128.f;
+                }
+                if (keys.test(DROP_BOMB)) {
+                    gzzzt::Log::debug(gzzzt::Log::NETWORK, "BOOOM !\n");
                 }
             }
             delete req;
