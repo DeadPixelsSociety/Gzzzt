@@ -73,26 +73,6 @@ static void receiveMsg(gzzzt::ServerUDPManager& udpManager, gzzzt::ConcurrentQue
     gzzzt::Log::info(gzzzt::Log::NETWORK, "Stopping the receiving thread...\n");
 }
 
-static void broadcastMsg(gzzzt::ServerUDPManager& udpManager,
-        gzzzt::ConcurrentQueue<gzzzt::Response*>& outQueue,
-        const gzzzt::ServerPlayerList& players) {
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Starting the broadcasting thread...\n");
-    gzzzt::Response* resp;
-    while (should_continue) {
-        if (!outQueue.empty()) {
-            resp = outQueue.pop();
-            if (resp != nullptr) {
-                gzzzt::Log::debug(gzzzt::Log::NETWORK, "Broadcast response\n");
-                if (!udpManager.broadcast(players, *resp)) {
-                    gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not broadcast msg\n");
-                }
-                delete resp;
-            }
-        }
-    }
-    gzzzt::Log::info(gzzzt::Log::NETWORK, "Stopping the broadcasting thread...\n");
-}
-
 static std::vector<float> getPlayersPosition(const gzzzt::ServerPlayerList& players) {
     std::vector<float> positions;
     positions.push_back(static_cast<float> (players.getSize()));
@@ -186,7 +166,6 @@ int main(int argc, char** argv) {
 
     // Launch the threads
     std::thread receiver(&receiveMsg, std::ref(udpManager), std::ref(inQueue));
-    std::thread broadcaster(&broadcastMsg, std::ref(udpManager), std::ref(outQueue), std::ref(players));
 
     // initialize
     gzzzt::Game game;
@@ -250,15 +229,18 @@ int main(int argc, char** argv) {
 
         // broadcast response
         std::vector<float> playersPositions = getPlayersPosition(players);
-        gzzzt::GameStateResponse* resp = new gzzzt::GameStateResponse(playersPositions);
-        outQueue.push(resp);
+        gzzzt::GameStateResponse resp(playersPositions);
+        if (udpManager.broadcast(players, resp)) {
+            gzzzt::Log::debug(gzzzt::Log::NETWORK, "Broadcast response\n");
+        } else {
+            gzzzt::Log::error(gzzzt::Log::NETWORK, "Could not broadcast response\n");
+        }
     }
 
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Stopping the server...\n");
 
     // Stop the threads
     receiver.join();
-    broadcaster.join();
     // Close the connections
     tcpManager.close();
     udpManager.close();
