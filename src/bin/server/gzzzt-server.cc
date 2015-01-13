@@ -189,7 +189,6 @@ int main(int argc, char** argv) {
     gzzzt::GameStateResponse resp(playersPositions);
     udpManager.broadcast(players, resp);
 
-    gzzzt::Log::setLevel(gzzzt::Log::Level::FATAL);
     // main loop
     sf::Clock clock;
 

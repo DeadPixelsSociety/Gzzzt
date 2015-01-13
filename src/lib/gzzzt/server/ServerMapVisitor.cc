@@ -89,7 +89,6 @@ namespace gzzzt {
             for (auto obj : layer) {
 
                 if (obj.getGID() != 0) {
-                    std::cout << "al" << std::endl;
                     Body* body = new Body();
                     body->type = Body::Type::STATIC;
                     body->shape.kind = Shape::CIRCLE;
@@ -99,7 +98,6 @@ namespace gzzzt {
                     body->velocity = {0., 0.};
                     body->layers = Body::ALL_LAYERS;
                     m_physics->addBody(body);
-                                        std::cout << m_mapLength << " " << m_tileIndex << " " << m_width << " " << body->pos.x << " " << body->pos.y << std::endl;
                 }
                 m_tileIndex++;
                 if (m_tileIndex == m_mapLength) {
