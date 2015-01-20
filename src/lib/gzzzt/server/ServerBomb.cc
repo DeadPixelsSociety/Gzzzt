@@ -19,8 +19,30 @@
 
 namespace gzzzt {
 
+    ServerBomb::ServerBomb(const sf::Vector2f & position)
+    : ServerEntity()
+    , m_remainingTime(BOMB_EXPLODE_TIME)
+    , m_hasExploded(false) {
+        m_shape.setRadius(30);
+        m_shape.setFillColor(sf::Color::Black);
+        m_shape.setPosition(position);
+    }
+
+    ServerBomb::~ServerBomb() {
+
+    }
+
     void ServerBomb::update(float dt) {
-        // TODO
+
+        m_remainingTime -= dt;
+
+        if (m_remainingTime <= 0) {
+            m_hasExploded = true;
+        }
+    }
+
+    bool ServerBomb::hasExploded() {
+        return m_hasExploded;
     }
 
 }

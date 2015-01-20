@@ -36,8 +36,6 @@ namespace gzzzt {
 
     private:
         sf::CircleShape m_shape;
-        float m_remainingTime;
-        bool m_hasExploded;
     };
 
 }
