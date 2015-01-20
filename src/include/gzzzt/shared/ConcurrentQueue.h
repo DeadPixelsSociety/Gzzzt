@@ -53,6 +53,17 @@ namespace gzzzt {
             m_qMutex.unlock();
             return pop;
         }
+        
+        bool popWhileItsPossible(T& value) {
+            m_qMutex.lock();
+            unsigned int size = m_queue.size();
+            if (size > 0) {
+                value = m_queue.front();
+                m_queue.pop();
+            }
+            m_qMutex.unlock();
+            return --size > 0;
+        }
 
         void push(T value) {
             m_qMutex.lock();

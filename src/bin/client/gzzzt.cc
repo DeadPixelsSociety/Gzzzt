@@ -256,9 +256,9 @@ int main(int argc, char** argv) {
             keys.set(DROP_BOMB, false);
         }
 
-        while (!inQueue.empty()) {
+        gzzzt::Response* resp = nullptr;
+        while (inQueue.tryPop(resp)) {
             // There is a pending message
-            gzzzt::Response* resp = inQueue.pop();
             gzzzt::GameStateResponse* gameStateResp = dynamic_cast<gzzzt::GameStateResponse*> (resp);
             std::vector<float> positions = gameStateResp->getPlayersPositions();
             // TODO: refactor this !
