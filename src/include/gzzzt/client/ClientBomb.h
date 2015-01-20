@@ -18,16 +18,26 @@
 #ifndef GZZZT_CLIENT_BOMB_H
 #define GZZZT_CLIENT_BOMB_H
 
+#define BOMB_EXPLODE_TIME 5.0f
+
 #include <gzzzt/client/ClientEntity.h>
 
 namespace gzzzt {
 
-    class ClientBomb {
+    class ClientBomb : public ClientEntity {
     public:
+        explicit ClientBomb(const sf::Vector2f & position);
+        virtual ~ClientBomb();
 
         virtual void update(float dt);
         virtual void render(sf::RenderWindow& window);
 
+        bool hasExploded();
+
+    private:
+        sf::CircleShape m_shape;
+        float m_remainingTime;
+        bool m_hasExploded;
     };
 
 }

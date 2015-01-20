@@ -18,13 +18,35 @@
 #include <gzzzt/client/ClientBomb.h>
 
 namespace gzzzt {
+    ClientBomb::ClientBomb(const sf::Vector2f & position) 
+    : ClientEntity()
+    , m_remainingTime(0.0f)
+    , m_hasExploded(false)
+    {
+        m_shape.setRadius(30);
+        m_shape.setFillColor(sf::Color::Black);
+        m_shape.setPosition(position);
+    }
+
+    ClientBomb::~ClientBomb() {
+
+    }
 
     void ClientBomb::update(float dt) {
-        // TODO
+        
+        m_remainingTime += dt;
+        
+        if (m_remainingTime > BOMB_EXPLODE_TIME) {
+            m_hasExploded = true;
+        }
     }
 
     void ClientBomb::render(sf::RenderWindow& window) {
         // TODO
+    }
+    
+    bool ClientBomb::hasExploded() {
+        return m_hasExploded;
     }
 
 }

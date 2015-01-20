@@ -256,7 +256,7 @@ int main(int argc, char** argv) {
             keys.set(DROP_BOMB, false);
         }
 
-        if (!inQueue.empty()) {
+        while (!inQueue.empty()) {
             // There is a pending message
             gzzzt::Response* resp = inQueue.pop();
             gzzzt::GameStateResponse* gameStateResp = dynamic_cast<gzzzt::GameStateResponse*> (resp);
