@@ -15,30 +15,32 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GZZZT_CLIENT_BOMB_H
-#define GZZZT_CLIENT_BOMB_H
+#ifndef GZZZT_SERVER_BOMB_H
+#define GZZZT_SERVER_BOMB_H
 
 #define BOMB_EXPLODE_TIME 5.0f
 
+#include <SFML/System.hpp>
 #include <gzzzt/server/ServerEntity.h>
 
 namespace gzzzt {
 
-    class ServerBomb : public ServerEntity{
+    class ServerBomb : public ServerEntity {
     public:
         explicit ServerBomb(const sf::Vector2f & position);
         virtual ~ServerBomb();
 
         virtual void update(float dt);
         bool hasExploded();
+        sf::Vector2f getPosition();
 
     private:
-        sf::CircleShape m_shape;
         float m_remainingTime;
         bool m_hasExploded;
+        sf::Vector2f m_position;
     };
 
 }
 
 
-#endif // GZZZT_CLIENT_BOMB_H
+#endif // GZZZT_SERVER_BOMB_H

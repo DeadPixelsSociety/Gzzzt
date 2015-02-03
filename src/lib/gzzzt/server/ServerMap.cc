@@ -39,6 +39,14 @@ namespace gzzzt {
         return m_tmxMap;
     }
 
+    unsigned int ServerMap::getTileHeight() const {
+        return m_tileHeight;
+    }
+
+    unsigned int ServerMap::getTileWidth() const {
+        return m_tileWidth;
+    }
+
     void ServerMap::load(Physics* p) {
         ServerMapVisitor visitor(this, p);
         m_tmxMap->visitLayers(visitor);

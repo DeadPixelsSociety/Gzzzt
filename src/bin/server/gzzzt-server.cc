@@ -28,6 +28,7 @@
 #include <gzzzt/server/ServerTCPManager.h>
 #include <gzzzt/server/ServerUDPManager.h>
 #include <gzzzt/server/Physics.h>
+#include <gzzzt/server/ServerBomb.h>
 #include <gzzzt/server/ServerMap.h>
 
 #include <gzzzt/shared/ConcurrentQueue.h>
@@ -73,7 +74,7 @@ static void receiveMsg(gzzzt::ServerUDPManager& udpManager, gzzzt::ConcurrentQue
     gzzzt::Log::info(gzzzt::Log::NETWORK, "Stopping the receiving thread...\n");
 }
 
-static std::vector<float> getPlayersPosition(const gzzzt::ServerPlayerList& players) {
+static std::vector<float> getPlayersPositions(const gzzzt::ServerPlayerList& players) {
     std::vector<float> positions;
     positions.push_back(static_cast<float> (players.getSize()));
     for (auto& p : players) {
@@ -83,6 +84,17 @@ static std::vector<float> getPlayersPosition(const gzzzt::ServerPlayerList& play
     }
     return positions;
 }
+
+static std::vector<float> getBombsPositions(const std::vector<gzzzt::ServerBomb*>& bombs) {
+    std::vector<float> positions;
+    positions.push_back(static_cast<float> (bombs.size()));
+    for (auto& b : bombs) {
+        positions.push_back(b->getPosition().x);
+        positions.push_back(b->getPosition().y);
+    }
+    return positions;
+}
+
 
 int main(int argc, char** argv) {
     if (argc > 3) {
@@ -184,9 +196,13 @@ int main(int argc, char** argv) {
         playerLayer++;
     }
 
+    // list of bombs
+    std::vector<gzzzt::ServerBomb*> bombs;
+    
     // send the players position
-    std::vector<float> playersPositions = getPlayersPosition(players);
-    gzzzt::GameStateResponse resp(playersPositions);
+    std::vector<float> playersPositions = getPlayersPositions(players);
+    std::vector<float> bombsPositions = getBombsPositions(bombs);
+    gzzzt::GameStateResponse resp(playersPositions, bombsPositions);
     udpManager.broadcast(players, resp);
 
     // main loop
@@ -215,7 +231,13 @@ int main(int argc, char** argv) {
                     playerBody->velocity.x = 128.f;
                 }
                 if (keys.test(DROP_BOMB)) {
-                    gzzzt::Log::debug(gzzzt::Log::NETWORK, "BOOOM !\n");
+                    sf::Vector2f bombPos;
+                    bombPos.x = ((playerBody->pos.x / serverMap.getTileWidth()) * serverMap.getTileWidth()) + (serverMap.getTileWidth() / 2);
+                    bombPos.y = ((playerBody->pos.y / serverMap.getTileHeight()) * serverMap.getTileHeight()) + (serverMap.getTileHeight() / 2);
+//                    std::shared_ptr<gzzzt::ServerBomb> bomb = std::make_shared<gzzzt::ServerBomb>(bombPos);
+//                    bombs.push_back(bomb.get());
+//                    gzzzt::Log::debug(gzzzt::Log::GENERAL, "NB BOMB : %d\n", bombs.size());
+//                    game.addEntity(bomb);
                 }
             }
             delete req;
@@ -229,8 +251,9 @@ int main(int argc, char** argv) {
         sf::sleep(sf::milliseconds(16));
 
         // broadcast response
-        std::vector<float> playersPositions = getPlayersPosition(players);
-        gzzzt::GameStateResponse resp(playersPositions);
+        playersPositions = getPlayersPositions(players);
+        bombsPositions = getBombsPositions(bombs);
+        gzzzt::GameStateResponse resp(playersPositions, bombsPositions);
         if (udpManager.broadcast(players, resp)) {
             gzzzt::Log::debug(gzzzt::Log::NETWORK, "Broadcast response\n");
         } else {

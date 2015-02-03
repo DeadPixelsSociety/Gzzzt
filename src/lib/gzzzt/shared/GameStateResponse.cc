@@ -20,9 +20,11 @@
 
 namespace gzzzt {
 
-    GameStateResponse::GameStateResponse(std::vector<float> playersPositions)
+    GameStateResponse::GameStateResponse(std::vector<float>& playersPositions,
+            std::vector<float>& bombsPositions)
     : Response(ResponseType::GAME_STATE),
-    m_playersPositions(playersPositions) {
+    m_playersPositions(playersPositions),
+    m_bombsPositions(bombsPositions) {
     }
 
     GameStateResponse::GameStateResponse(std::vector<uint8_t>& bytes)
@@ -33,15 +35,27 @@ namespace gzzzt {
             m_playersPositions.push_back(Serializer::deserializeFloat(bytes)); // X
             m_playersPositions.push_back(Serializer::deserializeFloat(bytes)); // Y
         }
+        int nbBombs = static_cast<int> (Serializer::deserializeFloat(bytes));
+        for (int i = 0; i < nbBombs; i++) {
+            m_bombsPositions.push_back(Serializer::deserializeFloat(bytes)); // X
+            m_bombsPositions.push_back(Serializer::deserializeFloat(bytes)); // Y
+        }
     }
 
     std::vector<float> GameStateResponse::getPlayersPositions() const {
         return m_playersPositions;
     }
 
+    std::vector<float> GameStateResponse::getBombsPositions() const {
+        return m_bombsPositions;
+    }
+
     std::vector<uint8_t> GameStateResponse::serialize() const {
         std::vector<uint8_t> bytes = Response::serialize();
         for (float f : m_playersPositions) {
+            Serializer::serializeFloat(bytes, f);
+        }
+        for (float f : m_bombsPositions) {
             Serializer::serializeFloat(bytes, f);
         }
         return bytes;

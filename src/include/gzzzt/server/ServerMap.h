@@ -37,6 +37,8 @@ namespace gzzzt {
 
         void load(Physics* p);
         tmx::Map* getTmxMap() const;
+        unsigned int getTileWidth() const;
+        unsigned int getTileHeight() const;
         
         virtual void update(float dt) override;
 

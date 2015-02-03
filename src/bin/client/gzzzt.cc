@@ -30,6 +30,7 @@
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 
+#include <gzzzt/client/ClientBomb.h>
 #include <gzzzt/client/ClientMap.h>
 #include <gzzzt/client/ClientPlayer.h>
 #include <gzzzt/client/ClientTCPManager.h>
@@ -243,6 +244,9 @@ int main(int argc, char** argv) {
                     case sf::Keyboard::Right:
                         keys.set(MOVE_RIGHT, false);
                         break;
+                    case sf::Keyboard::Space:
+                        keys.set(DROP_BOMB, false);
+                        break;
                     default:
                         break;
                 }
@@ -253,18 +257,23 @@ int main(int argc, char** argv) {
             } else {
                 gzzzt::Log::error(gzzzt::Log::GENERAL, "Error while sending a request\n");
             }
-            keys.set(DROP_BOMB, false);
         }
 
         gzzzt::Response* resp = nullptr;
         while (inQueue.tryPop(resp)) {
             // There is a pending message
             gzzzt::GameStateResponse* gameStateResp = dynamic_cast<gzzzt::GameStateResponse*> (resp);
-            std::vector<float> positions = gameStateResp->getPlayersPositions();
             // TODO: refactor this !
+            std::vector<float> playersPositions = gameStateResp->getPlayersPositions();
+            std::vector<float> bombsPositions = gameStateResp->getBombsPositions();
+            int nbBombs = bombsPositions.size() / 2;
+            gzzzt::Log::debug(gzzzt::Log::GENERAL, "NB BOMB: %d\n", nbBombs);
             for (auto p : players) {
-                p->setPos(getPos(p->getID(), positions));
+                p->setPos(getPos(p->getID(), playersPositions));
             }
+//            for (int i = 0; i < nbBombs; i += 2) {
+//                world.addEntity(new gzzzt::ClientBomb(sf::Vector2f(bombsPositions[i], bombsPositions[i + 1])));
+//            }
             delete resp;
         }
 
