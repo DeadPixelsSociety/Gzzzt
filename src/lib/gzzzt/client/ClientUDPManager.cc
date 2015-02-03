@@ -49,7 +49,7 @@ namespace gzzzt {
     }
 
     gzzzt::Response* ClientUDPManager::receive() {
-        std::vector<uint8_t> bytes(64);
+        std::vector<uint8_t> bytes(MAX_RECV_SIZE);
         std::size_t bytesRecv;
         sf::IpAddress senderAddress;
         unsigned short senderPort;

@@ -23,6 +23,8 @@
 #include <gzzzt/shared/Response.h>
 #include <gzzzt/shared/Request.h>
 
+#define MAX_RECV_SIZE 65536 // 65536 bytes
+
 namespace gzzzt {
 
     class ClientUDPManager {

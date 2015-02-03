@@ -234,12 +234,12 @@ int main(int argc, char** argv) {
                     sf::Vector2f bombPos;
                     bombPos.x = ((playerBody->pos.x / serverMap.getTileWidth()) * serverMap.getTileWidth()) + (serverMap.getTileWidth() / 2);
                     bombPos.y = ((playerBody->pos.y / serverMap.getTileHeight()) * serverMap.getTileHeight()) + (serverMap.getTileHeight() / 2);
-                    gzzzt::Log::info(gzzzt::Log::GENERAL, "%d %d %d %f %f\n", player->getID(),serverMap.getTileWidth(),serverMap.getTileHeight(), bombPos.x, bombPos.y);
+                    //gzzzt::Log::info(gzzzt::Log::GENERAL, "%d %d %d %f %f\n", player->getID(),serverMap.getTileWidth(),serverMap.getTileHeight(), bombPos.x, bombPos.y);
                     
-                      //std::shared_ptr<gzzzt::ServerBomb> bomb = std::make_shared<gzzzt::ServerBomb>(bombPos);
-//                    bombs.push_back(bomb.get());
-//                    gzzzt::Log::debug(gzzzt::Log::GENERAL, "NB BOMB : %d\n", bombs.size());
-//                    game.addEntity(bomb);
+                    std::shared_ptr<gzzzt::ServerBomb> bomb = std::make_shared<gzzzt::ServerBomb>(bombPos);
+                    bombs.push_back(bomb.get());
+                    gzzzt::Log::debug(gzzzt::Log::GENERAL, "NB BOMB : %d\n", bombs.size());
+                    game.addEntity(bomb);
                 }
             }
             delete req;
