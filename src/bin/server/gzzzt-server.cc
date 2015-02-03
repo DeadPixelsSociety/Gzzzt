@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
         help();
         return 1;
     }
-    gzzzt::Log::setLevel(gzzzt::Log::DEBUG);
+    gzzzt::Log::setLevel(gzzzt::Log::INFO);
     gzzzt::Log::info(gzzzt::Log::GENERAL, "Starting the server...\n");
     gzzzt::Log::info(gzzzt::Log::GENERAL, "You can stop it with CTRL+C or with the kill command.\n");
 
@@ -234,7 +234,9 @@ int main(int argc, char** argv) {
                     sf::Vector2f bombPos;
                     bombPos.x = ((playerBody->pos.x / serverMap.getTileWidth()) * serverMap.getTileWidth()) + (serverMap.getTileWidth() / 2);
                     bombPos.y = ((playerBody->pos.y / serverMap.getTileHeight()) * serverMap.getTileHeight()) + (serverMap.getTileHeight() / 2);
-//                    std::shared_ptr<gzzzt::ServerBomb> bomb = std::make_shared<gzzzt::ServerBomb>(bombPos);
+                    gzzzt::Log::info(gzzzt::Log::GENERAL, "%d %d %d %f %f\n", player->getID(),serverMap.getTileWidth(),serverMap.getTileHeight(), bombPos.x, bombPos.y);
+                    
+                      //std::shared_ptr<gzzzt::ServerBomb> bomb = std::make_shared<gzzzt::ServerBomb>(bombPos);
 //                    bombs.push_back(bomb.get());
 //                    gzzzt::Log::debug(gzzzt::Log::GENERAL, "NB BOMB : %d\n", bombs.size());
 //                    game.addEntity(bomb);

@@ -25,6 +25,8 @@ namespace gzzzt {
 
     ServerMap::ServerMap(const boost::filesystem::path & path, gzzzt::ResourceManager& resourceManager) {
         m_tmxMap = resourceManager.getMap(path.string());
+        m_tileHeight = m_tmxMap->getTileHeight();
+        m_tileWidth = m_tmxMap->getTileWidth();
     }
 
     ServerMap::~ServerMap() {
